@@ -306,7 +306,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
 			//flag to prevent infinite recursion
 			if (getDataValue("neighbor") == null) {
 				neighbor.setDataValue("neighbor", Boolean.TRUE);
-				if (neighbor.removeItem(type, amount)) {
+				if (neighbor.removeItem(type, amount, durability)) {
 					update();
 					return true;
 				}
