@@ -685,7 +685,7 @@ public class MinecartManiaWorld {
 		}
 		// To Do
 		// Find Fix For CraftItemStack
-		CraftItemStack stack = new CraftItemStack(item.getTypeId(), item.getAmount(), item.getDurability(), item.getItemMeta());
+		CraftItemStack stack = CraftItemStack.asCraftCopy(item);
 		if (stack.getMaxStackSize() != -1 && !(Boolean)MinecartManiaWorld.getConfigurationValue("StackAllItems")) {
 			return stack.getMaxStackSize();
 		}
