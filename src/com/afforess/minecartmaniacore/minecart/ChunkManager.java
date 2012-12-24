@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
 
 @SuppressWarnings("unused")
 public class ChunkManager {
