@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.minecraft.server.EntityMinecart;
+import net.minecraft.server.v1_4_6.EntityMinecart;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -15,11 +15,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMinecart;
-import org.bukkit.craftbukkit.entity.CraftPoweredMinecart;
-import org.bukkit.craftbukkit.entity.CraftStorageMinecart;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPoweredMinecart;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftStorageMinecart;
+import org.bukkit.craftbukkit.v1_4_6.inventory.CraftItemStack;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.StorageMinecart;
@@ -683,7 +683,9 @@ public class MinecartManiaWorld {
 		if (item == null) {
 			return 64;
 		}
-		CraftItemStack stack = new CraftItemStack(item.getTypeId(), item.getAmount(), item.getDurability());
+		// To Do
+		// Find Fix For CraftItemStack
+		CraftItemStack stack = CraftItemStack.asCraftCopy(item);
 		if (stack.getMaxStackSize() != -1 && !(Boolean)MinecartManiaWorld.getConfigurationValue("StackAllItems")) {
 			return stack.getMaxStackSize();
 		}
