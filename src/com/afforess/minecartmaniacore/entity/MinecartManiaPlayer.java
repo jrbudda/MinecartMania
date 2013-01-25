@@ -5,8 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmaniacore.inventory.MinecartManiaInventory;
-import com.afforess.minecartmaniacore.inventory.MinecartManiaSingleContainer;
 
 public class MinecartManiaPlayer extends MinecartManiaSingleContainer implements MinecartManiaInventory{
 	private final String name;

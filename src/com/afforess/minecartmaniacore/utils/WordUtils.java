@@ -1,5 +1,10 @@
 package com.afforess.minecartmaniacore.utils;
 
+import java.text.DecimalFormat;
+
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -411,4 +416,15 @@ public class WordUtils {
         return false;
     }
 
+    public static String printLoc(Location l){
+    	return df.format(l.getX()) +"," + df.format(l.getY()) + "," + df.format(l.getZ()); 
+    }
+    
+	private static DecimalFormat df=  new DecimalFormat("+0.00;-0.00");
+    
+    public static String printVec(Vector l){
+    	return df.format(l.getX()) +"," + df.format(l.getY()) + "," + df.format(l.getZ()); 
+    }
+    
+    
 }

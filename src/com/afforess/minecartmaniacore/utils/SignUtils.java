@@ -10,9 +10,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmaniacore.config.MinecartManiaConfiguration;
-import com.afforess.minecartmaniacore.minecart.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.signs.SignManager;
+import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.signs.SignManager;
 
 public class SignUtils {
 	public static boolean signMatches(Sign s1, Sign s2) {
@@ -40,11 +40,11 @@ public class SignUtils {
 	
 
 	public static ArrayList<Sign> getAdjacentSignList(MinecartManiaMinecart minecart, int range) {
-		return getAdjacentSignList(minecart.minecart.getLocation(), range);
+		return getAdjacentSignList(minecart.getLocation(), range);
 	}
 	
 	public static ArrayList<Sign> getAdjacentSignList(MinecartManiaMinecart minecart, int range, boolean force) {
-		return getAdjacentSignList(minecart.minecart.getLocation(), range, force);
+		return getAdjacentSignList(minecart.getLocation(), range, force);
 	}
 
 	public static ArrayList<Sign> getAdjacentSignList(Location location, int range) {
@@ -61,7 +61,7 @@ public class SignUtils {
 
 	public static ArrayList<Sign> getAdjacentSignList(World w, int x, int y, int z, int range, boolean force) {
 		ArrayList<Sign> signList = new ArrayList<Sign>();
-		if (!force && MinecartManiaConfiguration.isLimitedSignRange()) {
+		if (!force && Settings.isLimitedSignRange()) {
 			signList.addAll(getParallelSignList(w, x, y, z));
 			signList.addAll(getSignBeneathList(w, x, y, z, 2));
 			return signList;
@@ -79,27 +79,27 @@ public class SignUtils {
 		return signList;
 	}
 	
-	public static ArrayList<com.afforess.minecartmaniacore.signs.Sign> getAdjacentMinecartManiaSignList(Location location, int range) {
+	public static ArrayList<com.afforess.minecartmania.signs.Sign> getAdjacentMinecartManiaSignList(Location location, int range) {
 		ArrayList<Sign> list = getAdjacentSignList(location, range);
-		ArrayList<com.afforess.minecartmaniacore.signs.Sign> signList = new ArrayList<com.afforess.minecartmaniacore.signs.Sign>(list.size());
+		ArrayList<com.afforess.minecartmania.signs.Sign> signList = new ArrayList<com.afforess.minecartmania.signs.Sign>(list.size());
 		for (Sign s : list) {
 			signList.add(SignManager.getSignAt(s.getBlock()));
 		}
 		return signList;
 	}
 	
-	public static ArrayList<com.afforess.minecartmaniacore.signs.Sign> getAdjacentMinecartManiaSignList(Location location, int range, boolean force) {
+	public static ArrayList<com.afforess.minecartmania.signs.Sign> getAdjacentMinecartManiaSignList(Location location, int range, boolean force) {
 		ArrayList<Sign> list = getAdjacentSignList(location, range, force);
-		ArrayList<com.afforess.minecartmaniacore.signs.Sign> signList = new ArrayList<com.afforess.minecartmaniacore.signs.Sign>(list.size());
+		ArrayList<com.afforess.minecartmania.signs.Sign> signList = new ArrayList<com.afforess.minecartmania.signs.Sign>(list.size());
 		for (Sign s : list) {
 			signList.add(SignManager.getSignAt(s.getBlock()));
 		}
 		return signList;
 	}
 	
-	public static ArrayList<com.afforess.minecartmaniacore.signs.Sign> getMinecartManiaSignBeneathList(Location location, int range) {
+	public static ArrayList<com.afforess.minecartmania.signs.Sign> getMinecartManiaSignBeneathList(Location location, int range) {
 		ArrayList<Sign> list = getSignBeneathList(location, range);
-		ArrayList<com.afforess.minecartmaniacore.signs.Sign> signList = new ArrayList<com.afforess.minecartmaniacore.signs.Sign>(list.size());
+		ArrayList<com.afforess.minecartmania.signs.Sign> signList = new ArrayList<com.afforess.minecartmania.signs.Sign>(list.size());
 		for (Sign s : list) {
 			signList.add(SignManager.getSignAt(s.getBlock()));
 		}
@@ -107,7 +107,7 @@ public class SignUtils {
 	}
 
 	public static ArrayList<Sign> getParallelSignList(MinecartManiaMinecart minecart) {
-		return getParallelSignList(minecart.minecart.getLocation());
+		return getParallelSignList(minecart.getLocation());
 	}
 
 	public static ArrayList<Sign> getParallelSignList(Location location) {
@@ -133,7 +133,7 @@ public class SignUtils {
 	}
 
 	public static ArrayList<Sign> getSignBeneathList(MinecartManiaMinecart minecart, int range) {
-		return getSignBeneathList(minecart.minecart.getLocation(), range);
+		return getSignBeneathList(minecart.getLocation(), range);
 	}
 
 	public static ArrayList<Sign> getSignBeneathList(Location location, int range) {
@@ -152,12 +152,12 @@ public class SignUtils {
 		return signList;
 	}
 	
-	public static void sortByDistance(Block block, List<? extends com.afforess.minecartmaniacore.signs.Sign> signs) {
+	public static void sortByDistance(Block block, List<? extends com.afforess.minecartmania.signs.Sign> signs) {
 		Collections.sort(signs, new SignDistanceComparator(block.getX(),block.getY(),block.getZ()));
 	}
 }
 
-class SignDistanceComparator implements Comparator<com.afforess.minecartmaniacore.signs.Sign>
+class SignDistanceComparator implements Comparator<com.afforess.minecartmania.signs.Sign>
 {
 	private int x,y,z;
 
@@ -168,7 +168,7 @@ class SignDistanceComparator implements Comparator<com.afforess.minecartmaniacor
 		this.z = z;
 	}
 
-	protected int getSquaredDistanceFromLocation(com.afforess.minecartmaniacore.signs.Sign sign)
+	protected int getSquaredDistanceFromLocation(com.afforess.minecartmania.signs.Sign sign)
 	{
 		int x = sign.getX() - this.x;
 		int y = sign.getY() - this.y;
@@ -176,7 +176,7 @@ class SignDistanceComparator implements Comparator<com.afforess.minecartmaniacor
 		return x*x + y*y + z*z;
 	}
 	
-	public int compare(com.afforess.minecartmaniacore.signs.Sign sign1, com.afforess.minecartmaniacore.signs.Sign sign2)
+	public int compare(com.afforess.minecartmania.signs.Sign sign1, com.afforess.minecartmania.signs.Sign sign2)
 	{
 		int i1 = getSquaredDistanceFromLocation(sign1);
 		int i2 = getSquaredDistanceFromLocation(sign1);

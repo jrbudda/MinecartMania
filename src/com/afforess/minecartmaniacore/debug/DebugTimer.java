@@ -1,6 +1,6 @@
 package com.afforess.minecartmaniacore.debug;
 
-import com.afforess.minecartmaniacore.MinecartManiaCore;
+import com.afforess.minecartmania.MinecartMania;
 
 public class DebugTimer {
 	public final long start = System.currentTimeMillis();
@@ -14,7 +14,7 @@ public class DebugTimer {
 	}
 	
 	public void logProcessTime() {
-		MinecartManiaCore.log.time("Process Time " + (name != null ? "(for " + name + ") " : "") + "took " + (System.currentTimeMillis() - start) + " ms");
+		MinecartMania.log.time("Process Time " + (name != null ? "(for " + name + ") " : "") + "took " + (System.currentTimeMillis() - start) + " ms");
 	}
 
 }

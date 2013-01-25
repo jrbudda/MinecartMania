@@ -1,0 +1,403 @@
+name: MinecartMania
+main: com.afforess.minecartmania.MinecartMania
+version: 1.5.1-mod
+author: mze9412, Afforess
+database: true
+commands:
+  mm:
+    description: Base MM command class
+    usage: /<command>
+  st:
+    description: Sets the station value, for any station intersection the players may pass in a minecart
+    usage: /<command>
+  trucompass:
+    description: Returns the true compass direction for the direction that the player is facing
+    usage: /<command>
+permissions:
+    minecartmania.*:
+        description: Gives access to all minecart mania functionality
+        default: op
+        children:
+            minecartmania.commands.*: true
+            minecartmania.signs.*: true
+    minecartmania.signs.*:
+        description: Gives access to all minecart mania signs functionality
+        default: true
+        children:
+             minecartmania.signs.create.*: true
+             minecartmania.signs.break.*: true
+    minecartmania.commands.*:
+        description: Gives access to all minecart mania commands
+        default: op
+        children:
+            minecartmania.commands.eject: true
+            minecartmania.commands.permeject: true
+            minecartmania.commands.clearemptycarts: true
+            minecartmania.commands.clearpoweredcarts: true
+            minecartmania.commands.clearstoragecarts: true
+            minecartmania.commands.clearoccupiedcarts: true
+            minecartmania.commands.clearallcarts: true
+            minecartmania.commands.clearstalledcarts: true
+            minecartmania.commands.clearmovingcarts: true
+            minecartmania.commands.redraw: true
+            minecartmania.commands.hide: true
+            minecartmania.commands.momentum: true
+            minecartmania.commands.info: true
+            minecartmania.commands.getconfigkey: true
+            minecartmania.commands.listconfigkeys: true
+            minecartmania.commands.trucompass: true
+            minecartmania.commands.st: true
+            minecartmania.commands.throttle: true
+            minecartmania.commands.setconfigkey: true
+    minecartmania.commands.eject:
+        description: Ejects the given player from a minecart, if they are in one. 
+        default: op
+    minecartmania.commands.permeject:
+        description: Ejects the given player from a minecart, and prevents them from re-entering any minecart. This resets if the command is used again for the given player, or if the server is restarted. 
+        default: op
+    minecartmania.commands.clearemptycarts:
+        description: Removes all empty minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearpoweredcarts:
+        description: Removes all powered minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearstoragecarts:
+        description: Removes all storage minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearoccupiedcarts:
+        description: Removes all occupied minecarts from the server, dropping players where they stand. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearallcarts:
+        description: Removes all minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearstalledcarts:
+        description: Removes any unmoving minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.clearmovingcarts:
+        description: Removes any moving minecarts from the server. If -d (destroy) is set, they will not be returned to their owners. If the range is set, only carts inside the range will be cleared. 
+        default: op
+    minecartmania.commands.redraw:
+        description: Sends updates to all connected players to force all clients to redraw minecarts. Causes ~1 second of lag. 
+        default: op
+    minecartmania.commands.redraw:
+        description: Sends updates to all connected players to force all clients to redraw minecarts. Causes ~1 second of lag. 
+        default: op
+    minecartmania.commands.hide:
+        description: Hides all minecarts from view. They will continue moving, but will drop any passengers, and can not be seen unless someone re-logins or /mm redraw is used. 
+        default: op
+    minecartmania.commands.setconfigkey:
+        description: Sets the given configuration key to the given value. The key name and value are case-sensitive. 
+        default: op
+    minecartmania.commands.momentum:
+        description: shows the momentum of the minecart the player is in. 
+        default: true
+    minecartmania.commands.info:
+        description: Shows a list of detailed minecart information for the server 
+        default: true
+    minecartmania.commands.getconfigkey:
+        description: shows the value of the given configuration key. The Key is case-sensitive. 
+        default: true
+    minecartmania.commands.listconfigkeys:
+        description: Lists all of the config keys, in a page by page format 
+        default: true
+    minecartmania.commands.trucompass:
+        description: Shows the true (Notch) direction that the player is facing. 
+        default: true
+    minecartmania.commands.st:
+        description: Sets the station value for the player. It must be followed by any string, with numbers and letters. The -s flag saves the value so that it is not reset after 1 station. 
+        default: true
+    minecartmania.commands.throttle:
+        description: Autocart Only. Changes the momentum of the minecart. 100% is normal max speed. Can not exceed 500%. 
+        default: true
+    minecartmania.signs.create.*:
+        description: Gives access to all minecart mania create signs functionality
+        default: true
+        children:
+            minecartmania.signs.create.launchersign: true
+            minecartmania.signs.create.launchplayersign: true
+            minecartmania.signs.create.holdingsign: true
+            minecartmania.signs.create.alterrangesign: true
+            minecartmania.signs.create.announcementsign: true
+            minecartmania.signs.create.ejectionsign: true
+            minecartmania.signs.create.ejectatsign: true
+            minecartmania.signs.create.ejectionconditionsign: true
+            minecartmania.signs.create.elevatorsign: true
+            minecartmania.signs.create.lockcartsign: true
+            minecartmania.signs.create.unlockcartsign: true
+            minecartmania.signs.create.maxspeedsign: true
+            minecartmania.signs.create.setstationsign: true
+            minecartmania.signs.create.stopatdestinationsign: true
+            minecartmania.signs.create.minecarttypesign: true
+            minecartmania.signs.create.autotillsign: true
+            minecartmania.signs.create.tilloffsign: true
+            minecartmania.signs.create.autoseedsign: true
+            minecartmania.signs.create.seedoffsign: true
+            minecartmania.signs.create.autoharvestsign: true
+            minecartmania.signs.create.harvestoffsign: true
+            minecartmania.signs.create.autosugarsign: true
+            minecartmania.signs.create.sugaroffsign: true
+            minecartmania.signs.create.autoresugarsign: true
+            minecartmania.signs.create.resugaroffsign: true
+            minecartmania.signs.create.autotimbersign: true
+            minecartmania.signs.create.timberoffsign: true
+            minecartmania.signs.create.autoforestsign: true
+            minecartmania.signs.create.forestoffsign: true
+            minecartmania.signs.create.autocactussign: true
+            minecartmania.signs.create.cactusoffsign: true
+            minecartmania.signs.create.autorecactussign: true
+            minecartmania.signs.create.recactusoffsign: true
+            minecartmania.signs.create.farm: true
+    minecartmania.signs.create.launchersign:
+        description: Create launch direction signs
+        default: true
+    minecartmania.signs.create.launchplayersign:
+        description: Create launch player signs
+        default: true
+    minecartmania.signs.create.holdingsign:
+        description: Create holding signs
+        default: true
+    minecartmania.signs.create.alterrangesign:
+        description: Create Launch signs
+        default: true
+    minecartmania.signs.create.launchersign:
+        description: Create alter range signs
+        default: true
+    minecartmania.signs.create.announcementsign:
+        description: Create announcement signs
+        default: true
+    minecartmania.signs.create.ejectionsign:
+        description: Create eject here signs
+        default: true
+    minecartmania.signs.create.ejectatsign:
+        description: Create eject at signs
+        default: true
+    minecartmania.signs.create.ejectionconditionsign:
+        description: Create ejection condition signs
+        default: true
+    minecartmania.signs.create.elevatorsign:
+        description: Create elevator signs
+        default: true
+    minecartmania.signs.create.lockcartsign:
+        description: Create lock cart signs
+        default: true
+    minecartmania.signs.create.launchersign:
+        description: Create Launch signs
+        default: true
+    minecartmania.signs.create.unlockcartsign:
+        description: Create unlock cart signs
+        default: true
+    minecartmania.signs.create.maxspeedsign:
+        description: Create max speed signs
+        default: true
+    minecartmania.signs.create.setstationsign:
+        description: Create set station signs
+        default: true
+    minecartmania.signs.create.stopatdestinationsign:
+        description: Create stop at destination signs
+        default: true
+    minecartmania.signs.create.minecarttypesign:
+        description: Create minecart type signs
+        default: true
+    minecartmania.signs.create.autotillsign:
+        description: Create auto till signs
+        default: true
+    minecartmania.signs.create.tilloffsign:
+        description: Create till off signs
+        default: true
+    minecartmania.signs.create.autoseedsign:
+        description: Create auto seed signs
+        default: true
+    minecartmania.signs.create.seedoffsign:
+        description: Create seed off signs
+        default: true
+    minecartmania.signs.create.autoharvestsign:
+        description: Create auto harvest signs
+        default: true
+    minecartmania.signs.create.harvestoffsign:
+        description: Create harvest off signs
+        default: true
+    minecartmania.signs.create.autosugarsign:
+        description: Create auto sugar signs
+        default: true
+    minecartmania.signs.create.sugaroffsign :
+        description: Create sugar off signs
+        default: true
+    minecartmania.signs.create.autoresugarsign:
+        description: Create auto re sugar signs
+        default: true
+    minecartmania.signs.create.resugaroffsign:
+        description: Create re sugar off signs
+        default: true
+    minecartmania.signs.create.autotimbersign:
+        description: Create auto timber signs
+        default: true
+    minecartmania.signs.create.timberoffsign:
+        description: Create timber off signs
+        default: true
+    minecartmania.signs.create.autoforestsign:
+        description: Create auto forest signs
+        default: true
+    minecartmania.signs.create.forestoffsign:
+        description: Create forest off signs
+        default: true
+    minecartmania.signs.create.autocactussign:
+        description: Create auto cactus signs
+        default: true
+    minecartmania.signs.create.cactusoffsign:
+        description: Create cactus off signs
+        default: true
+    minecartmania.signs.create.autorecactussign:
+        description: Create auto recactus signs
+        default: true
+    minecartmania.signs.create.recactusoffsign:
+        description: Create re cactus off signs
+        default: true
+    minecartmania.signs.create.farm:
+        description: Create farm signs
+        default: true
+    minecartmania.signs.break.*:
+        description: Gives access to all minecart mania break signs functionality
+        default: true
+        children:
+            minecartmania.signs.break.launchersign: true
+            minecartmania.signs.break.launchplayersign: true
+            minecartmania.signs.break.holdingsign: true
+            minecartmania.signs.break.alterrangesign: true
+            minecartmania.signs.break.announcementsign: true
+            minecartmania.signs.break.ejectionsign: true
+            minecartmania.signs.break.ejectatsign: true
+            minecartmania.signs.break.ejectionconditionsign: true
+            minecartmania.signs.break.elevatorsign: true
+            minecartmania.signs.break.lockcartsign: true
+            minecartmania.signs.break.unlockcartsign: true
+            minecartmania.signs.break.maxspeedsign: true
+            minecartmania.signs.break.setstationsign: true
+            minecartmania.signs.break.stopatdestinationsign: true
+            minecartmania.signs.break.minecarttypesign: true
+            minecartmania.signs.break.autotillsign: true
+            minecartmania.signs.break.tilloffsign: true
+            minecartmania.signs.break.autoseedsign: true
+            minecartmania.signs.break.seedoffsign: true
+            minecartmania.signs.break.autoharvestsign: true
+            minecartmania.signs.break.harvestoffsign: true
+            minecartmania.signs.break.autosugarsign: true
+            minecartmania.signs.break.sugaroffsign: true
+            minecartmania.signs.break.autoresugarsign: true
+            minecartmania.signs.break.resugaroffsign: true
+            minecartmania.signs.break.autotimbersign: true
+            minecartmania.signs.break.timberoffsign: true
+            minecartmania.signs.break.autoforestsign: true
+            minecartmania.signs.break.forestoffsign: true
+            minecartmania.signs.break.autocactussign: true
+            minecartmania.signs.break.cactusoffsign: true
+            minecartmania.signs.break.autorecactussign: true
+            minecartmania.signs.break.recactusoffsign: true
+            minecartmania.signs.break.farm: true
+    minecartmania.signs.break.launchersign:
+        description: Break launch direction signs
+        default: true
+    minecartmania.signs.break.launchplayersign:
+        description: Break launch player signs
+        default: true
+    minecartmania.signs.break.holdingsign:
+        description: Break holding signs
+        default: true
+    minecartmania.signs.break.alterrangesign:
+        description: Break Launch signs
+        default: true
+    minecartmania.signs.break.launchersign:
+        description: Break alter range signs
+        default: true
+    minecartmania.signs.break.announcementsign:
+        description: Break announcement signs
+        default: true
+    minecartmania.signs.break.ejectionsign:
+        description: Break eject here signs
+        default: true
+    minecartmania.signs.break.ejectatsign:
+        description: Break eject at signs
+        default: true
+    minecartmania.signs.break.ejectionconditionsign:
+        description: Break ejection condition signs
+        default: true
+    minecartmania.signs.break.elevatorsign:
+        description: Break elevator signs
+        default: true
+    minecartmania.signs.break.lockcartsign:
+        description: Break lock cart signs
+        default: true
+    minecartmania.signs.break.launchersign:
+        description: Break Launch signs
+        default: true
+    minecartmania.signs.break.unlockcartsign:
+        description: Break unlock cart signs
+        default: true
+    minecartmania.signs.break.maxspeedsign:
+        description: Break max speed signs
+        default: true
+    minecartmania.signs.break.setstationsign:
+        description: Break set station signs
+        default: true
+    minecartmania.signs.break.stopatdestinationsign:
+        description: Break stop at destination signs
+        default: true
+    minecartmania.signs.break.minecarttypesign:
+        description: Break minecart type signs
+        default: true
+    minecartmania.signs.break.autotillsign:
+        description: Break auto till signs
+        default: true
+    minecartmania.signs.break.tilloffsign:
+        description: Break till off signs
+        default: true
+    minecartmania.signs.break.autoseedsign:
+        description: Break auto seed signs
+        default: true
+    minecartmania.signs.break.seedoffsign:
+        description: Break seed off signs
+        default: true
+    minecartmania.signs.break.autoharvestsign:
+        description: Break auto harvest signs
+        default: true
+    minecartmania.signs.break.harvestoffsign:
+        description: Break harvest off signs
+        default: true
+    minecartmania.signs.break.autosugarsign:
+        description: Break auto sugar signs
+        default: true
+    minecartmania.signs.break.sugaroffsign :
+        description: Break sugar off signs
+        default: true
+    minecartmania.signs.break.autoresugarsign:
+        description: Break auto re sugar signs
+        default: true
+    minecartmania.signs.break.resugaroffsign:
+        description: Break re sugar off signs
+        default: true
+    minecartmania.signs.break.autotimbersign:
+        description: Break auto timber signs
+        default: true
+    minecartmania.signs.break.timberoffsign:
+        description: Break timber off signs
+        default: true
+    minecartmania.signs.break.autoforestsign:
+        description: Break auto forest signs
+        default: true
+    minecartmania.signs.break.forestoffsign:
+        description: Break forest off signs
+        default: true
+    minecartmania.signs.break.autocactussign:
+        description: Break auto cactus signs
+        default: true
+    minecartmania.signs.break.cactusoffsign:
+        description: Break cactus off signs
+        default: true
+    minecartmania.signs.break.autorecactussign:
+        description: Break auto recactus signs
+        default: true
+    minecartmania.signs.break.recactusoffsign:
+        description: Break re cactus off signs
+        default: true
+    minecartmania.signs.break.farm:
+        description: Break farm signs
+        default: true
