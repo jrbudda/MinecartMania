@@ -1,0 +1,41 @@
+
+RangeXZ: 4
+RangeY: 4
+
+MaxSpeedPercent: 200
+
+DerailedFrictionPercent: 100
+PassengerFrictionPercent: 100
+
+SlowWhenEmpty: false
+EmptyFrictionPercent: 100
+
+ClearItemsOnTrack: true
+KillMobsOnTrack: true
+
+KillPlayersOnTrack: false
+KillPlayersOnTrackMinnimumSpeed: 90
+
+IgnorePlayersOnTrack: true
+
+LimitedSignRange: true
+
+
+ControlBlocks:
+  GOLD_BLOCK:
+   Redstone: Disables
+   Actions:
+      - "speed:1.5x"
+      
+  EMERALD_BLOCK:
+   Redstone: Disables
+   Actions:
+      - "speed:100"
+        
+  LIME_WOOL:
+   Redstone: Disables
+   Actions:
+      - "platform"
+     
+    
+LimitedSignRange2: true

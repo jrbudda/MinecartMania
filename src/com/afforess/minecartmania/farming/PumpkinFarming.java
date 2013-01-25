@@ -1,0 +1,42 @@
+package com.afforess.minecartmania.farming;
+
+import java.util.ArrayList;
+
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
+import com.afforess.minecartmaniacore.entity.Item;
+import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmaniacore.utils.StorageMinecartUtils;
+
+public class PumpkinFarming extends FarmingBase {    
+	public static void doAutoFarm(MinecartManiaStorageCart minecart)
+	{
+		if(isPumpkinFarmingActive(minecart))
+		{
+			ArrayList<Block> roots = findRoots(minecart, Item.PUMPKIN.getId());
+			
+			for (Block root : roots)
+			{
+			    Block melonBlock = root.getRelative(BlockFace.UP);
+	            if(melonBlock.getTypeId() == Item.PUMPKIN.getId())
+	            {	                 
+	                //add pumpkin to inventory
+	                minecart.addItem(Item.PUMPKIN.getId(), 1);
+	                
+	                //remove melon block
+                    melonBlock.setTypeIdAndData(Item.AIR.getId(), (byte)Item.AIR.getData(), true);
+	                
+                    //set root to soil/farmland
+                    root.setTypeIdAndData(Item.SOIL.getId(), (byte)Item.SOIL.getData(), true);
+	            }
+			}
+		}
+	}
+
+
+	private static boolean isPumpkinFarmingActive(MinecartManiaStorageCart minecart)
+	{
+		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Pumpkin);
+	}
+}
