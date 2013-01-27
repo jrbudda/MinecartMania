@@ -6,54 +6,47 @@ import org.bukkit.entity.Player;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 
 public class PermissionManager {
-	
+
 	//private PermissionHandler handler = null;
 	public PermissionManager(Server server) {		
 		MinecartManiaLogger.getInstance().log("Using Bukkit permissions.");
 	}
-	
-	public boolean isHasPermissions() {
-		return true;
-	}
-	
+
+
 	public boolean canCreateSign(Player player, String sign) {
-		if (player.isOp()) {
+		if (player == null || player.isOp()) {
 			return true;
 		}
-		if (isHasPermissions()) {
-			return player.hasPermission("minecartmania.signs.create." + sign);
-		}
-		return true;
+		//TODO do this properly in the plugin.yml
+		return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*") ;
+
 	}
-	
+
 	public boolean canBreakSign(Player player, String sign) {
-		if (player.isOp()) {
+		if (player == null || player.isOp()) {
 			return true;
 		}
-		if (isHasPermissions()) {
-			return player.hasPermission("minecartmania.signs.break." + sign);
-		}
-		return true;
+
+		return player.hasPermission("minecartmania.signs.break." + sign) || player.hasPermission("minecartmania.signs.break.*");
+
 	}
-	
+
 	public boolean canUseAdminCommand(Player player, String command) {
-		if (player.isOp()) {
+		if (player == null || player.isOp()) {
 			return true;
 		}
-		if (isHasPermissions()) {
-			return player.hasPermission("minecartmania.commands.create." + command.toLowerCase());
-		}
-		return false;
+
+		return player.hasPermission("minecartmania.commands.create." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
+
 	}
-	
+
 	public boolean canUseCommand(Player player, String command) {
-		if (player.isOp()) {
+		if (player == null || player.isOp()) {
 			return true;
 		}
-		if (isHasPermissions()) {
-			return player.hasPermission("minecartmania.commands." + command.toLowerCase());
-		}
-		return true;
+
+		return player.hasPermission("minecartmania.commands." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
+
 	}
 
 }

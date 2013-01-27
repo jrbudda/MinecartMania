@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.config.ControlBlockList;
+import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.events.MinecartCaughtEvent;
 import com.afforess.minecartmania.events.MinecartElevatorEvent;
@@ -36,7 +37,7 @@ import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartPassengerEjectEvent;
 import com.afforess.minecartmania.events.MinecartSpeedMultiplierEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.actions.LaunchMinecartAction;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.entity.Item;
@@ -57,7 +58,7 @@ public class MinecartManiaMinecart {
 	public static final double MAXIMUM_MOMENTUM = 1E150D;
 	protected Calendar cal;
 	public boolean createdLastTick = true;
-	protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
+	//protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 	protected volatile boolean dead = false;
 	protected Minecart minecart;
 	protected MinecartOwner owner = null;
@@ -71,8 +72,6 @@ public class MinecartManiaMinecart {
 		minecart = replaceCart(cart); 
 		initialize();
 		findOwner();
-
-
 	}
 
 	public MinecartManiaMinecart(Minecart cart, String owner) {
@@ -125,17 +124,20 @@ public class MinecartManiaMinecart {
 		setMotionZ(getMotionZ() + change);
 	}
 
-	public MinecartManiaMinecart copy(Minecart newMinecart) {
-		MinecartManiaMinecart newCopy = MinecartManiaWorld.getOrCreateMMMinecart(newMinecart);
-		newCopy.cal = this.cal;
-		newCopy.data = this.data;
-		newCopy.range = this.range;
-		newCopy.owner = this.owner;
-		newCopy.previousFacingDir = this.previousFacingDir;
-		newCopy.previousLocation = this.previousLocation;
-		newCopy.wasMovingLastTick = this.wasMovingLastTick;
 
-		return newCopy;
+	private long cooldown;
+	public boolean isCooledDown(){
+		return System.currentTimeMillis() > cooldown;
+
+	}
+
+	public void setCooldown(){
+		cooldown = 	 System.currentTimeMillis() +1000;
+	}
+
+	private MinecartManiaMinecart replaceEntity(Minecart newMinecart) {
+		this.minecart = replaceCart(newMinecart);
+		return this;
 	}
 
 	public boolean doCatcherBlock() {
@@ -144,27 +146,14 @@ public class MinecartManiaMinecart {
 				MinecartCaughtEvent mce = new MinecartCaughtEvent(this);
 				MinecartMania.callEvent(mce);
 				if (!mce.isActionTaken()) {
-					stopCart();
+					setFrozen(true);
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	public boolean doJumpblock(){
-		if (ControlBlockList.isCatcherBlock(getItemBeneath())){
-			if (ControlBlockList.isValidCatcherBlock(this)) {
-				MinecartCaughtEvent mce = new MinecartCaughtEvent(this);
-				MinecartMania.callEvent(mce);
-				if (!mce.isActionTaken()) {
-					stopCart();
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+
 
 	public boolean doEjectorBlock() {
 		if (ControlBlockList.isValidEjectorBlock(this)) {
@@ -270,6 +259,10 @@ public class MinecartManiaMinecart {
 		return false;
 	}
 
+	public Minecart getBukkitEntity(){
+		return this.minecart;
+	}
+
 	public boolean doSpeedMultiplierBlock() {
 		double multiplier = ControlBlockList.getSpeedMultiplier(this);
 		MinecartManiaLogger.getInstance().debug( "dospeed" +  multiplier);
@@ -363,12 +356,12 @@ public class MinecartManiaMinecart {
 
 	public Block getBlockBeneath() {
 		if (ControlBlockList.getControlBlock(Item.getItem(getLocation().getBlock())) != null) {
+			//control rail
 			return getLocation().getBlock();
 		}
 		else {
-			Location temp = getLocation();
-			temp.setY(temp.getY() - 1);
-			return temp.getBlock();
+			//block under rail;
+			return  getLocation().add(0, -1, 0).getBlock();
 		}
 	}
 
@@ -402,9 +395,7 @@ public class MinecartManiaMinecart {
 	 */
 	@ThreadSafe
 	public final Object getDataValue(String key) {
-		if (data.containsKey(key)) {
-			return data.get(key);
-		}
+		if(minecart.hasMetadata(key))	return minecart.getMetadata(key).get(0).value();
 		return null;
 	}
 
@@ -683,11 +674,12 @@ public class MinecartManiaMinecart {
 		previousLocation = minecart.getLocation().toVector().clone();
 		previousLocation.setY(previousLocation.getX() -1); //fool game into thinking we've already moved
 
-		minecart.setMaxSpeed(Settings.DefaultMaxSpeedPercent);
-		Vector v = new Vector(Settings.getDefaultMinecartDerailedSpeedPercent() * 0.5 / 100,Settings.getDefaultMinecartDerailedSpeedPercent() * 0.5 / 100,Settings.getDefaultMinecartDerailedSpeedPercent() * 0.5 / 100);
-
-		minecart.setDerailedVelocityMod(v);
 		minecart.setSlowWhenEmpty(Settings.getDefaultMinecartSlowerWhenEmpty());
+		minecart.setMaxSpeed(0.4D * Settings.DefaultMaxSpeedPercent /100 );
+		getHandle().derailedFrictioPercent = Settings.DefaultDerailedFrictionPercent;
+		getHandle().emptyFrictionPercent = Settings.DefaultEmptyFrictionPercent;
+		getHandle().passengerFrictionPercent = Settings.DefaultPassengerFrictionPercent;
+
 
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
@@ -747,9 +739,9 @@ public class MinecartManiaMinecart {
 	 * @return true if moving
 	 */
 	public boolean isMoving() {
+		if(isFrozen()) return false;
 		return getMotionX() != 0D || getMotionY() != 0D || getMotionZ() != 0D;
 	}
-
 
 
 	public boolean isMovingAway(Location l) {
@@ -779,26 +771,34 @@ public class MinecartManiaMinecart {
 	}
 
 	public boolean isOnControlBlock(){
-		return ControlBlockList.isControlBlock(getItemBeneath());
+		return NewControlBlockList.isControlBlock(getItemBeneath());
 	}
 
 	public boolean isOnRails() {
 		return getHandle().onRails;
 	}
 
+	public boolean isOnPoweredRails() {
+		return getHandle().onPoweredPoweredRail;
+	}
+
+	public boolean isOnUnPoweredRails() {
+		return getHandle().onUnpoweredPoweredRail;
+	}
+
 	public boolean isGoingUphill(){
 		return getHandle().uphill;
 	}
-	
+
 	public boolean isGoingDownhill(){
 		return getHandle().uphill;
 	}
-	
+
 	public boolean isOnSlope(){
 		return getHandle().uphill || getHandle().downhill;
 	}
-	
-	
+
+
 	/**
 	 * Attempts to determine if the given object is the owner if this minecart.
 	 * Valid datatypes: Entity, Vector, Location, Chest, MinecartManiaChest
@@ -916,14 +916,14 @@ public class MinecartManiaMinecart {
 	}
 
 	public void launchCart(double speed) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(getLocation(), 2);
-		
-		for (Sign sign : signList) {
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(getLocation(), 2);
+
+		for (MMSign sign : signList) {
 			if (sign.executeAction(this, LaunchMinecartAction.class)) {
 				break;
 			}
 		}
-		
+
 		if (!isMoving()) {
 			if (MinecartUtils.validMinecartTrack(minecart.getWorld(), getX(), getY(), getZ(), 2, DirectionUtils.CompassDirection.NORTH)) {
 				setMotion(DirectionUtils.CompassDirection.NORTH, speed);
@@ -941,13 +941,14 @@ public class MinecartManiaMinecart {
 
 		//Create event, then stop the cart and wait for the results
 		MinecartLaunchedEvent mle = new MinecartLaunchedEvent(this, minecart.getVelocity().clone());
-		stopCart();
+		setFrozen(true);
 		MinecartMania.callEvent(mle);
 		if (mle.isActionTaken()) {
 			return;
 		}
 		else {
 			minecart.setVelocity(mle.getLaunchSpeed());
+			setFrozen(false);
 		}
 	}
 
@@ -979,9 +980,9 @@ public class MinecartManiaMinecart {
 	@ThreadSafe
 	public final void setDataValue(String key, Object value) {
 		if (value == null) {
-			data.remove(key);
+			minecart.removeMetadata(key,MinecartMania.getInstance());
 		}else {
-			data.put(key, value);
+			minecart.setMetadata(key,  new org.bukkit.metadata.FixedMetadataValue(MinecartMania.getInstance(), value));
 		}
 	}
 
@@ -1062,41 +1063,58 @@ public class MinecartManiaMinecart {
 	}
 
 	/**
+	 * Frozen carts do not move, but retain their velocty. The do not raise update events.
+	 * @param freeze
+	 */
+	public void setFrozen(boolean freeze){
+		getHandle().frozen = freeze;
+	}
+
+	public boolean isFrozen(){
+		return getHandle().frozen;
+	}
+
+	/**
 	 * Teleports this minecart to the given location. Works with locations in other worlds
 	 * @param location
 	 * @return the new MinecartManiaMinecart at the end of the teleport, null if the teleport was unsuccessful
 	 */
 	public MinecartManiaMinecart teleport(Location location) {
 		if (!location.getWorld().equals(getWorld())) {
-			final Minecart newCart;
-			location.getWorld().loadChunk(location.getBlock().getChunk());
-			if (isStandardMinecart()) {
-				newCart = (Minecart)location.getWorld().spawn(location, Minecart.class);
-			}
-			else if (isPoweredMinecart()) {
-				newCart = (Minecart)location.getWorld().spawn(location, PoweredMinecart.class);
-			}
-			else {
-				newCart = (Minecart)location.getWorld().spawn(location, StorageMinecart.class);
-			}
-			final Entity passenger = minecart.getPassenger();
-			minecart.eject();
-			if (passenger != null) {
-				passenger.teleport(location);
-			}
-			Runnable update = new Runnable() {
-				public void run() {
-					if (passenger != null) {
-						newCart.setPassenger(passenger);
-					}
-					newCart.setVelocity(minecart.getVelocity());
-				}
-			};
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), update, 5);
 
-			MinecartManiaMinecart newMinecartManiaMinecart = this.copy(newCart);
-			kill(false);
-			return newMinecartManiaMinecart;
+			//TODO: fix this with new entities.
+
+			//			final Minecart newCart;
+			//			location.getWorld().loadChunk(location.getBlock().getChunk());
+			//			
+			//			if (isStandardMinecart()) {
+			//				newCart = (Minecart)location.getWorld().spawn(location, Minecart.class);
+			//			}
+			//			else if (isPoweredMinecart()) {
+			//				newCart = (Minecart)location.getWorld().spawn(location, PoweredMinecart.class);
+			//			}
+			//			else {
+			//				newCart = (Minecart)location.getWorld().spawn(location, StorageMinecart.class);
+			//			}
+			//			
+			//			final Entity passenger = minecart.getPassenger();
+			//			minecart.eject();
+			//			if (passenger != null) {
+			//				passenger.teleport(location);
+			//			}
+			//			Runnable update = new Runnable() {
+			//				public void run() {
+			//					if (passenger != null) {
+			//						newCart.setPassenger(passenger);
+			//					}
+			//					newCart.setVelocity(minecart.getVelocity());
+			//				}
+			//			};
+			//			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), update, 5);
+			//
+			//			MinecartManiaMinecart newMinecartManiaMinecart = this.replaceEntity(newCart);
+			//			kill(false);
+			//			return newMinecartManiaMinecart;
 		}
 
 		if (minecart.teleport(location)) {

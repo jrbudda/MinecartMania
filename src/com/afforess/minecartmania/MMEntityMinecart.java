@@ -4,20 +4,13 @@ package com.afforess.minecartmania;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.event.vehicle.VehicleDamageEvent;
-import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-import org.bukkit.util.Vector;
-import org.bukkit.inventory.InventoryHolder;
 
 import net.minecraft.server.v1_4_R1.Block;
 import net.minecraft.server.v1_4_R1.BlockMinecartTrack;
 import net.minecraft.server.v1_4_R1.Entity;
 import net.minecraft.server.v1_4_R1.EntityMinecart;
 import net.minecraft.server.v1_4_R1.IUpdatePlayerListBox;
-import net.minecraft.server.v1_4_R1.ItemStack;
 import net.minecraft.server.v1_4_R1.MathHelper;
 import net.minecraft.server.v1_4_R1.MinecraftServer;
 import net.minecraft.server.v1_4_R1.Vec3D;
@@ -40,38 +33,36 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 	private final double defaultpassengerFriction =  0.996999979019165D;
 	private final double defaultemptyFriction  = 0.9599999785423279D;
 	private final double defaultgravity = 0.03999999910593033D;
-	private final double slopeSpeed = 0.0078125D;
-	public double derailedFriction = 0.8;
-	public double passengerFriction = defaultpassengerFriction;
-	public double emptyFriction  = defaultemptyFriction;
+	private final double DefaultslopeSpeed = 0.0078125D;
+	private final double defaultDerailedFriction  = 0.8;
+	private final double defaultPassengerPushSpeed = 0.1D;
+
+	public double derailedFrictioPercent = 100;
+	public double passengerFrictionPercent = 100;
+	public double emptyFrictionPercent = 100;
+	public double slopeSpeedPercent = 100;
+	public double MaxPushSpeedPercent = 100;
+	public double GravityPercent = 100;
+
 	public boolean onPoweredPoweredRail;
 	public boolean onUnpoweredPoweredRail;
+
 	public int blockBeneathtype;
 	public int blockBeneathData;
-	public double gravity =defaultgravity;
 
-	public void setGravityPercent(double percent){
-		gravity = defaultgravity * percent/100;
-	}
-
-	public void setPassengerfrictionPercent(double percent){
-		passengerFriction = defaultpassengerFriction * percent/100;
-	}
-
-	public void setEmptyFrictionPercent(double percent){
-		emptyFriction = defaultemptyFriction * percent/100;
-	}
+	public boolean frozen;
 
 	public boolean onRails;
 
 	public boolean moving;
-	
+
 	public boolean uphill;
 	public boolean downhill;
-	
+
 	public boolean onNormalRail(){
 		return onRails && !onPoweredPoweredRail && !onUnpoweredPoweredRail;
 	}
+
 
 	private boolean isNew = true;
 
@@ -80,6 +71,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		this.g = world != null ? world.a(this) : null;
 		this.m = true;
 	}
+
 
 	@Override
 	public void j_() {
@@ -156,6 +148,8 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			this.world.methodProfiler.b();
 		}
 
+		if (frozen) return;
+
 		if (this.world.isStatic) {
 			//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j static " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
@@ -227,28 +221,28 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 				//slopes
 
-				 downhill = false;
-				 uphill = false;
+				downhill = false;
+				uphill = false;
 				if (blockBeneathData == 2) {
-					this.motX -= slopeSpeed;
+					this.motX -= DefaultslopeSpeed * slopeSpeedPercent/100;
 					downhill = motX <0;
 					uphill = !downhill;
 				}
 
 				if (blockBeneathData == 3) {
-					this.motX += slopeSpeed;
+					this.motX += DefaultslopeSpeed * slopeSpeedPercent/100;
 					downhill = motX >0;
 					uphill = !downhill;
 				}
 
 				if (blockBeneathData == 4) {
-					this.motZ += slopeSpeed;
+					this.motZ += DefaultslopeSpeed * slopeSpeedPercent/100;
 					downhill = motZ > 0;
 					uphill = !downhill;
 				}
 
 				if (blockBeneathData == 5) {
-					this.motZ -= slopeSpeed;
+					this.motZ -=DefaultslopeSpeed * slopeSpeedPercent/100;
 					downhill = motZ <0;
 					uphill = !downhill;
 				}
@@ -300,7 +294,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 					// there is a passenger
 					double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
 					double	cartSpeed = this.motX * this.motX + this.motZ * this.motZ;
-					if (passengerSpeed > .0001D && cartSpeed < 0.01D) {
+					if (passengerSpeed > .0001D && cartSpeed < MaxPushSpeedPercent / 100 * defaultPassengerPushSpeed) {
 						this.motX += this.passenger.motX * 0.2D;
 						this.motZ += this.passenger.motZ * 0.2D;
 					}
@@ -388,37 +382,61 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 				//frictions
 				if(slowWhenEmpty && this.passenger == null){
-					this.motX *= emptyFriction;
-					this.motZ *= emptyFriction;	
+					this.motX *= this.emptyFrictionPercent / 100 * this.defaultemptyFriction;
+					this.motZ *=  this.emptyFrictionPercent / 100 * this.defaultemptyFriction;
 				}
 				else{
-					this.motX *= passengerFriction;
-					this.motZ *= passengerFriction;
+					this.motX *= this.passengerFrictionPercent / 100 * this.defaultpassengerFriction;
+					this.motZ *=  this.passengerFrictionPercent / 100 * this.defaultpassengerFriction;
 				}
 
 
-				Vec3D vec3d1 = this.a(this.locX, this.locY, this.locZ);
+				//		Vec3D vec3d1 = this.a(this.locX, this.locY, this.locZ);
 
 				//wat...
-				if (vec3d1 != null && vec3d != null) {
-					double d20 = (vec3d.d - vec3d1.d) * 0.05D;
-					totalSpeed = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
-					if (totalSpeed > 0.0D) {
-						this.motX = this.motX / totalSpeed * (totalSpeed + d20);
-						this.motZ = this.motZ / totalSpeed * (totalSpeed + d20);
-					}
-
-					//	this.setPosition(this.locX, vec3d1.d, this.locZ);
-				}
+				//				if (vec3d1 != null && vec3d != null) {
+				//					
+				//					double d20 = (vec3d.d - vec3d1.d) * 0.05D; //5% of the change in Y value
+				//			why do this when you already have the slope modifier ?
+				//					totalSpeed = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
+				//					if (totalSpeed > 0.0D) {
+				//						this.motX = this.motX / totalSpeed * (totalSpeed + d20);
+				//						this.motZ = this.motZ / totalSpeed * (totalSpeed + d20);
+				//					}
+				///					//	this.setPosition(this.locX, vec3d1.d, this.locZ);
+				//				}
 
 				int newXBlock = MathHelper.floor(this.locX);
 				int newZBlock = MathHelper.floor(this.locZ);
+				int newYBlock = MathHelper.floor(this.locY);
 
 				if (newXBlock != xBlock || newZBlock != zBlock) {
-					//conserve speed around corners?
+					//now in a new block, move speed from x to z if needed, I think.	
 					totalSpeed = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
 					this.motX = totalSpeed * (double) (newXBlock - xBlock);
 					this.motZ = totalSpeed * (double) (newZBlock - zBlock);
+
+					blockBeneathtype = this.world.getTypeId(newXBlock, newYBlock, newZBlock);
+					blockBeneathData = this.world.getData(newXBlock, newYBlock, newZBlock);
+
+					if (Math.abs(xBlock - newXBlock) > 1 || Math.abs(zBlock - newZBlock) > 1){
+						//moved more than 1 block, going fast.
+						if (!BlockMinecartTrack.e(blockBeneathtype)) {
+							onRails = false;
+							//we moved off a track this tick, did we miss a slope?
+							for (int j = 1; j<4;j++ ){
+								//search upwards for a new track piece
+								if (BlockMinecartTrack.e( this.world.getTypeId(newXBlock, newYBlock+j, newZBlock))){
+									this.setPosition(this.locX,this.locY + j, this.locZ);
+									blockBeneathtype = this.world.getTypeId(newXBlock, newYBlock + j, newZBlock);
+									blockBeneathData = this.world.getData(newXBlock, newYBlock + j, newZBlock);
+									onRails = true;
+									break;
+								}
+							}
+						}	
+					}
+
 				}
 
 				double d21;
@@ -467,7 +485,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 				onRails = false;
 
-				this.motY -= gravity;
+				this.motY -= defaultgravity * GravityPercent / 100;
 
 				if (this.motX < -maxSpeed) {
 					this.motX = -maxSpeed;
@@ -486,8 +504,8 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				}
 
 				if (this.onGround) {
-					this.motX *= this.derailedFriction;
-					this.motZ *= this.derailedFriction;
+					this.motX *= this.derailedFrictioPercent / 100 * this.defaultDerailedFriction;
+					this.motZ *=  this.derailedFrictioPercent / 100 * this.defaultDerailedFriction;
 				}
 
 				this.setPosition(this.locX, this.locY, this.locZ);
@@ -585,5 +603,8 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		}
 	}
+
+
+
 
 }

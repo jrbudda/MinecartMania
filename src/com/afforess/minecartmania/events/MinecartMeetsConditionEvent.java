@@ -1,25 +1,25 @@
 package com.afforess.minecartmania.events;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 
 public class MinecartMeetsConditionEvent extends MinecartManiaEvent{
 	private MinecartManiaMinecart minecart;
-	private Sign sign;
+	private String[] Conditions;
 	private boolean condition = false;
 
-	public MinecartMeetsConditionEvent(MinecartManiaMinecart minecart, Sign sign) {
+	public MinecartMeetsConditionEvent(MinecartManiaMinecart minecart, String[] conditions) {
 		super("MinecartMeetsConditionEvent");
 		this.minecart = minecart;
-		this.sign = sign;
+		this.Conditions = conditions;
 	}
 	
 	public MinecartManiaMinecart getMinecart() {
 		return minecart;
 	}
 	
-	public Sign getSign() {
-		return sign;
+	public String[] getConditions(){
+		return this.Conditions;
 	}
 	
 	public boolean isMeetCondition() {

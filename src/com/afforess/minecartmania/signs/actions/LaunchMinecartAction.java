@@ -4,72 +4,65 @@ import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmaniacore.utils.MinecartUtils;
 
-public class LaunchMinecartAction implements SignAction {
+public class LaunchMinecartAction extends SignAction {
 	private volatile Vector launchSpeed = null;
 	private volatile boolean previous = false;
-	protected Sign sign;
-	public LaunchMinecartAction(Sign sign) {
-		this.sign = sign;
-	}
 
 
 	public boolean execute(MinecartManiaMinecart minecart) {
-		if (ControlBlockList.getLaunchSpeed(minecart.getItemBeneath()) == 1.0D) {
-			return false;
+		if(minecart == null){
+			minecart = MinecartUtils.getNearestMinecartInRange(loc, 2);
 		}
+
+		if(minecart == null) return false;
+
 		if (minecart.isMoving()) {
 			return false;
 		}
-		Vector launch = calculateLaunchSpeed(false);
+
 		if (previous) {
-			if (minecart.getPreviousDirectionOfMotion() != null && minecart.getPreviousDirectionOfMotion() != CompassDirection.NO_DIRECTION) {
+			if (minecart.isFrozen()){
+				minecart.setFrozen(false);
+			}
+			else if (minecart.getPreviousDirectionOfMotion() != null && minecart.getPreviousDirectionOfMotion() != CompassDirection.NO_DIRECTION) {
 				minecart.setMotion(minecart.getPreviousDirectionOfMotion(), 0.6D);
+				return true;
 			}
 		}
-		else {
-			minecart.setMotion(launch);
+		else if (launchSpeed != null) {
+			minecart.setMotion(launchSpeed);
+			return true;
 		}
+		else		{
+			Vector spd = null;
+			if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.NORTH)){
+				spd = new Vector(0, 0, -0.6D);
+			}
+			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.SOUTH)){
+				spd = new Vector(0, 0, 0.6D);
+			}
+			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.EAST)){
+				spd = new Vector(0.6D, 0, 0);
+			}
+			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.WEST)){
+				spd = new Vector(-0.6D, 0, 0);
+			}
 
-		return true;
-	}
-
-	private Vector calculateLaunchSpeed(boolean force) {
-		if (launchSpeed == null || force) {
-			previous = false;
-			launchSpeed = null;
-			for (int i = 0; i < sign.getNumLines(); i++) {
-				if (sign.getLine(i).toLowerCase().contains("previous dir")) {
-					previous = true;
-					break;
-				}
-
-				if (sign.getLine(i).toLowerCase().contains("launch north")) {
-					launchSpeed = new Vector(0, 0, -0.6D);
-					break;
-				}
-				else if (sign.getLine(i).toLowerCase().contains("launch east")) {
-					launchSpeed = new Vector(0.6D, 0, 0);
-					break;
-				}
-				if (sign.getLine(i).toLowerCase().contains("launch south")) {
-					launchSpeed = new Vector(0, 0, 0.6D);
-					break;
-				}
-				if (sign.getLine(i).toLowerCase().contains("launch west")) {
-					launchSpeed = new Vector(-0.6D, 0, 0);
-					break;
-				}
+			if (spd !=null){
+				minecart.setMotion(launchSpeed);
+				return true;
 
 			}
-			if (launchSpeed != null || previous) {
-				sign.addBrackets();
-			}
+
 		}
-		return launchSpeed;
+
+		return false;
+
 	}
 
 
@@ -77,14 +70,44 @@ public class LaunchMinecartAction implements SignAction {
 		return true;
 	}
 
+	public boolean process(String[] lines) {
+		this.executeAcceptsNull = true;
+		if (launchSpeed == null ) {
+			previous = false;
+			launchSpeed = null;
+			for (String line : lines){
+				if (line.toLowerCase().contains("[previous dir")) {
+					previous = true;
+					break;
+				}
+				else if (line.toLowerCase().contains("[launch north")) {
+					launchSpeed = new Vector(0, 0, -0.6D);
+					break;
+				}
+				else if (line.toLowerCase().contains("[launch east")) {
+					launchSpeed = new Vector(0.6D, 0, 0);
+					break;
+				}
+				else if (line.toLowerCase().contains("[launch south")) {
+					launchSpeed = new Vector(0, 0, 0.6D);
+					break;
+				}
+				else if (line.toLowerCase().contains("[launch west")) {
+					launchSpeed = new Vector(-0.6D, 0, 0);
+					break;
+				}
+				else if (line.toLowerCase().contains("[launch")) {
+					return true;
+				}
 
-	public boolean valid(Sign sign) {
-		calculateLaunchSpeed(true);
+			}
+
+		}
 		return launchSpeed != null || previous;
 	}
 
 
-	public String getName() {
+	public String getPermissionName() {
 		return "launchersign";
 	}
 

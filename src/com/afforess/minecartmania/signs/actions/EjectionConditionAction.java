@@ -4,18 +4,13 @@ import org.bukkit.Bukkit;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.events.MinecartMeetsConditionEvent;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 
-public class EjectionConditionAction implements SignAction {
-	private Sign sign;
-	public EjectionConditionAction(Sign sign) {
-		this.sign = sign;
-	}
-
+public class EjectionConditionAction extends SignAction {
 	
 	public boolean execute(MinecartManiaMinecart minecart) {
-		MinecartMeetsConditionEvent mmce = new MinecartMeetsConditionEvent(minecart, this.sign);
+		MinecartMeetsConditionEvent mmce = new MinecartMeetsConditionEvent(minecart, com.afforess.minecartmania.signs.SignManager.getOrCreateMMSign(loc).getLines());
 		Bukkit.getServer().getPluginManager().callEvent(mmce);
 		return mmce.isMeetCondition();
 	}
@@ -26,16 +21,15 @@ public class EjectionConditionAction implements SignAction {
 	}
 
 	
-	public boolean valid(Sign sign) {
-		if (sign.getLine(0).toLowerCase().contains("ejection")) {
-			sign.addBrackets();
+	public boolean process(String[] lines) {
+		if (lines[0].toLowerCase().contains("[ejection")) {
 			return true;
 		}
 		return false;
 	}
 
 	
-	public String getName() {
+	public String getPermissionName() {
 		return "ejectionconditionsign";
 	}
 

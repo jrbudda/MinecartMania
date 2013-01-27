@@ -4,36 +4,32 @@ import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 
-public class PassPlayerAction extends SignAction{
-	
-	
+public class ForceUnlockChestAction extends SignAction{
+	protected boolean valid = false;
+
 	public boolean execute(MinecartManiaMinecart minecart) {
-		return false;
+		return valid;
 	}
 
-	
 	public boolean async() {
 		return false;
 	}
 
-	
 	public boolean process(String[] lines) {
+
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[pass player")) {
+			if (line.contains("[unlock chest")) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	
 	public String getPermissionName() {
-		return "passplayersign";
+		return "forceunlockchestsign";
 	}
 
-	
 	public String getFriendlyName() {
-		return "Pass Player Sign";
+		return "Force Unlock Chest Sign";
 	}
-
 }

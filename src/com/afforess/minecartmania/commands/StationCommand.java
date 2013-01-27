@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.afforess.minecartmania.config.LocaleParser;
+import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmaniacore.entity.MinecartManiaPlayer;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
 
@@ -20,9 +21,12 @@ public class StationCommand extends MinecartManiaCommand {
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player player = (Player)sender;
+		
 		if (args.length < 1) {
+			sender.sendMessage(Settings.StationHelpString);
 			return false;
 		}
+		
 		MinecartManiaPlayer mmp = MinecartManiaWorld.getMinecartManiaPlayer(player);
 		String station = args[0];
 		mmp.setLastStation(station);

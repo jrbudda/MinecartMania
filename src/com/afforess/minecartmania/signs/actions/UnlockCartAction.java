@@ -2,11 +2,12 @@ package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 
-public class UnlockCartAction extends GenericAction{
+public class UnlockCartAction extends DataValuecAction{
 	public static final String name = "Unlock Cart";
-	public UnlockCartAction(Sign sign) {
+	
+	public UnlockCartAction() {
 		super(name, LockCartAction.name, null);
 	}
 	

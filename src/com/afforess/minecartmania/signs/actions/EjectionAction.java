@@ -5,26 +5,17 @@ import org.bukkit.entity.Entity;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.EntityUtils;
 
-public class EjectionAction implements SignAction{
-	
-	private Location sign;
-	public EjectionAction(Sign sign) {
-		this.sign = sign.getLocation();
-	}
+public class EjectionAction extends SignAction{
 
-	
 	public boolean execute(MinecartManiaMinecart minecart) {
-		if (minecart.getPassenger() == null) {
+		if (minecart.getPassenger() == null || loc == null) {
 			return false;
 		}
-		if (!ControlBlockList.isValidEjectorBlock(minecart)) {
-			return false;
-		}
-		Location location = EntityUtils.getValidLocation(this.sign.getBlock());
+		Location location = EntityUtils.getValidLocation(loc.getBlock());
 		if (location != null) {
 			Entity passenger = minecart.getPassenger();
 			location.setPitch(passenger.getLocation().getPitch());
@@ -35,28 +26,27 @@ public class EjectionAction implements SignAction{
 		return false;
 	}
 
-	
+
 	public boolean async() {
 		return false;
 	}
 
-	
-	public boolean valid(Sign sign) {
-		for (String line : sign.getLines()) {
-			if (line.toLowerCase().contains("eject here")) {
-				sign.addBrackets();
+
+	public boolean process(String[] lines) {
+		for (String line : lines) {
+			if (line.toLowerCase().contains("[eject") && !line.toLowerCase().contains("at")) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	
-	public String getName() {
+
+	public String getPermissionName() {
 		return "ejectionsign";
 	}
 
-	
+
 	public String getFriendlyName() {
 		return "Ejection Sign";
 	}

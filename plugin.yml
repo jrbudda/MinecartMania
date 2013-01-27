@@ -49,6 +49,7 @@ permissions:
             minecartmania.commands.st: true
             minecartmania.commands.throttle: true
             minecartmania.commands.setconfigkey: true
+            minecartmania.commands.reload: true
     minecartmania.commands.eject:
         description: Ejects the given player from a minecart, if they are in one. 
         default: op
@@ -146,7 +147,9 @@ permissions:
             minecartmania.signs.create.cactusoffsign: true
             minecartmania.signs.create.autorecactussign: true
             minecartmania.signs.create.recactusoffsign: true
-            minecartmania.signs.create.farm: true
+            minecartmania.signs.create.farmsign: true
+            minecartmania.signs.create.jumpsign: true
+            minecartmania.signs.create.setspeedsign: true
     minecartmania.signs.create.launchersign:
         description: Create launch direction signs
         default: true
@@ -252,9 +255,16 @@ permissions:
     minecartmania.signs.create.recactusoffsign:
         description: Create re cactus off signs
         default: true
-    minecartmania.signs.create.farm:
+    minecartmania.signs.create.farmsign:
         description: Create farm signs
         default: true
+    minecartmania.signs.create.setspeedsign:
+        description: Create set speed signs
+        default: true
+    minecartmania.signs.create.jumpsign:
+        description: Create jump signs
+        default: true
+   
     minecartmania.signs.break.*:
         description: Gives access to all minecart mania break signs functionality
         default: true
@@ -292,7 +302,7 @@ permissions:
             minecartmania.signs.break.cactusoffsign: true
             minecartmania.signs.break.autorecactussign: true
             minecartmania.signs.break.recactusoffsign: true
-            minecartmania.signs.break.farm: true
+            minecartmania.signs.break.farmsign: true
     minecartmania.signs.break.launchersign:
         description: Break launch direction signs
         default: true
@@ -398,6 +408,12 @@ permissions:
     minecartmania.signs.break.recactusoffsign:
         description: Break re cactus off signs
         default: true
-    minecartmania.signs.break.farm:
+    minecartmania.signs.break.farmsign:
         description: Break farm signs
+        default: true
+    minecartmania.signs.break.setspeedsign:
+        description: Create set speed signs
+        default: true
+    minecartmania.signs.break.jumpsign:
+        description: Create jump signs
         default: true

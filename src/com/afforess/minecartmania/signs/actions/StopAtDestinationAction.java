@@ -2,28 +2,14 @@ package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 
-public class StopAtDestinationAction implements SignAction{
+public class StopAtDestinationAction extends SignAction{
 	protected String station = null;
-	public StopAtDestinationAction(Sign sign) {
-		
-		boolean found = false;
-		for (String line : sign.getLines()) {
-			if (found) {
-				station = StringUtils.removeBrackets(line);
-				sign.addBrackets();
-				break;
-			}
-			if (line.toLowerCase().contains("station stop")) {
-				found = true;
-			}
-		}
-		
-	}
+
 
 	
 	public boolean execute(MinecartManiaMinecart minecart) {
@@ -43,12 +29,23 @@ public class StopAtDestinationAction implements SignAction{
 	}
 
 	
-	public boolean valid(Sign sign) {
+	public boolean process(String[]  lines) {
+		boolean found = false;
+		for (String line : lines) {
+			if (found) {
+				station = StringUtils.removeBrackets(line);
+				break;
+			}
+			if (line.toLowerCase().contains("[station stop")) {
+				found = true;
+			}
+		}
+		
 		return station != null;
 	}
 
 	
-	public String getName() {
+	public String getPermissionName() {
 		return "stopatdestinationsign";
 	}
 

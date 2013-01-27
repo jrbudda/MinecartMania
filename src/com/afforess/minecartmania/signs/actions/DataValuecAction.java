@@ -1,22 +1,22 @@
 package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 
-public class GenericAction implements SignAction{
+public class DataValuecAction extends SignAction{
 	protected String setting = null;
 	protected String key = null;
 	protected Object value = null;
 	
-	public GenericAction(String setting) {
+	public DataValuecAction(String setting) {
 		this.setting = setting;
 		this.key = setting;
 		this.value = true;
 	}
 	
-	public GenericAction(String setting, String key, Object value) {
+	public DataValuecAction(String setting, String key, Object value) {
 		this.setting = setting;
 		this.key = key;
 		this.value = value;
@@ -34,10 +34,9 @@ public class GenericAction implements SignAction{
 	}
 
 	
-	public boolean valid(Sign sign) {
-		for (String line : sign.getLines()) {
-			if (line.toLowerCase().contains(setting.toLowerCase())) {
-				sign.addBrackets();
+	public boolean process(String[] lines) {
+		for (String line : lines) {
+			if (line.toLowerCase().contains("[" + setting.toLowerCase())) {
 				return true;
 			}
 		}
@@ -45,7 +44,7 @@ public class GenericAction implements SignAction{
 	}
 
 	
-	public String getName() {
+	public String getPermissionName() {
 		return StringUtils.removeWhitespace(setting.toLowerCase()) + "sign";
 	}
 

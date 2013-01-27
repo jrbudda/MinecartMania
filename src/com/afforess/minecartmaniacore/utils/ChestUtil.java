@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.afforess.minecartmania.signs.MinecartTypeSign;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmaniacore.entity.Item;
 import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
@@ -14,8 +14,8 @@ import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 public class ChestUtil {
 
 	public static boolean isNoCollection(MinecartManiaChest chest) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
-		for (Sign sign : signList) {
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		for (MMSign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
 				if (sign.getLine(i).toLowerCase().contains("no collection")) {
 					sign.setLine(i, "[No Collection]");
@@ -27,8 +27,8 @@ public class ChestUtil {
 	}
 
 	public static Item getMinecartType(MinecartManiaChest chest) {
-		ArrayList<com.afforess.minecartmania.signs.Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
-		for (com.afforess.minecartmania.signs.Sign sign : signList) {
+		ArrayList<com.afforess.minecartmania.signs.MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		for (com.afforess.minecartmania.signs.MMSign sign : signList) {
 			if (sign instanceof MinecartTypeSign) {
 				MinecartTypeSign type = (MinecartTypeSign)sign;
 				if (type.canDispenseMinecartType(Item.MINECART)) {
@@ -55,12 +55,12 @@ public class ChestUtil {
 	}
 
 	public static Location getSpawnLocationSignOverride(MinecartManiaChest chest) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
 		Location spawn = chest.getLocation();
 		Location result = null;
 		Block neighbor = chest.getNeighborChest() != null ? chest.getNeighborChest().getLocation().getBlock() : null;
 
-		for (Sign sign : signList) {
+		for (MMSign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
 
 				if (sign.getLine(i).toLowerCase().contains("spawn north")) {

@@ -14,10 +14,12 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
+import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.ControlBlockList;
+import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.events.MinecartClickedEvent;
@@ -28,28 +30,29 @@ import com.afforess.minecartmania.events.MinecartMotionStopEvent;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.signs.actions.LaunchPlayerAction;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
+import com.afforess.minecartmaniacore.entity.Item;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.utils.MinecartUtils;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 import com.afforess.minecartmaniacore.utils.WordUtils;
 
-public class MinecartManiaCoreListener implements Listener{
-	public MinecartManiaCoreListener() {
+public class CoreListener implements Listener{
+	public CoreListener() {
 
 	}
-	
+
 	@EventHandler
 	public void onVehicleUpdate(VehicleUpdateEvent event) {
 		if (event.getVehicle() instanceof Minecart) {
 			Minecart cart = (Minecart)event.getVehicle();
 			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart);
-			
+
 			if (minecart.isDead()) {
 				return;
 			}
 
-//	MinecartManiaLogger.getInstance().info(minecart.getEntityId() + ":" + WordUtils.printLoc(minecart.getLocation()) + " " + WordUtils.printVec(minecart.getMotion())+ " " + minecart.isOnRails());
-			
+			//	MinecartManiaLogger.getInstance().info(minecart.getEntityId() + ":" + WordUtils.printLoc(minecart.getLocation()) + " " + WordUtils.printVec(minecart.getMotion())+ " " + minecart.isOnRails());
+
 			minecart.updateCalendar(); 
 			if (minecart.isMoving()) {
 				if (minecart.getDirectionOfMotion() != minecart.getPreviousDirectionOfMotion()) {
@@ -57,7 +60,7 @@ public class MinecartManiaCoreListener implements Listener{
 					minecart.setPreviousDirectionOfMotion(minecart.getDirectionOfMotion());
 				}
 			}
-			
+
 			//Fire new events
 			if (minecart.wasMovingLastTick() && !minecart.isMoving()) {
 				MinecartMotionStopEvent mmse = new MinecartMotionStopEvent(minecart);
@@ -69,17 +72,17 @@ public class MinecartManiaCoreListener implements Listener{
 				MinecartMania.callEvent(mmse);
 				mmse.logProcessTime();
 			}
-			
+
 			minecart.setWasMovingLastTick(minecart.isMoving());
 			minecart.doLauncherBlock();
-			
+
 			//total hack workaround because of the inability to create runnables/threads w/o IllegalAccessError
 			if (minecart.getDataValue("launch") != null) {
 				MinecartManiaLogger.getInstance().debug("launch");
 				minecart.launchCart();
 				minecart.setDataValue("launch", null);
 			}
-			
+
 			if (minecart.hasChangedPosition() || minecart.createdLastTick) {
 				minecart.updateChunks();
 				if (minecart.isAtIntersection()) {
@@ -88,25 +91,34 @@ public class MinecartManiaCoreListener implements Listener{
 					MinecartMania.callEvent(mie);
 					mie.logProcessTime();
 				}
-				
+
 				if (!minecart.createdLastTick) {
 					MinecartActionEvent mae = new MinecartActionEvent(minecart);
 					MinecartMania.callEvent(mae);
 					mae.logProcessTime();
 				}
+
+				if(minecart.isOnControlBlock()){
+					//there isnt that better?
+					
+					org.bukkit.block.Block block = minecart.getBlockBeneath(); // this will return the rail block if its set as a control block.
+					com.afforess.minecartmania.config.NewControlBlock cb = NewControlBlockList.getControlBlock(Item.getItem(block));
 				
-				if(minecart.isOnControlBlock()){		
-					minecart.doSpeedMultiplierBlock();
-					minecart.doCatcherBlock();
-					minecart.doPlatformBlock(); //platform must be after catcher block
-					minecart.doElevatorBlock();
-					minecart.doEjectorBlock();
+					if (NewControlBlockList.isCorrectState(block, cb.redstoneEffect)){
+						cb.execute(minecart, block.getLocation());			
+					}
+
+					//					minecart.doSpeedMultiplierBlock();
+					//					minecart.doCatcherBlock();
+					//					minecart.doPlatformBlock(); //platform must be after catcher block
+					//					minecart.doElevatorBlock();
+					//					minecart.doEjectorBlock();
 				}
 
 				MinecartUtils.updateNearbyItems(minecart);
-				
+
 				minecart.updateLocation();
-				
+
 				//should do last
 				minecart.doKillBlock();
 				minecart.createdLastTick = false;
@@ -167,17 +179,17 @@ public class MinecartManiaCoreListener implements Listener{
 			Minecart cart = (Minecart)event.getVehicle();
 			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart);
 			Entity collisioner = event.getEntity();
-			
+
 			if (minecart.doCatcherBlock()) {
 				event.setCancelled(true);
 				event.setCollisionCancelled(true);
 				event.setPickupCancelled(true);
 				return;
 			}
-			
+
 			if (collisioner instanceof LivingEntity) {
 				LivingEntity victim = (LivingEntity)(collisioner);
-				if (!(victim instanceof Player) && !(victim instanceof Wolf)) {
+				if (!(victim instanceof Player) && !(victim instanceof Wolf)) {				
 					if (Settings.isMinecartsKillMobs()) {
 						if (minecart.isMoving()) {
 							victim.remove();
@@ -186,7 +198,37 @@ public class MinecartManiaCoreListener implements Listener{
 							event.setPickupCancelled(true);
 						}
 					}
+					else {
+						event.setCancelled(true);
+						event.setCollisionCancelled(true);
+						event.setPickupCancelled(true);
+						victim.setVelocity(minecart.getMotion().clone().setY(1));
+					}
 				}
+				else if (victim instanceof Player){
+					if (minecart.getMotion().length() > Settings.KillPlayersOnTrackMinnimumSpeed / 100 * .4){
+						event.setCancelled(true);
+						event.setCollisionCancelled(true);
+						event.setPickupCancelled(true);			
+						if(Settings.KillPlayersOnTrack ){
+							//die
+							victim.setHealth(0);
+						}
+						else if(minecart.getMotion().length() > Settings.KillPlayersOnTrackMinnimumSpeed){
+							//get out the way
+							double mag = minecart.getMotionX() * .5 + minecart.getMotionZ() * .5;
+							victim.setVelocity(new Vector(mag, mag/4 ,mag));
+						}	
+					}
+				}
+				else if(collisioner instanceof Minecart) {
+					MinecartManiaMinecart otherminecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart) collisioner);
+					if (minecart.isFrozen() || otherminecart.isFrozen()){
+						event.setCancelled(true);
+						event.setCollisionCancelled(true);
+						event.setPickupCancelled(true);
+					}
+				}		
 			}
 		}
 	}
@@ -196,7 +238,7 @@ public class MinecartManiaCoreListener implements Listener{
 		if (event.isCancelled() || !(event.getVehicle() instanceof Minecart)) {
 			return;
 		}
-		
+
 		final MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 		if (minecart.getPassenger() != null) {
 			return;
@@ -205,7 +247,7 @@ public class MinecartManiaCoreListener implements Listener{
 			if (!minecart.isMoving()) {
 				ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, 2);
 				for (Sign s : signs) {
-					com.afforess.minecartmania.signs.Sign sign = SignManager.getSignAt(s.getBlock());
+					com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(s.getBlock());
 					if (sign.executeAction(minecart, LaunchPlayerAction.class)) {
 						break;
 					}

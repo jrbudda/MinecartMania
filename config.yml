@@ -1,41 +1,96 @@
 
-RangeXZ: 4
-RangeY: 4
+RangeXZ: 1
+RangeY: 1
 
+#Minecart Physics
 MaxSpeedPercent: 200
-
 DerailedFrictionPercent: 100
 PassengerFrictionPercent: 100
-
 SlowWhenEmpty: false
 EmptyFrictionPercent: 100
+MaxPushSpeedPercent: 100
+SlopeSpeedPercent: 100
+GravityPercent: 100
 
 ClearItemsOnTrack: true
 KillMobsOnTrack: true
-
 KillPlayersOnTrack: false
-KillPlayersOnTrackMinnimumSpeed: 90
-
+KillPlayersOnTrackMinimumSpeed: 90
 IgnorePlayersOnTrack: true
 
 LimitedSignRange: true
 
-
 ControlBlocks:
+#See the items.txt file for the proper name of each block.
+#Actions are like signs. use / between each line.
   GOLD_BLOCK:
    Redstone: Disables
    Actions:
-      - "speed:1.5x"
+      - "[set speed:1.5x]"
       
   EMERALD_BLOCK:
    Redstone: Disables
    Actions:
-      - "speed:100"
+      - "[set speed:100]"
         
-  LIME_WOOL:
+  LIGHT_GREEN_WOOL:
    Redstone: Disables
    Actions:
-      - "platform"
-     
+      - "[platform]"
+
+  RED_WOOL:
+   Redstone: Disables
+   Actions:
+      - "[elevator]"
+      - "[announce] / Elevator!"
+      
+  WOOL:
+   Actions:
+      - "[set speed:-1x]"
     
-LimitedSignRange2: true
+  BRICK:
+   Actions:
+      - "[Station]"
+      
+  DIAMOND_BLOCK:
+   Redstone: TriggerOn
+   Actions:
+      - "[spawn] / [launch]"
+  
+  IRON_BLOCK:
+   Redstone: Disables
+   Actions:
+      - "[eject]"
+  
+  DIAMOND_ORE:
+   Redstone: Disables
+   Actions:
+       - "[kill]"
+       
+  POWERED_RAIL:
+   Redstone: Enables
+   Actions:
+       - "[set speed:16x]"
+       
+  SPONGE:    
+   Redstone: Disables
+   Actions:
+       - "[jump]"
+
+       
+ItemAliases:
+  Ores:
+      - GOLD_ORE
+      - EMERALD_ORE
+      - DIAMOND_ORE
+      - LAPIS_ORE
+      - IRON_ORE
+      
+  Food:
+    - 260
+    - 297
+    - 322
+    - 354
+    - 350
+    - 319
+    - 320 

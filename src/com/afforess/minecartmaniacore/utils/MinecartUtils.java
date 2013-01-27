@@ -1,5 +1,7 @@
 package com.afforess.minecartmaniacore.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Wolf;
@@ -44,6 +47,25 @@ public class MinecartUtils {
 				validMinecartTrack(w, x, y, z, range, DirectionUtils.CompassDirection.EAST) || 
 				validMinecartTrack(w, x, y, z, range, DirectionUtils.CompassDirection.SOUTH) ||
 				validMinecartTrack(w, x, y, z, range, DirectionUtils.CompassDirection.WEST);
+	}
+
+	public static MinecartManiaMinecart getNearestMinecartInRange(Location loc, int range){
+
+		ArrayList<MinecartManiaMinecart> carts = MinecartManiaWorld.getMinecartManiaMinecartList();
+
+		MinecartManiaMinecart closest = null;
+		double closestdist = 0;
+		for (MinecartManiaMinecart cart : carts){
+			double dist =	loc.distance(cart.getLocation());
+			if(dist <= range){
+				if (dist < closestdist || closest == null){
+					closest = cart;
+				}
+			}
+		}
+
+		return closest;
+
 	}
 
 	public static boolean isSlopedTrack(Block rail) {
@@ -103,7 +125,7 @@ public class MinecartUtils {
 
 			range--;
 		}
-		
+
 
 
 		return true;

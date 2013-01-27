@@ -1,31 +1,24 @@
 package com.afforess.minecartmania.signs;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.events.MinecartManiaSignFoundEvent;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 
 public class SignManager {
-	private static ConcurrentHashMap<Block, Sign> signList = new ConcurrentHashMap<Block, Sign>();
+	private static ConcurrentHashMap<Location, MMSign> signList = new ConcurrentHashMap<Location, MMSign>();
 
-	public static Sign getSignAt(Block block) {
-		return getSignAt(block, null);
+	public static MMSign getOrCreateMMSign(Block block) {
+		return getOrCreateMMSign(block, null);
 	}
 
-	public static Sign getSignAt(Location location) {
-		return getSignAt(location.getBlock(), null);
-	}
-
-	public static Sign getSignAt(Location location, Player player) {
-		return getSignAt(location.getBlock(), player);
-	}
-
-	public static Sign getSignAt(Block block, Player player) {
+	public static MMSign getOrCreateMMSign(Block block, Player player) {
 		switch(block.getTypeId()) {
 		case 63:
 		case 68:
@@ -34,46 +27,55 @@ public class SignManager {
 			return null;
 		}
 
-		//process the signs only if they are new or have changed.
-		Sign temp = signList.get(block);
+		return getOrCreateMMSign((Sign)block.getState(), player);
+	}
+
+	public static MMSign getOrCreateMMSign(Location location) {
+		return getOrCreateMMSign(location.getBlock(), null);
+	}
+
+	public static MMSign getOrCreateMMSign(Location location, Player player) {
+		return getOrCreateMMSign(location.getBlock(), player);
+	}
+
+
+	private static MMSign getOrCreateMMSign(Sign sign, Player player) {
+
+		MMSign existing = signList.get(sign.getLocation());
 		boolean reregister = false;
 
-		if (temp == null){
+		//process the signs only if they are new or have changed.
+
+		if (existing == null) 		{
+			//new
 			reregister = true;
-			temp = new MinecartManiaSign(block);
-			MinecartManiaLogger.getInstance().debug("Found new sign: " + temp);
+			existing = new MMSign(sign);
+			MinecartManiaLogger.getInstance().info("Found new sign: " + existing.getLine(0));
 		}
-		else {
-			org.bukkit.block.Sign sign = (org.bukkit.block.Sign)block.getState();
-			if (!temp.equals(sign)){
+		else{
+			if(!existing.textMatches(sign)) {
+				//changed
 				reregister = true;
-				MinecartManiaLogger.getInstance().debug("Found updated sign: " + temp);
-				temp.update(sign);
+				existing = new MMSign(sign);
+				MinecartManiaLogger.getInstance().info("Found updated sign: " + existing.getLine(0));
 			}
 		}
-		
 		if (reregister){
-			MinecartManiaSignFoundEvent mmsfe = new MinecartManiaSignFoundEvent(temp, player);
-			MinecartMania.callEvent(mmsfe);
-			mmsfe.logProcessTime();
-			temp = mmsfe.getSign();
-			signList.put(block, temp);
+			List<SignAction> actions = ActionList.getSignActionsforLines(sign.getLines());
+			if (actions.size() > 0) existing.addBrackets();
+			for (SignAction action : actions)	{
+				MinecartManiaLogger.getInstance().info("adding action: " + action.getFriendlyName());
+				action.loc = existing.getLocation();
+				existing.addSignAction(action);
+			}
+			signList.put(sign.getLocation(), existing);
 		}
 
-		return temp;
+		return existing;
 	}
 
-	public static void updateSign(Location location, Sign sign) {
-		updateSign(location.getBlock(), sign);
-	}
-
-	public static void updateSign(Block block, Sign sign) {
-		if (sign == null) {
-			signList.remove(block);
-		}
-		else {
-			signList.put(sign.getBlock(), sign);
-		}
+	public static void remove(Block block){
+		signList.remove(block.getLocation());
 	}
 
 }

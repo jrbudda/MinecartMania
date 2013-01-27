@@ -4,6 +4,8 @@ import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
 
 public  class Settings {
 
+	public static final String StationHelpString = "Usage /st 'station name'";
+	public static final int DefaultPlatformRange = 4;
 	//core
 	public static int DefaultMaxSpeedPercent = 200;
 	public static int DefaultDerailedFrictionPercent = 100;
@@ -38,7 +40,7 @@ public  class Settings {
 	public static int EmptyStorageMinecartKillTimer;
 	public static int EmptyPoweredMinecartKillTimer;
 	public static int RailAdjusterTool;
-	public static int KillPlayersOnTrackMinnimumSpeed;
+	public static int KillPlayersOnTrackMinnimumSpeed = 25;
 	public static boolean IgnorePlayersOnTrack;
 	
 	
@@ -49,7 +51,7 @@ public  class Settings {
 	
 	
 	//
-	public static int defaultJumpHeight = 2;
+	public static double defaultJumpHeight = 3;
 	
 	public static int getMaximumMinecartSpeedPercent() {
 		return (Integer)MinecartManiaWorld.getConfigurationValue("MaximumMinecartSpeedPercent",200);

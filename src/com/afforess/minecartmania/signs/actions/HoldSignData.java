@@ -44,10 +44,9 @@ public class HoldSignData {
 		
 	}
 
-	public HoldSignData(int id, int time, int line, Location minecart, Location sign, Vector motion) {
+	public HoldSignData(int id, int time, Location minecart, Location sign, Vector motion) {
 		this.id = id;
 		this.time = time;
-		this.line = line;
 		this.signX = sign.getBlockX();
 		this.signY = sign.getBlockY();
 		this.signZ = sign.getBlockZ();

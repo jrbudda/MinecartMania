@@ -27,13 +27,6 @@ public class ControlBlockList {
 		else return null;
 	}
 	
-	public static boolean hasSpeedMultiplier(Item item) {
-		ControlBlock block = getControlBlock(item);
-		if (block != null) {
-			return block.getSpeedMultipliers().size() > 0;
-		}
-		return false;
-	}
 	
 	public static double getSpeedMultiplier(MinecartManiaMinecart minecart) {
 		ControlBlock block = getControlBlock(minecart.getItemBeneath());

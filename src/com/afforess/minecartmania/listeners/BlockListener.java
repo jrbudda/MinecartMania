@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_4_R1.block.CraftSign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,11 +28,11 @@ import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.ControlBlockList;
 import com.afforess.minecartmania.config.LocaleParser;
+import com.afforess.minecartmania.config.NewControlBlock;
 import com.afforess.minecartmania.config.RedstoneState;
 import com.afforess.minecartmania.events.ChestPoweredEvent;
-import com.afforess.minecartmania.events.MinecartManiaSignFoundEvent;
 import com.afforess.minecartmania.signs.MinecartTypeSign;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.signs.sensors.GenericSensor;
@@ -42,15 +46,14 @@ import com.afforess.minecartmaniacore.utils.MinecartUtils;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 
 public class BlockListener implements Listener{
-	private HashMap<Location, Long> lastSpawn = new HashMap<Location, Long>();
 
 	@EventHandler
 	public void onBlockRedstoneChange(BlockRedstoneEvent event) {    
 		if (event.getOldCurrent() > 0 && event.getNewCurrent() > 0) {
 			return;
 		}
-		
-		
+
+
 		boolean power = event.getNewCurrent() > 0;
 		Block block = event.getBlock();
 
@@ -59,8 +62,8 @@ public class BlockListener implements Listener{
 			for (int dy = -(range); dy <= range; dy++){
 				for (int dz = -(range); dz <= range; dz++){
 					//check all around powered block
-					
-					
+
+
 					//chests
 					final Block b = MinecartManiaWorld.getBlockAt(block.getWorld(), block.getX() + dx, block.getY() + dy, block.getZ() + dz);
 					if (b.getState() instanceof Chest) {
@@ -80,151 +83,106 @@ public class BlockListener implements Listener{
 							}
 						}
 					}
-					
+
 					Item type = Item.getItem(b.getTypeId(), b.getData());
 					if (Item.getItem(b.getTypeId()).size() == 1) {
 						type = Item.getItem(b.getTypeId()).get(0);
 					}
-					
-					//spawn blocks
-					if (ControlBlockList.isSpawnMinecartBlock(type)) {
-						if (ControlBlockList.getControlBlock(type).getSpawnState() != RedstoneState.Enables || power) {
-							if (ControlBlockList.getControlBlock(type).getSpawnState() != RedstoneState.Disables || !power) {
-								if (MinecartUtils.isTrack(b.getRelative(0, 1, 0).getTypeId())) {
-									Long lastSpawn = this.lastSpawn.get(b.getLocation());
-									if (lastSpawn == null || (Math.abs(System.currentTimeMillis() - lastSpawn) > 1000)) {
-										Location spawn = b.getLocation().clone();
-										spawn.setY(spawn.getY() + 1);
-										final MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawn, getMinecartType(b.getLocation()), null);
-										this.lastSpawn.put(b.getLocation(), System.currentTimeMillis());
-										if (ControlBlockList.getLaunchSpeed(Item.materialToItem(b.getType())) != 0.0) {
-											MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), new Runnable(){
-												@Override
-												public void run() {
-													minecart.launchCart(ControlBlockList.getLaunchSpeed(Item.materialToItem(b.getType())));
-												}
-											});
-										}
-									}
-								}
-							}
+
+
+					boolean on = event.getNewCurrent() > 0 && event.getOldCurrent() ==0;
+					boolean off = event.getNewCurrent() == 0 && event.getOldCurrent() >0;
+
+					if (com.afforess.minecartmania.config.NewControlBlockList.isControlBlock(type)){
+						NewControlBlock ncb = com.afforess.minecartmania.config.NewControlBlockList.getControlBlock(type);
+						if (((ncb.redstoneEffect == RedstoneState.TriggerOn) && on) || ((ncb.redstoneEffect == RedstoneState.TriggerOff) && off)){
+							ncb.execute(null, event.getBlock().getLocation());
 						}
 					}
+
+//					//spawn blocks
+//					if (ControlBlockList.isSpawnMinecartBlock(type)) {
+//						if (ControlBlockList.getControlBlock(type).getSpawnState() != RedstoneState.Enables || power) {
+//							if (ControlBlockList.getControlBlock(type).getSpawnState() != RedstoneState.Disables || !power) {
+//								if (MinecartUtils.isTrack(b.getRelative(0, 1, 0).getTypeId())) {
+//									Long lastSpawn = this.lastSpawn.get(b.getLocation()); //cooldown on spawner
+//									if (lastSpawn == null || (Math.abs(System.currentTimeMillis() - lastSpawn) > 1000)) {
+//										Location spawn = b.getLocation().clone();
+//										spawn.setY(spawn.getY() + 1);
+//										final MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawn, getMinecartType(b.getLocation()), null);
+//										this.lastSpawn.put(b.getLocation(), System.currentTimeMillis());
+//										if (ControlBlockList.getLaunchSpeed(Item.materialToItem(b.getType())) != 0.0) {
+//											MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), new Runnable(){
+//												@Override
+//												public void run() {
+//													minecart.launchCart(ControlBlockList.getLaunchSpeed(Item.materialToItem(b.getType())));
+//												}
+//											});
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+					
+					
+					
 				}
 			}
 		}
 	}
 
-	private static Item getMinecartType(Location loc) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(loc, 2);
-		for (Sign sign : signList) {
-			if (sign instanceof MinecartTypeSign) {
-				MinecartTypeSign type = (MinecartTypeSign)sign;
-				if (type.canDispenseMinecartType(Item.MINECART)) {
-					return Item.MINECART;
-				}
-				if (type.canDispenseMinecartType(Item.POWERED_MINECART)) {
-					return Item.POWERED_MINECART;
-				}
-				if (type.canDispenseMinecartType(Item.STORAGE_MINECART)) {
-					return Item.STORAGE_MINECART;
-				}
-			}
-		}
 
-		//Returns standard minecart by default
-		return Item.MINECART;
-	}
 
-	@EventHandler
-	public void onSignChange(SignChangeEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-		if (!(event.getBlock().getState() instanceof org.bukkit.block.Sign)) {
-			return;
-		}
-		Sign sign = SignManager.getSignAt(event.getBlock().getLocation(), event.getPlayer());
-		String[] old = new String[4];
-		for (int i = 0; i < 4; i++) {
-			old[i] = ((org.bukkit.block.Sign)event.getBlock().getState()).getLine(i);
-			sign.setLine(i, event.getLine(i), false);
-		}
+	@EventHandler(ignoreCancelled = true)
+	public void onSignChange(final SignChangeEvent event) {
 
-		MinecartManiaSignFoundEvent mmsfe = new MinecartManiaSignFoundEvent(sign, event.getPlayer());
-		MinecartMania.callEvent(mmsfe);
-		sign = mmsfe.getSign();
+		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info("OnSignChange " +  event.getLine(0));
+		Player player = event.getPlayer();
 
-		Collection<SignAction> actions = sign.getSignActions();
-		Iterator<SignAction> i = actions.iterator();
-		org.bukkit.entity.Player player = event.getPlayer();
-		while (i.hasNext()) {
-			SignAction action = i.next();
-			if (!MinecartMania.permissions.canCreateSign(player, action.getName())) {
+		List<SignAction> actions = com.afforess.minecartmania.signs.ActionList.getSignActionsforLines(event.getLines());
+
+		for (SignAction action :actions){
+			if (!MinecartMania.permissions.canCreateSign(event.getPlayer(), action.getPermissionName())) {
 				event.setCancelled(true);
-				player.sendMessage(LocaleParser.getTextKey("LackPermissionForSign", action.getFriendlyName()));
-				SignManager.updateSign(sign.getLocation(), null);
+				if(player !=null)	player.sendMessage(LocaleParser.getTextKey("LackPermissionForSign", action.getFriendlyName()));
+				SignManager.remove(event.getBlock());
 				break;
 			}
 		}
 
-		if (!event.isCancelled() && sign instanceof MinecartTypeSign) {
-			if (!MinecartMania.permissions.canCreateSign(player, "minecarttypesign")) {
-				player.sendMessage(LocaleParser.getTextKey("LackPermissionForSign", "Minecart Type Sign"));
-				SignManager.updateSign(sign.getLocation(), null);
-				event.setCancelled(true);
+		//Schedule next tick so the sign updates naturally.
+		MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
+			@Override
+			public void run() {
+				MMSign sign = SignManager.getOrCreateMMSign(event.getBlock().getLocation(), event.getPlayer());
 			}
-		}
+		});
 
-		if (event.isCancelled()) {
-			for (int j = 0; j < 4; j++) {
-				sign.setLine(j, old[j], false);
-			}
-		}
-		else {
-			SignManager.updateSign(sign.getLocation(), sign);
-		}
+
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
-		if (event.getBlock().getState() instanceof org.bukkit.block.Sign) {
-			Sign sign = SignManager.getSignAt(event.getBlock().getLocation());
-			Collection<SignAction> actions = sign.getSignActions();
-			Iterator<SignAction> i = actions.iterator();
-			org.bukkit.entity.Player player = event.getPlayer();
-			while (i.hasNext()) {
-				SignAction action = i.next();
-				if (!MinecartMania.permissions.canBreakSign(player, action.getName())) {
-					event.setCancelled(true);
-					player.sendMessage(LocaleParser.getTextKey("LackPermissionToRemoveSign", action.getFriendlyName()));
-					break;
-				}
-			}
 
-			if (sign instanceof MinecartTypeSign) {
-				if (!MinecartMania.permissions.canBreakSign(player, "minecarttypesign")) {
-					player.sendMessage(LocaleParser.getTextKey("LackPermissionToRemoveSign", "Minecart Type Sign"));
-					event.setCancelled(true);
-				}
+		MMSign sign = SignManager.getOrCreateMMSign(event.getBlock());
+		if(sign == null) return; 
+
+		org.bukkit.entity.Player player = event.getPlayer();
+
+		for(SignAction action:sign.getSignActions()){
+			if (!MinecartMania.permissions.canBreakSign(player, action.getPermissionName())) {
+				event.setCancelled(true);
+				if(player !=null) player.sendMessage(LocaleParser.getTextKey("LackPermissionToRemoveSign", action.getFriendlyName()));
+				break;
 			}
 		}
-		if (event.isCancelled()) {
-			final Location loc =	event.getBlock().getLocation();
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), new Runnable(){
-				public void run() {
-					loc.getBlock().getState().update(true);
-				}
-			}, 5);
-		}
+
 	}
 
 	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event) {
-		if (event.getBlock().getState() instanceof Sign) {
+		if (event.getBlock().getState() instanceof MMSign) {
 			Sensor previous = SensorManager.getSensor(event.getBlock().getLocation());
 			if (previous == null) {
 				Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)event.getBlock().getState(), event.getPlayer());

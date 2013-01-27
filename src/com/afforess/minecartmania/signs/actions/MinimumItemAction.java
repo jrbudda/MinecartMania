@@ -1,18 +1,14 @@
 package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.entity.AbstractItem;
 import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
 
-public class MinimumItemAction implements SignAction{
+public class MinimumItemAction extends SignAction{
 	protected AbstractItem items[] = null;
-	public MinimumItemAction(Sign sign) {
-		this.items = ItemUtils.getItemStringListToMaterial(sign.getLines());
-	}
-
 	
 	public boolean execute(MinecartManiaMinecart minecart) {
 		if (minecart.isStorageMinecart()) {
@@ -30,16 +26,16 @@ public class MinimumItemAction implements SignAction{
 	}
 
 	
-	public boolean valid(Sign sign) {
-		if (sign.getLine(0).toLowerCase().contains("min item")) {
-			sign.addBrackets();
+	public boolean process(String[] lines) {
+		if (lines[0].toLowerCase().contains("[min item")) {
+			this.items = ItemUtils.getItemStringListToMaterial(lines);
 			return true;
 		}
 		return false;
 	}
 
 	
-	public String getName() {
+	public String getPermissionName() {
 		return "minimumitemsign";
 	}
 

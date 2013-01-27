@@ -6,46 +6,46 @@ import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 
-public class SetMaxSpeedAction extends SignAction {
-	
-	protected int percent = -1;
-	
-	
+public class SetSpeedAction extends SignAction {
+
+	protected double percent = 0;
+	protected boolean isMultiplier = false;
+
 	public boolean execute(MinecartManiaMinecart minecart) {
-		minecart.setMaxSpeed(0.4D * percent / 100);
+		if(isMultiplier){
+			minecart.multiplyMotion(percent);	
+		}
+		else {
+			minecart.setMotion(.4D * percent / 100, minecart.getMotionY(), .4D * percent / 100);
+		}
 		return true;
 	}
 
-	
 	public boolean async() {
 		return true;
 	}
 
-	
 	public boolean process(String[] lines) {
-		
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[max speed")) {
-				String[] split = line.split(":");
+			if (line.toLowerCase().contains("[set speed")) {
+				String[] split = line.toLowerCase().split(":");
 				if (split.length != 2) continue;
-				double percent = Double.parseDouble(StringUtils.getNumber(split[1]));
-				percent = Math.min(percent, Settings.getMaximumMinecartSpeedPercent());
-				this.percent = (int)percent;
-				break;
+				if(split[1].contains("x")) isMultiplier = true;
+				 percent = Double.parseDouble(StringUtils.getNumber(split[1].split("x")[0]));
+				 return true;
 			}
 		}
-		
-		return this.percent > 0;
+		return false;
 	}
 
-	
+
 	public String getPermissionName() {
-		return "maxspeedsign";
+		return "setspeedsign";
 	}
 
-	
+
 	public String getFriendlyName() {
-		return "Max Speed Sign";
+		return "Set Speed Sign";
 	}
 
 }

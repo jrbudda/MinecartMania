@@ -14,24 +14,24 @@ import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 import com.afforess.minecartmaniacore.utils.WordUtils;
 
-public class MinecartManiaSign implements Sign{
+public class MMSign{
 	protected HashSet<SignAction> actions = new HashSet<SignAction>();
 	protected final Block block;
 	protected ConcurrentHashMap<Object, Object> data = new ConcurrentHashMap<Object, Object>();
 	protected volatile String[] lines;
 	protected int updateId = -1;
 
-	protected MinecartManiaSign(Block block) {
+	protected MMSign(Block block) {
 		this.block = block;
 		lines = getSign().getLines();
 	}
 
-	protected MinecartManiaSign(Location loc) {
+	protected MMSign(Location loc) {
 		block = loc.getBlock();
 		lines = getSign().getLines();
 	}
 
-	public MinecartManiaSign(org.bukkit.block.Sign sign) {
+	public MMSign(org.bukkit.block.Sign sign) {
 		block = sign.getBlock();
 		lines = getSign().getLines();
 	}
@@ -50,9 +50,9 @@ public class MinecartManiaSign implements Sign{
 	}
 
 
-	public void copy(Sign sign) {
-		if (sign instanceof MinecartManiaSign) {
-			MinecartManiaSign temp = (MinecartManiaSign)sign;
+	public void copy(MMSign sign) {
+		if (sign instanceof MMSign) {
+			MMSign temp = (MMSign)sign;
 			temp.data = this.data;
 			temp.lines = this.lines;
 			temp.actions = this.actions;
@@ -70,9 +70,9 @@ public class MinecartManiaSign implements Sign{
 	}
 
 
-	public boolean equals(Object obj) {
-		if (obj instanceof Sign) {
-			return hashCode() == ((Sign)obj).hashCode();
+	public boolean textMatches(Object obj) {
+		if (obj instanceof MMSign) {
+			return hashCode() == ((MMSign)obj).hashCode();
 		}
 		else if (obj instanceof org.bukkit.block.Sign) {
 			return hashCode() == hashCode(((org.bukkit.block.Sign)obj).getLines());

@@ -9,7 +9,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmaniacore.entity.Item;
 import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
 import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
@@ -91,8 +91,8 @@ public abstract class ChestStorageUtil {
 		for (Block block : blockList) {
 			if (block.getState() instanceof Chest) {
 				MinecartManiaChest chest = MinecartManiaWorld.getMinecartManiaChest((Chest)block.getState());
-				ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 1);
-				for (Sign sign : signList) {
+				ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 1);
+				for (MMSign sign : signList) {
 					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("parallel")) {
 							sign.setLine(i, "[Parallel]");
@@ -114,8 +114,8 @@ public abstract class ChestStorageUtil {
 		HashSet<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
-				ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(block.getLocation(), 2);
-				for (Sign sign : signList) {
+				ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(block.getLocation(), 2);
+				for (MMSign sign : signList) {
 					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("compress items")) { 
 							sign.setLine(i, "[Compress Items]");

@@ -1,15 +1,10 @@
 package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 
-public class LaunchPlayerAction implements SignAction{
-	protected Sign sign;
-	public LaunchPlayerAction(Sign sign) {
-		this.sign = sign;
-	}
-
+public class LaunchPlayerAction extends SignAction{
 
 	public boolean execute(MinecartManiaMinecart minecart) {
 		minecart.launchCart();
@@ -23,10 +18,9 @@ public class LaunchPlayerAction implements SignAction{
 	}
 
 
-	public boolean valid(Sign sign) {
-		for (String line : sign.getLines()) {
-			if (line.toLowerCase().contains("launch player")) {
-				sign.addBrackets();
+	public boolean process(String[] lines) {
+		for (String line : lines) {
+			if (line.toLowerCase().contains("[launch player")) {
 				return true;
 			}
 		}
@@ -34,7 +28,7 @@ public class LaunchPlayerAction implements SignAction{
 	}
 
 
-	public String getName() {
+	public String getPermissionName() {
 		return "launchplayersign";
 	}
 

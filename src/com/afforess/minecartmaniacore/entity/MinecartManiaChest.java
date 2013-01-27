@@ -12,8 +12,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
-import com.afforess.minecartmania.signs.ForceUnlockChestAction;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.signs.actions.ForceUnlockChestAction;
 
 import com.afforess.minecartmaniacore.utils.SignUtils;
 
@@ -140,8 +140,8 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
 	 }
 	 
 	 private boolean isIgnoreProtection() {
-		 ArrayList<Sign> signs = SignUtils.getAdjacentMinecartManiaSignList(getLocation(), 1);
-		 for (Sign sign : signs) {
+		 ArrayList<MMSign> signs = SignUtils.getAdjacentMinecartManiaSignList(getLocation(), 1);
+		 for (MMSign sign : signs) {
 			 if (sign.executeAction(null, ForceUnlockChestAction.class)) {
 				 return true;
 			 }

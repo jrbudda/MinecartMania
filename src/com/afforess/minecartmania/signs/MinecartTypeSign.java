@@ -1,16 +1,16 @@
 package com.afforess.minecartmania.signs;
 
-import com.afforess.minecartmania.signs.MinecartManiaSign;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.entity.Item;
 
-public class MinecartTypeSign extends MinecartManiaSign{
+public class MinecartTypeSign extends MMSign{
 	protected boolean standard = false;
 	protected boolean powered = false;
 	protected boolean storage = false;
 	protected boolean calculated = false;
-	public MinecartTypeSign(Sign sign) {
+	public MinecartTypeSign(MMSign sign) {
 		super(sign.getBlock());
 		sign.copy(this);
 	}
@@ -50,7 +50,7 @@ public class MinecartTypeSign extends MinecartManiaSign{
 	}
 	
 	@Override
-	public void copy(Sign sign) {
+	public void copy(MMSign sign) {
 		if (sign instanceof MinecartTypeSign) {
 			((MinecartTypeSign)sign).calculated = this.calculated;
 			((MinecartTypeSign)sign).standard = this.standard;
@@ -60,7 +60,7 @@ public class MinecartTypeSign extends MinecartManiaSign{
 		super.copy(sign);
 	}
 	
-	public static boolean isMinecartTypeSign(Sign sign) {
+	public static boolean isMinecartTypeSign(MMSign sign) {
 		MinecartManiaLogger.getInstance().debug("Testing Sign For Minecart Type Sign, Line 0: " + sign.getLine(0));
 		if (sign.getLine(0).contains("[Dispenser]")) {
 			sign.setLine(0, "minecart type");

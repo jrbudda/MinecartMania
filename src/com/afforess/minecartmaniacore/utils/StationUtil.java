@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.ControlBlockList;
 import com.afforess.minecartmania.config.LocaleParser;
+import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.events.MinecartIntersectionEvent;
 import com.afforess.minecartmania.stations.SignCommands;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
@@ -15,19 +16,19 @@ import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 public class StationUtil {
 
 	public static boolean isPromptUserAtAnyIntersection() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("IntersectionPrompts") == 0;
+		return Settings.IntersectionPromptsMode == 0;
 	}
 
 	public static boolean isStationIntersectionPrompt() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("IntersectionPrompts") == 1;
+		return  Settings.IntersectionPromptsMode== 1;
 	}
 
 	public static boolean isNeverIntersectionPrompt() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("IntersectionPrompts") == 2;
+		return 	 Settings.IntersectionPromptsMode== 2;
 	}
 
 	public static boolean isStationCommandNeverResets() {
-		return (Boolean)MinecartManiaWorld.getConfigurationValue("StationCommandSavesAfterUse");
+		return 	 Settings.StationCommandSaveAfterUse;
 	}
 
 	public static boolean shouldPromptUser(MinecartManiaMinecart minecart, final MinecartIntersectionEvent event) {

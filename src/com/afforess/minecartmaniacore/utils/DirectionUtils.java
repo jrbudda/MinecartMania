@@ -186,16 +186,16 @@ public abstract class DirectionUtils {
 		return CompassDirection.fromId(val);
 	}
 
-	private static boolean isFacingNorth(double degrees, double leeway) {
+	private static boolean isFacingSouth(double degrees, double leeway) {
 		return ((0 <= degrees) && (degrees < 45+leeway)) || ((315-leeway <= degrees) && (degrees <= 360));
 	}
-	private static boolean isFacingEast(double degrees, double leeway) {
+	private static boolean isFacingWest(double degrees, double leeway) {
 		return (45-leeway <= degrees) && (degrees < 135+leeway);
 	}
-	private static boolean isFacingSouth(double degrees, double leeway) {
+	private static boolean isFacingNorth(double degrees, double leeway) {
 		return (135-leeway <= degrees) && (degrees < 225+leeway);
 	}
-	private static boolean isFacingWest(double degrees, double leeway) {
+	private static boolean isFacingEast(double degrees, double leeway) {
 		return (225-leeway <= degrees) && (degrees < 315+leeway);
 	}
 

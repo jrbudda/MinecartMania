@@ -20,10 +20,9 @@ public class TruCompassCommand extends MinecartManiaCommand{
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		final int bearing = (int)((Player)sender).getLocation().getYaw();
-		final int corrBearing = (bearing + 180 + 360) % 360;
 
 		final DirectionUtils.CompassDirection facingDir = DirectionUtils.getDirectionFromRotation(bearing);
-		sender.sendMessage(ChatColor.YELLOW + "Bearing: " + facingDir.toString() + " (" + corrBearing + " degrees)");
+		sender.sendMessage(ChatColor.YELLOW + "Bearing: " + facingDir.toString() + " (" + bearing + " degrees)");
 		return true;
 
 	

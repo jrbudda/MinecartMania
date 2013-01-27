@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
@@ -11,6 +12,7 @@ import javax.persistence.PersistenceException;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -26,6 +28,7 @@ import com.afforess.minecartmania.config.MinecartManiaConfigurationParser;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.config.SignCommandsSettingParser;
 import com.afforess.minecartmania.listeners.*;
+import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.entity.Item;
 import com.afforess.minecartmaniacore.entity.MinecartManiaMinecartDataTable;
@@ -56,6 +59,7 @@ public class MinecartMania extends JavaPlugin {
 		instance = this;
 		file = this.getFile();
 
+		writeItemsFile();
 
 		MinecartManiaConfigurationParser.read("MinecartManiaConfiguration.xml", dataDirectory, new CoreSettingParser());
 		MinecartManiaConfigurationParser.read("MinecartManiaLocale.xml", dataDirectory, new LocaleParser());
@@ -65,7 +69,7 @@ public class MinecartMania extends JavaPlugin {
 
 		permissions = new PermissionManager(getServer());
 
-		getServer().getPluginManager().registerEvents( new MinecartManiaCoreListener(), this);
+		getServer().getPluginManager().registerEvents( new CoreListener(), this);
 		getServer().getPluginManager().registerEvents(new ChunkListener(), this);
 		getServer().getPluginManager().registerEvents( new BlockListener(), this);
 		getServer().getPluginManager().registerEvents( new PlayerListener(), this);
@@ -77,6 +81,9 @@ public class MinecartMania extends JavaPlugin {
 		getServer().getPluginManager().registerEvents( new StationsActionListener(), this);
 		getServer().getPluginManager().registerEvents( new FarmingActionListener(), this);
 		getServer().getPluginManager().registerEvents( new ChestActionListener(), this);
+
+
+		reloadMyConfig();
 
 		log.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 
@@ -153,6 +160,38 @@ public class MinecartMania extends JavaPlugin {
 		return null;
 	}
 
+
+	private void writeItemsFile() {
+		try {
+			File items = new File(dataDirectory + File.separator + "items.txt");
+			PrintWriter pw = new PrintWriter(items);
+			pw.append("This file is a list of all the data values, and matching item names for Minecart Mania. \nThis list is never used, and changes made to this file will be ignored");
+			pw.append("\n");
+			pw.append("\n");
+			pw.append("Items:");
+			pw.append("\n");
+			for (Item item : Item.values()) {
+				String name = "Item Name: " + item.toString();
+				pw.append(name);
+				String id = "";
+				for (int i = name.length()-1; i < 40; i++) {
+					id += " ";
+				}
+				pw.append(id);
+				id = "Item Id: " + String.valueOf(item.getId());
+				pw.append(id);
+				String data = "";
+				for (int i = id.length()-1; i < 15; i++) {
+					data += " ";
+				}
+				data += "Item Data: " + String.valueOf(item.getData());
+				pw.append(data);
+				pw.append("\n");
+			}
+			pw.close();
+		}
+		catch (Exception e) {}
+	}
 
 	private int getDatabaseVersion() {
 		try {
@@ -235,7 +274,7 @@ public class MinecartMania extends JavaPlugin {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
-	private void reloadMyConfig(){
+	public void reloadMyConfig(){
 		this.saveDefaultConfig();
 		this.reloadConfig();
 
@@ -253,31 +292,60 @@ public class MinecartMania extends JavaPlugin {
 		Settings.LimitedSignRange = getConfig().getBoolean("LimitedSignRange",true);
 		Settings.DefaultSlowWhenEmpty = getConfig().getBoolean("SlowWhenEmpty",true); 
 
-		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",200);
+		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",165);
 		Settings.DisappearonDisconnect = getConfig().getBoolean("SlowWhenEmpty",true); 
 
 
 
-		//		schematicsFolder = getConfig().getString("SchematicsFolder",this.getDataFolder() + File.separator + "schematics" + File.separator);
-		//		CompleteMessage = getConfig().getString("DefaultTexts.BuildComplete","");
-		//		CancelMessage = getConfig().getString("DefaultTexts.BuildCanceled","");
-		//		StartedMessage = getConfig().getString("DefaultTexts.BuildStarted","");
-		//		CollectingMessage =  getConfig().getString("DefaultTexts.BuildCollecting","");
-		//		MarkMessage = getConfig().getString("DefaultTexts.Mark","");
-		//		SurveyMessage = getConfig().getString("DefaultTexts.Survey","");
-		//		SupplyListMessage = getConfig().getString("DefaultTexts.Supply_List","");
-		//		SupplyNeedMessage = getConfig().getString("DefaultTexts.Supply_Need_Item","");
-		//		SupplyDontNeedMessage = getConfig().getString("DefaultTexts.Supply_Dont_Need_Item","");
-		//		SupplyTakenMessage = getConfig().getString("DefaultTexts.Supply_Item_Taken","");
-		//		for (String M:getConfig().getStringList("MarkMaterials")){
-		//			if (getMat(M) > 0) this.MarkMats.add(getMat(M));
-		//		}
-		//
-		//		if (this.MarkMats.isEmpty()) this.MarkMats.add(Material.GLASS.getId());
+		ConfigurationSection blocks = getConfig().getConfigurationSection("ControlBlocks");
+
+		if(blocks !=null){
+
+
+			com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.clear();
+
+			for (String  block : blocks.getKeys(false)){
+				log("Adding control block: " + block);
+				Item item = Item.getItem(block);
+				if(item == null) {
+					log("Invalid Block Item: " + block);
+					continue;
+				}
+
+				ConfigurationSection blockdata = blocks.getConfigurationSection(block);	
+
+				List<String> signs = blockdata.getStringList("Actions");
+
+				List<SignAction> actions = new LinkedList<SignAction>();
+
+				for (String sign : signs){
+					String[] lines = sign.split("/");
+
+					List<SignAction> thiactions = com.afforess.minecartmania.signs.ActionList.getSignActionsforLines(lines);
+
+					for(SignAction a:thiactions){
+						log("Adding action " + a.getFriendlyName() + " to " + item);
+						actions.add(a );
+					}
+				}
+
+				if(actions.size() > 0){	
+					com.afforess.minecartmania.config.NewControlBlock ncb = new com.afforess.minecartmania.config.NewControlBlock(item, actions);
+
+					if(blockdata.contains("Redstone"))	ncb.redstoneEffect = com.afforess.minecartmania.config.RedstoneState.valueOf(blockdata.getString("Redstone"));
+
+					com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.put(item, ncb);
+				}
+
+			}
+
+		}
 
 	}
 
 
-
+	public static void log(String str){
+		MinecartManiaLogger.getInstance().info(str);
+	}
 
 }

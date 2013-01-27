@@ -1,7 +1,6 @@
 package com.afforess.minecartmania.listeners;
 
 import java.util.ArrayList;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -9,18 +8,13 @@ import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.LocaleParser;
 import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.events.MinecartCaughtEvent;
-import com.afforess.minecartmania.events.MinecartClickedEvent;
 import com.afforess.minecartmania.events.MinecartLaunchedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
-import com.afforess.minecartmania.events.MinecartManiaSignFoundEvent;
 import com.afforess.minecartmania.events.MinecartMotionStartEvent;
 import com.afforess.minecartmania.events.MinecartMotionStopEvent;
 import com.afforess.minecartmania.events.MinecartPassengerEjectEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
-import com.afforess.minecartmania.signs.ActionList;
-import com.afforess.minecartmania.signs.FailureReason;
-import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.signs.actions.EjectionAction;
 import com.afforess.minecartmania.signs.actions.EjectionConditionAction;
@@ -35,8 +29,10 @@ public class SignsActionListener implements Listener{
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		final MinecartManiaMinecart minecart = event.getMinecart();
 		if (minecart.isOnRails()){
-			ArrayList<com.afforess.minecartmania.signs.Sign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 2);
-			for (com.afforess.minecartmania.signs.Sign sign : list) {
+			ArrayList<com.afforess.minecartmania.signs.MMSign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 2);
+	//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info("signs: " + list.size());
+			for (com.afforess.minecartmania.signs.MMSign sign : list) {
+				com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info("Executing sign " + sign.getLine(0));
 				sign.executeActions(minecart);
 			}
 			SignCommands.updateSensors(minecart);
@@ -46,10 +42,10 @@ public class SignsActionListener implements Listener{
 	@EventHandler
 	public void onMinecartPassengerEjectEvent(MinecartPassengerEjectEvent event) {
 		MinecartManiaMinecart minecart = event.getMinecart();
-		ArrayList<com.afforess.minecartmania.signs.Sign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 2);
+		ArrayList<com.afforess.minecartmania.signs.MMSign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 2);
 		boolean success = false;
 		boolean found = false;
-		for (com.afforess.minecartmania.signs.Sign sign : list) {
+		for (com.afforess.minecartmania.signs.MMSign sign : list) {
 			if (sign.hasSignAction(EjectionConditionAction.class)) {
 				found = true;
 				if (sign.executeAction(minecart, EjectionConditionAction.class)) {
@@ -64,7 +60,7 @@ public class SignsActionListener implements Listener{
 		if (minecart.getDataValue("Eject At Sign") == null) {
 			list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 8, true);
 			SignUtils.sortByDistance(minecart.getLocation().getBlock(), list);
-			for (com.afforess.minecartmania.signs.Sign sign : list) {
+			for (com.afforess.minecartmania.signs.MMSign sign : list) {
 				if (sign.executeAction(minecart, EjectionAction.class)) {
 					event.setCancelled(true);
 					break;
@@ -115,7 +111,7 @@ public class SignsActionListener implements Listener{
 		}*/
 		if (data != null) {
 			data.setTime(data.getTime() - 1);
-			com.afforess.minecartmania.signs.Sign sign = SignManager.getSignAt(data.getSignLocation());
+			com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(data.getSignLocation());
 			if (sign == null) {
 				minecart.setMotion(data.getMotion());
 				minecart.setDataValue("hold sign data", null);
@@ -132,7 +128,7 @@ public class SignsActionListener implements Listener{
 					sign.setLine(data.getLine(), "");
 				}
 			}
-			
+
 			if (data.getTime() == 0) {
 				minecart.setMotion(data.getMotion());
 				minecart.setDataValue("hold sign data", null);
@@ -172,45 +168,7 @@ public class SignsActionListener implements Listener{
 		}
 	}
 
-	@EventHandler
-	public void onMinecartClickedEvent(MinecartClickedEvent event) {
-		if (event.isActionTaken()) {
-			return;
-		}
-		MinecartManiaMinecart minecart = event.getMinecart();
-		
-		if (minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
-			if (minecart.hasPlayerPassenger()) {
-				minecart.getPlayerPassenger().sendMessage(LocaleParser.getTextKey("SignCommandsMinecartLockedError"));
-			}
-			event.setActionTaken(true);
-		}
-		
-		if (minecart.getPlayerPassenger()!=null){
-          new com.afforess.minecartmania.signs.actions.JumpAction(null).execute(minecart);
-          event.setActionTaken(true);
-		}
-		
-		
-	}
 
-	
-	//Register action to a sign.
-	@EventHandler
-	public void onMinecartManiaSignFoundEvent(MinecartManiaSignFoundEvent event) {
-		com.afforess.minecartmania.signs.Sign sign = event.getSign();
-	
-		for (ActionList type : ActionList.values()) {
-			SignAction action = type.getSignAction(sign);
-			if (action.valid(sign)) {
-				sign.addSignAction(action);
-			}
-			else if (action instanceof FailureReason && event.getPlayer() != null) {
-				if (((FailureReason)action).getReason() != null) {
-					event.getPlayer().sendMessage(ChatColor.RED + ((FailureReason)action).getReason());
-				}
-			}
-		}
-		
-	}
+
+
 }

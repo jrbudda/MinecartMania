@@ -4,23 +4,16 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.MinecartUtils;
 
-public class ElevatorAction implements SignAction{
-	
-	protected Location sign;
-	public ElevatorAction(Sign sign) {
-		this.sign = sign.getLocation();
-	}
-	
-	protected Sign getSign() {
-		return SignManager.getSignAt(this.sign); 
-	}
-	
+public class ElevatorAction extends SignAction{
+
+
+
 	protected Location calculateElevatorStop(MinecartManiaMinecart minecart) {
 		//get the offset of the track just after the sign in the current facing direction
 		int facingX = 0;
@@ -38,12 +31,12 @@ public class ElevatorAction implements SignAction{
 			facingZ = 1;
 		}
 
-		Location search = this.sign.clone();
+		Location search = loc.clone();
 		Location nextFloor = null;
-		for (int i = 0; i < 128; i++) {
-			if (i != this.sign.getY()) {
+		for (int i = 0; i < 256; i++) {
+			if (i != loc.getY()) {
 				search.setY(i);
-				Sign temp = SignManager.getSignAt(search);
+				MMSign temp = SignManager.getOrCreateMMSign(search);
 				if (temp != null) {
 					if (temp.hasSignAction(ElevatorAction.class)) {
 						nextFloor = search.clone();
@@ -85,7 +78,7 @@ public class ElevatorAction implements SignAction{
 		return null;
 	}
 
-	
+
 	public boolean execute(MinecartManiaMinecart minecart) {
 		Block ahead = minecart.getBlockTypeAhead();
 		if (ahead != null && ahead.getState() instanceof org.bukkit.block.Sign) {
@@ -98,29 +91,27 @@ public class ElevatorAction implements SignAction{
 		return false;
 	}
 
-	
+
 	public boolean async() {
 		return false;
 	}
 
-	
-	public boolean valid(Sign sign) {
-		for (String line : sign.getLines()) {
-			if (line.toLowerCase().contains("elevator") ||
-				line.toLowerCase().contains("lift up") ||
-				line.toLowerCase().contains("lift down")) {
+
+	public boolean process(String[] lines) {
+		for (String line : lines) {
+			if (line.toLowerCase().contains("[elevator")) {
 				return true;
-			}
+					}
 		}
 		return false;
 	}
 
-	
-	public String getName() {
+
+	public String getPermissionName() {
 		return "elevatorsign";
 	}
 
-	
+
 	public String getFriendlyName() {
 		return "Elevator Sign";
 	}

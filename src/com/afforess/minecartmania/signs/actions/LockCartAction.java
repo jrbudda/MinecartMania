@@ -2,12 +2,12 @@ package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.signs.Sign;
+import com.afforess.minecartmania.signs.MMSign;
 
-public class LockCartAction extends GenericAction{
+public class LockCartAction extends DataValuecAction{
 	public static final String name = "Lock Cart";
 
-	public LockCartAction(Sign sign) {
+	public LockCartAction() {
 		super(name);
 	}
 	
@@ -22,10 +22,9 @@ public class LockCartAction extends GenericAction{
 	}
 	
 	@Override
-	public boolean valid(Sign sign) {
-		for (String line : sign.getLines()) {
-			if (line.toLowerCase().contains(name.toLowerCase()) && !line.toLowerCase().contains(UnlockCartAction.name.toLowerCase())) {
-				sign.addBrackets();
+	public boolean process(String[] lines) {
+		for (String line : lines) {
+			if (line.toLowerCase().contains("["+name.toLowerCase()) && !line.toLowerCase().contains(UnlockCartAction.name.toLowerCase())) {
 				return true;
 			}
 		}
