@@ -291,17 +291,21 @@ public class MinecartMania extends JavaPlugin {
 		Settings.IgnorePlayersOnTrack = getConfig().getBoolean("IgnorePlayersOnTrack", true);
 		Settings.LimitedSignRange = getConfig().getBoolean("LimitedSignRange",true);
 		Settings.DefaultSlowWhenEmpty = getConfig().getBoolean("SlowWhenEmpty",true); 
+		Settings.ReturnCartsToOwner= getConfig().getBoolean("ReturnCartsToOwner",false); 
 
-		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",165);
+		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",200);
+		Settings.MaxAllowedSpeedPercent = getConfig().getInt("MaxAllowedSpeedPercent",500);
+		
 		Settings.DisappearonDisconnect = getConfig().getBoolean("SlowWhenEmpty",true); 
+		
+		Settings.DefaultMagneticRail =  getConfig().getBoolean("DefaultMagneticRail",false); 
 
-
+		
+		Settings.AnnouncementPrefix = getConfig().getString("AnnouncementPrefix","&e[Announcement] &f");
 
 		ConfigurationSection blocks = getConfig().getConfigurationSection("ControlBlocks");
 
 		if(blocks !=null){
-
-
 			com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.clear();
 
 			for (String  block : blocks.getKeys(false)){

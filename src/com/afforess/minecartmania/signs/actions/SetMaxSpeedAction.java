@@ -2,7 +2,6 @@ package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 
@@ -27,15 +26,15 @@ public class SetMaxSpeedAction extends SignAction {
 		for (String line : lines) {
 			if (line.toLowerCase().contains("[max speed")) {
 				String[] split = line.split(":");
-				if (split.length != 2) continue;
+				if (split.length != 2) return false;
 				double percent = Double.parseDouble(StringUtils.getNumber(split[1]));
-				percent = Math.min(percent, Settings.getMaximumMinecartSpeedPercent());
+				percent = Math.min(percent, Settings.MaxAllowedSpeedPercent);
 				this.percent = (int)percent;
-				break;
+				return true;
 			}
 		}
 		
-		return this.percent > 0;
+		return false;
 	}
 
 	

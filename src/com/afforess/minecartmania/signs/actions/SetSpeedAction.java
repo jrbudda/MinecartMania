@@ -15,8 +15,8 @@ public class SetSpeedAction extends SignAction {
 		if(isMultiplier){
 			minecart.multiplyMotion(percent);	
 		}
-		else {
-			minecart.setMotion(.4D * percent / 100, minecart.getMotionY(), .4D * percent / 100);
+		else {	
+			minecart.setMotion(.4D * percent / 100 * (minecart.getMotionX() < 0 ? -1:1), minecart.getMotionY(), .4D * percent / 100* (minecart.getMotionZ() < 0 ? -1:1));
 		}
 		return true;
 	}

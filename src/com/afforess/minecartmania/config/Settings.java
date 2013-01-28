@@ -7,27 +7,29 @@ public  class Settings {
 	public static final String StationHelpString = "Usage /st 'station name'";
 	public static final int DefaultPlatformRange = 4;
 	//core
-	public static int DefaultMaxSpeedPercent = 200;
+	public static int DefaultMaxSpeedPercent;
+	public static int MaxAllowedSpeedPercent;
 	public static int DefaultDerailedFrictionPercent = 100;
 	public static boolean DefaultSlowWhenEmpty;
-	public static boolean ClearTrack = true;
+	public static boolean ClearTrack;
 	public static int RangeXZ = 4;
 	public static int RangeY = 4;
      public static int MaxRange = 5;
-    public static boolean LoadChunksOnTrack = false;
-	public static boolean KillMobsOnTrack = false;
-	public static boolean ReturnCartsToOwner = false;
-	public static boolean StackAllItems = true;
-	public static boolean LimitedSignRange = true;
-	public static boolean DisappearonDisconnect = true;
+    public static boolean LoadChunksOnTrack;
+	public static boolean KillMobsOnTrack;
+	public static boolean ReturnCartsToOwner;
+	public static boolean StackAllItems;
+	public static boolean LimitedSignRange;
+	public static boolean DisappearonDisconnect;
 	
 	//new
 	public static boolean KillPlayersOnTrack;
 	public static int DefaultPassengerFrictionPercent;
 	public static int DefaultEmptyFrictionPercent;
+	public static boolean DefaultMagneticRail;
 	
 	//Signs
-	public static String AnnouncementPrefix;
+	public static String AnnouncementPrefix ;
     public static int SensorDisableDelay = 8;
 
     //Intersections
@@ -53,14 +55,9 @@ public  class Settings {
 	//
 	public static double defaultJumpHeight = 3;
 	
-	public static int getMaximumMinecartSpeedPercent() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("MaximumMinecartSpeedPercent",200);
-	}
-
 	public static int getDefaultMinecartDerailedSpeedPercent() {
 		return (Integer)MinecartManiaWorld.getConfigurationValue("DefaultMinecartDerailedSpeedPercent",100);
 	}	 
-
 
 	public static Boolean getDefaultMinecartSlowerWhenEmpty() {
 		return (Boolean)MinecartManiaWorld.getConfigurationValue("MinecartSlowerWhenEmpty",true);
@@ -87,10 +84,6 @@ public  class Settings {
 
 	public static boolean isMinecartsKillMobs() {
 		return KillMobsOnTrack;
-	}
-
-	public static boolean isReturnMinecartToOwner() {
-		return ReturnCartsToOwner;
 	}
 
 	public static boolean isStackAllItems() {

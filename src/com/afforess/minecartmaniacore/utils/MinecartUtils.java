@@ -87,13 +87,7 @@ public class MinecartUtils {
 
 	//TODO this method is not a perfect detection of track. It will give false positives for having 2 sets of parallel track, and when double curves are used
 	public static boolean validMinecartTrack(World w, int x, int y, int z, int range, CompassDirection direction) {
-		if (!isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z))) {
-			y--;
-			if (!isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z))) {
-				return false;
-			}
-		}
-		range--;
+	
 		while (range > 0) {
 
 			if (direction == CompassDirection.WEST) {
@@ -105,23 +99,29 @@ public class MinecartUtils {
 			} else if (direction == CompassDirection.SOUTH) {
 				z++;
 			}
+			
 			if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y - 1, z))) {
 				y--;
 			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y + 1, z))) {
 				y++;
 			}
+			
 			if (!isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z)))
 				return false;
-
-			if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x - 1, y, z))) {
-				direction = CompassDirection.WEST;
-			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z - 1))) {
-				direction = CompassDirection.NORTH;
-			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x + 1, y, z))) {
-				direction = CompassDirection.EAST;
-			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z + 1))) {
-				direction = CompassDirection.SOUTH;
+			else {
+				com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" valid track at " + x + y+ + z);
 			}
+			
+     //wat?
+//			if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x - 1, y, z))) {
+//				direction = CompassDirection.WEST;
+//			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z - 1))) {
+//				direction = CompassDirection.NORTH;
+//			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x + 1, y, z))) {
+//				direction = CompassDirection.EAST;
+//			} else if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x, y, z + 1))) {
+//				direction = CompassDirection.SOUTH;
+//			}
 
 			range--;
 		}

@@ -74,7 +74,7 @@ public class CoreListener implements Listener{
 			}
 
 			minecart.setWasMovingLastTick(minecart.isMoving());
-			minecart.doLauncherBlock();
+		//	minecart.doLauncherBlock();
 
 			//total hack workaround because of the inability to create runnables/threads w/o IllegalAccessError
 			if (minecart.getDataValue("launch") != null) {
@@ -105,6 +105,7 @@ public class CoreListener implements Listener{
 					com.afforess.minecartmania.config.NewControlBlock cb = NewControlBlockList.getControlBlock(Item.getItem(block));
 				
 					if (NewControlBlockList.isCorrectState(block, cb.redstoneEffect)){
+					
 						cb.execute(minecart, block.getLocation());			
 					}
 
@@ -120,7 +121,8 @@ public class CoreListener implements Listener{
 				minecart.updateLocation();
 
 				//should do last
-				minecart.doKillBlock();
+		//		minecart.doKillBlock();
+				
 				minecart.createdLastTick = false;
 			}
 		}

@@ -24,6 +24,7 @@ import org.bukkit.entity.StorageMinecart;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.config.ControlBlockList;
@@ -395,7 +396,13 @@ public class MinecartManiaMinecart {
 	 */
 	@ThreadSafe
 	public final Object getDataValue(String key) {
-		if(minecart.hasMetadata(key))	return minecart.getMetadata(key).get(0).value();
+		if(minecart.hasMetadata(key) ){
+			List<MetadataValue> dat;
+			dat = minecart.getMetadata(key);
+			if(dat.size() > 0){
+				return dat.get(0).value();
+			}
+		}
 		return null;
 	}
 
@@ -462,7 +469,7 @@ public class MinecartManiaMinecart {
 	 * @return X motion
 	 */
 	public double getMotionX() {
-		return minecart.getVelocity().getX();
+		return getHandle().motX;
 	}
 
 	/**
@@ -470,7 +477,7 @@ public class MinecartManiaMinecart {
 	 * @return Y motion
 	 */
 	public double getMotionY() {
-		return minecart.getVelocity().getY();
+		return getHandle().motY;
 	}
 
 	/**
@@ -478,7 +485,7 @@ public class MinecartManiaMinecart {
 	 * @return Z motion
 	 */
 	public double getMotionZ() {
-		return minecart.getVelocity().getZ();
+		return getHandle().motZ;
 	}
 
 	/**
@@ -675,10 +682,13 @@ public class MinecartManiaMinecart {
 		previousLocation.setY(previousLocation.getX() -1); //fool game into thinking we've already moved
 
 		minecart.setSlowWhenEmpty(Settings.getDefaultMinecartSlowerWhenEmpty());
+
 		minecart.setMaxSpeed(0.4D * Settings.DefaultMaxSpeedPercent /100 );
+
 		getHandle().derailedFrictioPercent = Settings.DefaultDerailedFrictionPercent;
 		getHandle().emptyFrictionPercent = Settings.DefaultEmptyFrictionPercent;
 		getHandle().passengerFrictionPercent = Settings.DefaultPassengerFrictionPercent;
+		getHandle().magnetic = Settings.DefaultMagneticRail;
 
 
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
@@ -875,10 +885,10 @@ public class MinecartManiaMinecart {
 				Object owner = getOwner();
 				MinecartManiaInventory inventory = null;
 				Player invOwner = null;
-				if (owner instanceof Player && Settings.isReturnMinecartToOwner()) {
+				if (owner instanceof Player && Settings.ReturnCartsToOwner) {
 					inventory = MinecartManiaWorld.getMinecartManiaPlayer((Player)owner);
 				}
-				else if (owner instanceof MinecartManiaChest && Settings.isReturnMinecartToOwner()) {
+				else if (owner instanceof MinecartManiaChest && Settings.ReturnCartsToOwner) {
 					inventory = ((MinecartManiaChest)owner);
 					String temp = ((MinecartManiaChest)owner).getOwner();
 					if (temp != null) {
@@ -959,7 +969,7 @@ public class MinecartManiaMinecart {
 	 */
 	public void multiplyMotion(double multiplier) {
 		if (MAXIMUM_MOMENTUM / Math.abs(multiplier) > Math.abs(getMotionX())) {
-			setMotionX(getMotionX() * multiplier);
+			setMotionX((getMotionX() * multiplier));
 		}
 		if (MAXIMUM_MOMENTUM / Math.abs(multiplier) > Math.abs(getMotionZ())) {
 			setMotionZ(getMotionZ() * multiplier);
@@ -1011,11 +1021,11 @@ public class MinecartManiaMinecart {
 	 * @param motion to set
 	 */
 	public void setMotion(Vector motion) {
-		minecart.setVelocity(motion);
+		setMotion(motion.getX(), motion.getY(), motion.getZ());
 	}
 
 	public void setMotionX(double motionX){
-		getHandle().motX = motionX <= minecart.getMaxSpeed() ?  motionX : minecart.getMaxSpeed();
+		getHandle().motX = (motionX <= minecart.getMaxSpeed()) ?  motionX : minecart.getMaxSpeed();
 	}
 
 	public void setMotionY(double motionY){
@@ -1023,7 +1033,7 @@ public class MinecartManiaMinecart {
 	}
 
 	public void setMotionZ(double motionZ){
-		getHandle().motZ = motionZ <= minecart.getMaxSpeed() ?  motionZ : minecart.getMaxSpeed();
+		getHandle().motZ = (motionZ <= minecart.getMaxSpeed()) ?  motionZ : minecart.getMaxSpeed();
 	}
 
 	public void setPassenger(Entity entity) {

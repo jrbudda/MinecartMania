@@ -63,11 +63,13 @@ public class SignUtils {
 
 	public static ArrayList<Sign> getAdjacentSignList(World w, int x, int y, int z, int range, boolean force) {
 		ArrayList<Sign> signList = new ArrayList<Sign>();
-		if (!force && Settings.isLimitedSignRange()) {
-			signList.addAll(getParallelSignList(w, x, y, z));
-			signList.addAll(getSignBeneathList(w, x, y, z, 2));
-			return signList;
-		}
+		
+//		if (!force && Settings.isLimitedSignRange()) {
+//			signList.addAll(getParallelSignList(w, x, y, z));
+//			signList.addAll(getSignBeneathList(w, x, y, z, 2));
+//			return signList;
+//		}
+		
 		for (int dx = -(range); dx <= range; dx++){
 			for (int dy = -(range); dy <= range; dy++){
 				for (int dz = -(range); dz <= range; dz++){

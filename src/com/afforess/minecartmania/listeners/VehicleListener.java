@@ -52,9 +52,9 @@ public class VehicleListener implements Listener{
 					return;
 				}
 			}
-			
+
 			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
-			
+
 			if (minecart !=null && minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
 				if (minecart.hasPlayerPassenger()) {
 					minecart.getPlayerPassenger().sendMessage(LocaleParser.getTextKey("SignCommandsMinecartLockedError"));
@@ -73,6 +73,13 @@ public class VehicleListener implements Listener{
 		if (event.getVehicle() instanceof Minecart) {
 			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 			SignCommands.updateSensors(minecart);
+		}
+	}
+
+	@EventHandler
+	public void onVehicleBounce(org.bukkit.event.vehicle.VehicleBlockCollisionEvent event) {
+		if (event.getVehicle() instanceof Minecart) {
+			com.afforess.minecartmania.MinecartMania.log("Bounce! " + event.getVehicle().getLocation());
 		}
 	}
 

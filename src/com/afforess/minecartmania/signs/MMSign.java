@@ -38,10 +38,11 @@ public class MMSign{
 
 	public void addBrackets() {
 		for (int i = 0; i < getNumLines(); i++) {
-			if (!getLine(i).isEmpty() && getLine(i).length() < 14) {
+			if (!getLine(i).isEmpty() && getLine(i).length() <= 14) {
 				setLine(i, WordUtils.capitalize(StringUtils.addBrackets((getLine(i)))));
 			}
 		}
+		
 	}
 
 

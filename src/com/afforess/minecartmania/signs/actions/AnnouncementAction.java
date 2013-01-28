@@ -1,6 +1,7 @@
 package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
@@ -33,9 +34,8 @@ public class AnnouncementAction extends SignAction{
 	public boolean process(String[] lines) {
 		if (lines.length < 2) return false;
 		if (lines[0].toLowerCase().contains("[announce")) {
-			final String title = MinecartManiaWorld.getConfigurationValue("AnnouncementSignPrefixColor","&c").toString()
-					+ MinecartManiaWorld.getConfigurationValue("AnnouncementSignPrefix","Announcement:").toString() + " "
-					+ MinecartManiaWorld.getConfigurationValue("AnnouncementColor","yellow");
+
+			final String title = org.bukkit.ChatColor.translateAlternateColorCodes('&', Settings.AnnouncementPrefix);
 
 			if(lines[0].contains(":")){
 				String[] linesplit = lines[0].split(":");
@@ -52,7 +52,7 @@ public class AnnouncementAction extends SignAction{
 			int line = 0;
 			announcement[line] = title + lines[1];
 			//! signifies a new line, otherwise continue message on same line
-			
+
 			if(lines.length <3) return true;
 			if (lines[2].startsWith("!")) {
 				line++;

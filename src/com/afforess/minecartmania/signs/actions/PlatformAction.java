@@ -35,7 +35,7 @@ public class PlatformAction extends SignAction {
 				}
 			}
 
-			if (closest != null && closest.getLocation().toVector().distanceSquared(minecart.getLocation().toVector()) < range) {
+			if (closest != null ) {
 				//Let the world know about this
 				VehicleEnterEvent vee = new VehicleEnterEvent(minecart.getBukkitEntity(), closest);
 				MinecartMania.callEvent(vee);

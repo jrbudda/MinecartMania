@@ -1,20 +1,14 @@
 package com.afforess.minecartmania.listeners;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_4_R1.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,15 +17,11 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
-
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
 import com.afforess.minecartmania.config.LocaleParser;
 import com.afforess.minecartmania.config.NewControlBlock;
 import com.afforess.minecartmania.config.RedstoneState;
 import com.afforess.minecartmania.events.ChestPoweredEvent;
-import com.afforess.minecartmania.signs.MinecartTypeSign;
 import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
@@ -42,8 +32,7 @@ import com.afforess.minecartmania.signs.sensors.SensorManager;
 import com.afforess.minecartmaniacore.entity.Item;
 import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
 import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.MinecartUtils;
-import com.afforess.minecartmaniacore.utils.SignUtils;
+
 
 public class BlockListener implements Listener{
 
@@ -96,7 +85,7 @@ public class BlockListener implements Listener{
 					if (com.afforess.minecartmania.config.NewControlBlockList.isControlBlock(type)){
 						NewControlBlock ncb = com.afforess.minecartmania.config.NewControlBlockList.getControlBlock(type);
 						if (((ncb.redstoneEffect == RedstoneState.TriggerOn) && on) || ((ncb.redstoneEffect == RedstoneState.TriggerOff) && off)){
-							ncb.execute(null, event.getBlock().getLocation());
+							ncb.execute(null, b.getLocation());
 						}
 					}
 

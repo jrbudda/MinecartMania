@@ -4,6 +4,7 @@ RangeY: 1
 
 #Minecart Physics
 MaxSpeedPercent: 200
+MaxAllowedSpeedPercent: 500
 DerailedFrictionPercent: 100
 PassengerFrictionPercent: 100
 SlowWhenEmpty: false
@@ -19,6 +20,9 @@ KillPlayersOnTrackMinimumSpeed: 90
 IgnorePlayersOnTrack: true
 
 LimitedSignRange: true
+ReturnCartsToOwner: false
+
+AnnouncementPrefix: "&e[Announcement] &f"
 
 ControlBlocks:
 #See the items.txt file for the proper name of each block.
@@ -26,52 +30,43 @@ ControlBlocks:
   GOLD_BLOCK:
    Redstone: Disables
    Actions:
-      - "[set speed:1.5x]"
-      
+      - "[set speed:1.5x]"    
   EMERALD_BLOCK:
    Redstone: Disables
    Actions:
-      - "[set speed:100]"
-        
+      - "[set speed:100]"   
   LIGHT_GREEN_WOOL:
    Redstone: Disables
    Actions:
       - "[platform]"
-
   RED_WOOL:
    Redstone: Disables
    Actions:
       - "[elevator]"
-      - "[announce] / Elevator!"
-      
+      - "[announce] / Elevator!"     
   WOOL:
    Actions:
-      - "[set speed:-1x]"
-    
+      - "[set speed:-1x]"   
   BRICK:
    Actions:
-      - "[Station]"
-      
+      - "[Station]"    
   DIAMOND_BLOCK:
    Redstone: TriggerOn
    Actions:
-      - "[spawn] / [launch]"
-  
+      - "[spawn]"
+      - "[launch]"
   IRON_BLOCK:
    Redstone: Disables
    Actions:
       - "[eject]"
-  
   DIAMOND_ORE:
    Redstone: Disables
    Actions:
-       - "[kill]"
-       
+       - "[kill]"  
   POWERED_RAIL:
    Redstone: Enables
    Actions:
-       - "[set speed:16x]"
-       
+       - "[set speed:16x]"   
   SPONGE:    
    Redstone: Disables
    Actions:

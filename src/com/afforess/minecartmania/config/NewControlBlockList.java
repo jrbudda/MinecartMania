@@ -2,9 +2,12 @@ package com.afforess.minecartmania.config;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
+import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmaniacore.entity.Item;
 
 public class NewControlBlockList {
@@ -47,4 +50,14 @@ public class NewControlBlockList {
 			return false;
 		}
 	}
+
+	public static boolean hasSignAction(Block block, Class<? extends SignAction> action){
+		if (block ==null) return false;
+		Item i = Item.getItem(block);
+		if (i == null) return false;
+		if (!isControlBlock(i)) return false;
+		return getControlBlock(i).hasSignAction(action);
+
+	}
+
 }

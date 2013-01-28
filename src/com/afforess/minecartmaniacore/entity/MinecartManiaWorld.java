@@ -50,7 +50,7 @@ public class MinecartManiaWorld {
 	 * @param the minecart to wrap
 	 */
 	@ThreadSafe
-	 public static MinecartManiaMinecart getOrCreateMMMinecart(Minecart minecart) {
+	public static MinecartManiaMinecart getOrCreateMMMinecart(Minecart minecart) {
 		prune();
 		final int id = minecart.getEntityId();
 		MinecartManiaMinecart testMinecart = minecarts.get(id);
@@ -92,14 +92,14 @@ public class MinecartManiaWorld {
 	 * @param the id of the minecart to delete
 	 */
 	@ThreadSafe
-	 public static boolean delMinecartManiaMinecart(int entityID) {
+	public static boolean delMinecartManiaMinecart(int entityID) {
 		if (minecarts.containsKey(new Integer(entityID))) {
 			minecarts.remove(new Integer(entityID));
 			return true;
 		}
 		return false;
 	}
-	 
+
 	@ThreadSafe
 	public static void prune() {
 		if (pruneLock.tryLock()) {
@@ -129,7 +129,7 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	
+
 	public static void pruneFurnaces() {
 		Iterator<Entry<Location, MinecartManiaFurnace>> i = furnaces.entrySet().iterator();
 		while (i.hasNext()) {
@@ -139,7 +139,7 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	
+
 	public static void pruneDispensers() {
 		Iterator<Entry<Location, MinecartManiaDispenser>> i = dispensers.entrySet().iterator();
 		while (i.hasNext()) {
@@ -149,7 +149,7 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	
+
 	public static void pruneChests() {
 		Iterator<Entry<Location, MinecartManiaChest>> i = chests.entrySet().iterator();
 		while (i.hasNext()) {
@@ -159,7 +159,7 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	
+
 	public static void pruneMinecarts() {
 		Iterator<Entry<Integer, MinecartManiaMinecart>> i = minecarts.entrySet().iterator();
 		HashSet<Integer> idList = new HashSet<Integer>();
@@ -179,49 +179,49 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	
-	 /**
+
+	/**
 	 ** Returns any minecart at the given location, or null if none is present
 	 ** @param the x - coordinate to check
 	 ** @param the y - coordinate to check
 	 ** @param the z - coordinate to check
 	 **/
 	@ThreadSafe
-	 public static MinecartManiaMinecart getMinecartManiaMinecartAt(int x, int y, int z) {
-		 Iterator<Entry<Integer, MinecartManiaMinecart>> i = minecarts.entrySet().iterator();
-		 while (i.hasNext()) {
-			 Entry<Integer, MinecartManiaMinecart> e = i.next();
-			 if (e.getValue().getLocation().getBlockX() == x) {
-				 if (e.getValue().getLocation().getBlockY() == y) {
-					 if (e.getValue().getLocation().getBlockZ() == z) {
-						 return e.getValue();
-					 }
-				 }
-			 }
-		 }
-		
-		 return null;
-	 }
-	 
-	 /**
-	  * Returns an arraylist of all the MinecartManiaMinecarts stored by this class
-	  * @return arraylist of all MinecartManiaMinecarts
-	  */
+	public static MinecartManiaMinecart getMinecartManiaMinecartAt(int x, int y, int z) {
+		Iterator<Entry<Integer, MinecartManiaMinecart>> i = minecarts.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<Integer, MinecartManiaMinecart> e = i.next();
+			if (e.getValue().getLocation().getBlockX() == x) {
+				if (e.getValue().getLocation().getBlockY() == y) {
+					if (e.getValue().getLocation().getBlockZ() == z) {
+						return e.getValue();
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns an arraylist of all the MinecartManiaMinecarts stored by this class
+	 * @return arraylist of all MinecartManiaMinecarts
+	 */
 	@ThreadSafe
-	 public static ArrayList<MinecartManiaMinecart> getMinecartManiaMinecartList() {
-		 Iterator<Entry<Integer, MinecartManiaMinecart>> i = minecarts.entrySet().iterator();
-		 ArrayList<MinecartManiaMinecart> minecartList = new ArrayList<MinecartManiaMinecart>(minecarts.size());
-		 while (i.hasNext()) {
-			 minecartList.add(i.next().getValue());
-		 }
-		 return minecartList;
-	 }
-	 
-	 /**
+	public static ArrayList<MinecartManiaMinecart> getMinecartManiaMinecartList() {
+		Iterator<Entry<Integer, MinecartManiaMinecart>> i = minecarts.entrySet().iterator();
+		ArrayList<MinecartManiaMinecart> minecartList = new ArrayList<MinecartManiaMinecart>(minecarts.size());
+		while (i.hasNext()) {
+			minecartList.add(i.next().getValue());
+		}
+		return minecartList;
+	}
+
+	/**
 	 * Returns a new MinecartManiaChest from storage if it already exists, or creates and stores a new MinecartManiaChest object, and returns it
 	 * @param the chest to wrap
 	 */
-	 public static MinecartManiaChest getMinecartManiaChest(Chest chest) {
+	public static MinecartManiaChest getMinecartManiaChest(Chest chest) {
 		MinecartManiaChest testChest = chests.get(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()));
 		if (testChest == null) {
 			MinecartManiaChest newChest = new MinecartManiaChest(chest);
@@ -240,23 +240,23 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	 
+
 	/**
 	 * Returns true if the chest with the given location was deleted, false if not.
 	 * @param the  location of the chest to delete
 	 */
-	 public static boolean delMinecartManiaChest(Location v) {
+	public static boolean delMinecartManiaChest(Location v) {
 		if (chests.containsKey(v)) {
 			chests.remove(v);
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
-	* Returns an arraylist of all the MinecartManiaChests stored by this class
-	* @return arraylist of all MinecartManiaChest
-	*/
+	 * Returns an arraylist of all the MinecartManiaChests stored by this class
+	 * @return arraylist of all MinecartManiaChest
+	 */
 	public static ArrayList<MinecartManiaChest> getMinecartManiaChestList() {
 		Iterator<Entry<Location, MinecartManiaChest>> i = chests.entrySet().iterator();
 		ArrayList<MinecartManiaChest> chestList = new ArrayList<MinecartManiaChest>(chests.size());
@@ -264,13 +264,13 @@ public class MinecartManiaWorld {
 			chestList.add(i.next().getValue());
 		}
 		return chestList;
-	 }
-	 
-	 /**
+	}
+
+	/**
 	 ** Returns a new MinecartManiaDispenser from storage if it already exists, or creates and stores a new MinecartManiaDispenser object, and returns it
 	 ** @param the dispenser to wrap
 	 **/
-	 public static MinecartManiaDispenser getMinecartManiaDispenser(Dispenser dispenser) {
+	public static MinecartManiaDispenser getMinecartManiaDispenser(Dispenser dispenser) {
 		MinecartManiaDispenser testDispenser = dispensers.get(new Location(dispenser.getWorld(), dispenser.getX(), dispenser.getY(), dispenser.getZ()));
 		if (testDispenser == null) {
 			MinecartManiaDispenser newDispenser = new MinecartManiaDispenser(dispenser);
@@ -289,23 +289,23 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	 
+
 	/**
 	 ** Returns true if the dispenser with the given location was deleted, false if not.
 	 ** @param the location of the dispenser to delete
 	 **/
-	 public static boolean delMinecartManiaDispenser(Location v) {
+	public static boolean delMinecartManiaDispenser(Location v) {
 		if (dispensers.containsKey(v)) {
 			dispensers.remove(v);
 			return true;
 		}
 		return false;
 	}
-	 
+
 	/**
-	* Returns an arraylist of all the MinecartManiaDispensers stored by this class
-	* @return arraylist of all MinecartManiaDispensers
-	*/
+	 * Returns an arraylist of all the MinecartManiaDispensers stored by this class
+	 * @return arraylist of all MinecartManiaDispensers
+	 */
 	public static ArrayList<MinecartManiaDispenser> getMinecartManiaDispenserList() {
 		Iterator<Entry<Location, MinecartManiaDispenser>> i = dispensers.entrySet().iterator();
 		ArrayList<MinecartManiaDispenser> dispenserList = new ArrayList<MinecartManiaDispenser>(dispensers.size());
@@ -313,14 +313,14 @@ public class MinecartManiaWorld {
 			dispenserList.add(i.next().getValue());
 		}
 		return dispenserList;
-	 }
-	 
-	 /**
+	}
+
+	/**
 	 ** Returns a new MinecartManiaFurnace from storage if it already exists, or creates and stores a new MinecartManiaFurnace object, and returns it
 	 ** @param the furnace to wrap
 	 **/
-	 public static MinecartManiaFurnace getMinecartManiaFurnace(Furnace furnace) {
-		 MinecartManiaFurnace testFurnace = furnaces.get(new Location(furnace.getWorld(), furnace.getX(), furnace.getY(), furnace.getZ()));
+	public static MinecartManiaFurnace getMinecartManiaFurnace(Furnace furnace) {
+		MinecartManiaFurnace testFurnace = furnaces.get(new Location(furnace.getWorld(), furnace.getX(), furnace.getY(), furnace.getZ()));
 		if (testFurnace == null) {
 			MinecartManiaFurnace newFurnace = new MinecartManiaFurnace(furnace);
 			furnaces.put(new Location(furnace.getWorld(), furnace.getX(), furnace.getY(), furnace.getZ()), newFurnace);
@@ -339,23 +339,23 @@ public class MinecartManiaWorld {
 			}
 		}
 	}
-	 
+
 	/**
 	 ** Returns true if the furnaces with the given location was deleted, false if not.
 	 ** @param the location of the furnaces to delete
 	 **/
-	 public static boolean delMinecartManiaFurnace(Location v) {
+	public static boolean delMinecartManiaFurnace(Location v) {
 		if (furnaces.containsKey(v)) {
 			furnaces.remove(v);
 			return true;
 		}
 		return false;
 	}
-	 
+
 	/**
-	* Returns an arraylist of all the MinecartManiaFurnaces stored by this class
-	* @return arraylist of all MinecartManiaFurnaces
-	*/
+	 * Returns an arraylist of all the MinecartManiaFurnaces stored by this class
+	 * @return arraylist of all MinecartManiaFurnaces
+	 */
 	public static ArrayList<MinecartManiaFurnace> getMinecartManiaFurnaceList() {
 		Iterator<Entry<Location, MinecartManiaFurnace>> i = furnaces.entrySet().iterator();
 		ArrayList<MinecartManiaFurnace> furnaceList = new ArrayList<MinecartManiaFurnace>(furnaces.size());
@@ -363,8 +363,8 @@ public class MinecartManiaWorld {
 			furnaceList.add(i.next().getValue());
 		}
 		return furnaceList;
-	 }
-	
+	}
+
 	/**
 	 ** Returns a new MinecartManiaPlayer from storage if it already exists, or creates and stores a new MinecartManiaPlayer object, and returns it
 	 ** @param the player to wrap
@@ -372,31 +372,31 @@ public class MinecartManiaWorld {
 	public static MinecartManiaPlayer getMinecartManiaPlayer(Player player) {
 		return getMinecartManiaPlayer(player.getName());
 	}
-	
-	 /**
+
+	/**
 	 ** Returns a new MinecartManiaPlayer from storage if it already exists, or creates and stores a new MinecartManiaPlayer object, and returns it
 	 ** @param the name of the player to wrap
 	 **/	 
-	 public static MinecartManiaPlayer getMinecartManiaPlayer(String player) {
-		 MinecartManiaPlayer testPlayer = players.get(player);
-		 if (testPlayer == null) {
-			 testPlayer = new MinecartManiaPlayer(player);
-			 players.put(player, testPlayer);
-		 }
-		 if (testPlayer.isOnline()) {
-			 testPlayer.updateInventory(testPlayer.getPlayer().getInventory());
-		 }
-		 return testPlayer;
-	 }
-	 
-	 public static void setMinecartManiaPlayer(MinecartManiaPlayer player, String name) {
-		 players.put(name, player);
-	 }
-	 
+	public static MinecartManiaPlayer getMinecartManiaPlayer(String player) {
+		MinecartManiaPlayer testPlayer = players.get(player);
+		if (testPlayer == null) {
+			testPlayer = new MinecartManiaPlayer(player);
+			players.put(player, testPlayer);
+		}
+		if (testPlayer.isOnline()) {
+			testPlayer.updateInventory(testPlayer.getPlayer().getInventory());
+		}
+		return testPlayer;
+	}
+
+	public static void setMinecartManiaPlayer(MinecartManiaPlayer player, String name) {
+		players.put(name, player);
+	}
+
 	/**
-	* Returns an arraylist of all the MinecartManiaPlayers stored by this class. These players may not be online.
-	* @return arraylist of all MinecartManiaPlayers
-	*/
+	 * Returns an arraylist of all the MinecartManiaPlayers stored by this class. These players may not be online.
+	 * @return arraylist of all MinecartManiaPlayers
+	 */
 	public static ArrayList<MinecartManiaPlayer> getMinecartManiaPlayerList() {
 		Iterator<Entry<String, MinecartManiaPlayer>> i = players.entrySet().iterator();
 		ArrayList<MinecartManiaPlayer> playerList = new ArrayList<MinecartManiaPlayer>(players.size());
@@ -404,62 +404,62 @@ public class MinecartManiaWorld {
 			playerList.add(i.next().getValue());
 		}
 		return playerList;
-	 }
-	 
+	}
+
 	/**
 	 ** Returns the value from the loaded configuration
 	 ** @param the string key the configuration value is associated with
 	 **/
-	 public static Object getConfigurationValue(String key, Object defaultValue) {
-		 if (configuration.containsKey(key)) {
-			 return configuration.get(key);
-		 }
-		 return defaultValue;
-	 }
-	 
-		/**
-		 ** Returns the value from the loaded configuration
-		 ** @param the string key the configuration value is associated with
-		 **/
-		 public static Object getConfigurationValue(String key) {
-			 return getConfigurationValue(key, null);
-		 }
-		 
+	public static Object getConfigurationValue(String key, Object defaultValue) {
+		if (configuration.containsKey(key)) {
+			return configuration.get(key);
+		}
+		return defaultValue;
+	}
+
+	/**
+	 ** Returns the value from the loaded configuration
+	 ** @param the string key the configuration value is associated with
+	 **/
+	public static Object getConfigurationValue(String key) {
+		return getConfigurationValue(key, null);
+	}
+
 	/**
 	 ** Creates a new configuration value if it does not already exists, or resets an existing value
 	 ** @param the string key the configuration value is associated with
 	 ** @param the value to store
 	 **/	 
-	 public static void setConfigurationValue(String key, Object value) {
-		 if (value == null) {
-			 configuration.remove(key);
-		 }
-		 else {
-			 configuration.put(key, value);
-		 }
-	 }
-	 
-	 public static ConcurrentHashMap<String, Object> getConfiguration() {
-		 return configuration;
-	 }
-	 
+	public static void setConfigurationValue(String key, Object value) {
+		if (value == null) {
+			configuration.remove(key);
+		}
+		else {
+			configuration.put(key, value);
+		}
+	}
+
+	public static ConcurrentHashMap<String, Object> getConfiguration() {
+		return configuration;
+	}
+
 	/**
 	 ** Returns an integer value from the given object, if it exists
 	 ** @param the object containing the value
 	 **/
-	 @Deprecated
-	 public static int getIntValue(Object o) {
-		 if (o != null) {
+	@Deprecated
+	public static int getIntValue(Object o) {
+		if (o != null) {
 			if (o instanceof Integer) {
 				return ((Integer)o).intValue();
 			}
 		}
 		return 0;
-	 }
-	 
-	 @Deprecated
-	 public static double getDoubleValue(Object o) {
-		 if (o != null) {
+	}
+
+	@Deprecated
+	public static double getDoubleValue(Object o) {
+		if (o != null) {
 			if (o instanceof Double) {
 				return ((Double)o).doubleValue();
 			}
@@ -467,21 +467,21 @@ public class MinecartManiaWorld {
 			return getIntValue(o);
 		}
 		return 0;
-	 }
-	 
-	 @Deprecated
+	}
+
+	@Deprecated
 	public static int getMaximumMinecartSpeedPercent() {
 		return getIntValue(getConfigurationValue("MaximumMinecartSpeedPercent"));
 	}
-	 @Deprecated
+	@Deprecated
 	public static int getDefaultMinecartSpeedPercent() {
 		return getIntValue(getConfigurationValue("DefaultMinecartSpeedPercent"));
 	}
-	 @Deprecated
+	@Deprecated
 	public static int getMinecartsClearRailsSetting() {
 		return getIntValue(getConfigurationValue("MinecartsClearRails"));
 	}
-	 @Deprecated
+	@Deprecated
 	public static boolean isKeepMinecartsLoaded() {
 		Object o = getConfigurationValue("KeepMinecartsLoaded");
 		if (o != null) {
@@ -490,7 +490,7 @@ public class MinecartManiaWorld {
 		}
 		return false;
 	}
-	 @Deprecated
+	@Deprecated
 	public static boolean isMinecartsKillMobs() {
 		Object o = getConfigurationValue("MinecartsKillMobs");
 		if (o != null) {
@@ -499,7 +499,7 @@ public class MinecartManiaWorld {
 		}
 		return true;
 	}
-	 @Deprecated
+	@Deprecated
 	public static boolean isReturnMinecartToOwner() {
 		Object o = getConfigurationValue("MinecartsReturnToOwner");
 		if (o != null) {
@@ -508,7 +508,7 @@ public class MinecartManiaWorld {
 		}
 		return true;
 	}
-	
+
 	/**
 	 ** Returns the block at the given x, y, z coordinates
 	 ** @param w World to take effect in
@@ -519,7 +519,7 @@ public class MinecartManiaWorld {
 	public static Block getBlockAt(World w, int x, int y, int z) {
 		return w.getBlockAt(x, y, z);
 	}
-	
+
 	/**
 	 ** Returns the block type id at the given x, y, z coordinates
 	 ** @param w World to take effect in
@@ -530,7 +530,7 @@ public class MinecartManiaWorld {
 	public static int getBlockIdAt(World w, int x, int y, int z) {
 		return w.getBlockTypeIdAt(x, y, z);
 	}
-	
+
 	/**
 	 ** Returns the block at the given x, y, z coordinates
 	 ** @param w World to take effect in
@@ -542,7 +542,7 @@ public class MinecartManiaWorld {
 	public static void setBlockAt(World w, int type, int x, int y, int z) {
 		w.getBlockAt(x, y, z).setTypeId(type);
 	}
-	
+
 	/**
 	 ** Returns the block data at the given x, y, z coordinates
 	 ** @param w World to take effect in
@@ -553,7 +553,7 @@ public class MinecartManiaWorld {
 	public static byte getBlockData(World w, int x, int y, int z) {
 		return w.getBlockAt(x, y, z).getData();
 	}
-	
+
 	/**
 	 ** sets the block data at the given x, y, z coordinates
 	 ** @param w World to take effect in
@@ -565,7 +565,7 @@ public class MinecartManiaWorld {
 	public static void setBlockData(World w, int x, int y, int z, int data) {
 		w.getBlockAt(x, y, z).setData((byte) (data));
 	}
-	
+
 	/**
 	 ** Returns true if the block at the given x, y, z coordinates is indirectly powered
 	 ** @param w World to take effect in
@@ -576,7 +576,7 @@ public class MinecartManiaWorld {
 	public static boolean isBlockIndirectlyPowered(World w, int x, int y, int z) {
 		return getBlockAt(w, x, y, z).isBlockIndirectlyPowered();
 	}
-	
+
 	/**
 	 ** Returns true if the block at the given x, y, z coordinates is directly powered
 	 ** @param w World to take effect in
@@ -587,7 +587,7 @@ public class MinecartManiaWorld {
 	public static boolean isBlockPowered(World w, int x, int y, int z) {
 		return getBlockAt(w, x, y, z).isBlockPowered();
 	}
-	
+
 	/**
 	 ** Sets the block at the given x, y, z coordinates to the given power state, if possible
 	 ** @param w World to take effect in
@@ -611,7 +611,7 @@ public class MinecartManiaWorld {
 			setBlockData(w, x, y, z, ((byte)(power ? data | 0x8 : data & 0x7)));
 		}
 	}
-	
+
 	/**
 	 ** Sets the block at the given x, y, z coordinates, as well as any block directly touch the given block to the given power state, if possible
 	 ** @param w World to take effect in
@@ -638,7 +638,7 @@ public class MinecartManiaWorld {
 	public static MinecartManiaMinecart spawnMinecart(Location l, Item type, Object owner) {
 		return spawnMinecart(l.getWorld(), l.getBlockX(), l.getBlockY(), l.getBlockZ(), type, owner);
 	}
-	
+
 	/** Spawns a minecart at the given coordinates. Includes a "fudge factor" to get the minecart to properly line up with minecart tracks.
 	 ** @param w World to take effect in
 	 ** @param x coordinate
@@ -659,6 +659,9 @@ public class MinecartManiaWorld {
 		else {
 			m = (Minecart)w.spawn(loc, StorageMinecart.class);
 		}
+
+		if(!m.isValid()) return null;
+
 		MinecartManiaMinecart minecart = null;
 		String ownerName = "none";
 		if (owner != null) {
@@ -672,7 +675,7 @@ public class MinecartManiaWorld {
 				ownerName = ((MinecartManiaChest)owner).toString();
 			}
 		}
-		
+
 		if (m instanceof StorageMinecart) {
 			minecart = new MinecartManiaStorageCart(m, ownerName);
 		}
@@ -682,7 +685,7 @@ public class MinecartManiaWorld {
 		minecarts.put(m.getEntityId(), minecart);
 		return minecart;
 	}
-	
+
 	public static int getMaxStackSize(ItemStack item) {
 		if (item == null) {
 			return 64;
@@ -695,7 +698,7 @@ public class MinecartManiaWorld {
 		}
 		return 64;
 	}
-	
+
 
 	public static void LoadChunksAround(Location location, int radius) {
 		World world = location.getWorld();
@@ -708,6 +711,6 @@ public class MinecartManiaWorld {
 		}
 	}
 
-	
-	
+
+
 }

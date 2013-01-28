@@ -92,7 +92,7 @@ public class StationsActionListener implements Listener {
 			return;
 		}
 
-		if (ControlBlockList.isValidStationBlock(minecart)) {
+		if (com.afforess.minecartmania.config.NewControlBlockList.hasSignAction(minecart.getBlockBeneath(), com.afforess.minecartmania.signs.actions.StationAction.class)) {
 			SignCommands.processStation(event);
 		}
 

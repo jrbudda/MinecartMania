@@ -63,7 +63,7 @@ public class SignManager {
 		if (reregister){
 			List<SignAction> actions = ActionList.getSignActionsforLines(sign.getLines());
 			if (actions.size() > 0) existing.addBrackets();
-			for (SignAction action : actions)	{
+				for (SignAction action : actions)	{
 				MinecartManiaLogger.getInstance().info("adding action: " + action.getFriendlyName());
 				action.loc = existing.getLocation();
 				existing.addSignAction(action);

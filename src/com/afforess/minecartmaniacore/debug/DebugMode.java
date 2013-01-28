@@ -4,6 +4,7 @@ public enum DebugMode {
 	TIMER,
 	DEBUG,
 	NORMAL,
+	MOTION,
 	SEVERE,
 	NONE;
 	
