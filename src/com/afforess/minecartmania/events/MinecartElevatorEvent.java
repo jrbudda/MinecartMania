@@ -3,20 +3,20 @@ package com.afforess.minecartmania.events;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartElevatorEvent extends MinecartManiaEvent implements Cancellable{
 
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	private boolean cancelled = false;
 	private Location location;
-	public MinecartElevatorEvent(MinecartManiaMinecart minecart, Location teleport) {
+	public MinecartElevatorEvent(MMMinecart minecart, Location teleport) {
 		super("MinecartElevatorEvent");
 		this.minecart = minecart;
 		this.location = teleport;
 	}
 
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return this.minecart;
 	}
 	

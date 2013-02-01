@@ -2,12 +2,8 @@ package com.afforess.minecartmania.signs.actions;
 
 import org.bukkit.Location;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmania.signs.SignManager;
-import com.afforess.minecartmaniacore.utils.StringUtils;
 
 public class HoldingForAction extends SignAction{
 	
@@ -16,7 +12,7 @@ public class HoldingForAction extends SignAction{
 	protected Location sign;
 
 	
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 	
 		//TODO: fix this mess. Making holding an option of Catch
 		return true;
@@ -72,7 +68,7 @@ public class HoldingForAction extends SignAction{
 
 	
 	public String getFriendlyName() {
-		return "Holding Sign";
+		return "Holding";
 	}
 
 }

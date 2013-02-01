@@ -4,10 +4,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.config.LocaleParser;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmaniacore.entity.MinecartManiaPlayer;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.entity.MinecartManiaPlayer;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class StationCommand extends MinecartManiaCommand {
 
@@ -23,7 +22,7 @@ public class StationCommand extends MinecartManiaCommand {
 		Player player = (Player)sender;
 		
 		if (args.length < 1) {
-			sender.sendMessage(Settings.StationHelpString);
+			sender.sendMessage(Settings.getLocal("StationHelpString"));
 			return false;
 		}
 		
@@ -38,13 +37,9 @@ public class StationCommand extends MinecartManiaCommand {
 		else {
 			mmp.setDataValue("Reset Station Data", null);
 		}
-		mmp.sendMessage(LocaleParser.getTextKey("AdminControlsStation", station));
+		mmp.sendMessage(Settings.getLocal("AdminControlsStation", station));
 		return true;
 	}
 
-    
-    public static boolean getAlwaysRememberStation() {
-        return (Boolean)MinecartManiaWorld.getConfigurationValue("AlwaysRememberStation");
-    }
 
 }

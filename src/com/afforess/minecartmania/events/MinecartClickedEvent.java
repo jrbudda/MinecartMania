@@ -1,12 +1,12 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartClickedEvent extends MinecartManiaEvent implements MinecartEvent{
 	boolean action = false;
-	MinecartManiaMinecart minecart;
+	MMMinecart minecart;
 	
-	public MinecartClickedEvent(MinecartManiaMinecart minecart) {
+	public MinecartClickedEvent(MMMinecart minecart) {
 		super("MinecartClickedEvent");
 		this.minecart = minecart;
 	}
@@ -19,7 +19,7 @@ public class MinecartClickedEvent extends MinecartManiaEvent implements Minecart
 		this.action = Action;
 	}
 
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 

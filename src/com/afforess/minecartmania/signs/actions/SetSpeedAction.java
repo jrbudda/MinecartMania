@@ -1,22 +1,20 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class SetSpeedAction extends SignAction {
 
 	protected double percent = 0;
 	protected boolean isMultiplier = false;
 
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if(isMultiplier){
 			minecart.multiplyMotion(percent);	
 		}
 		else {	
-			minecart.setMotion(.4D * percent / 100 * (minecart.getMotionX() < 0 ? -1:1), minecart.getMotionY(), .4D * percent / 100* (minecart.getMotionZ() < 0 ? -1:1));
+			minecart.setMotion(minecart.getDirection(), .4D * percent / 100 );
 		}
 		return true;
 	}
@@ -31,8 +29,8 @@ public class SetSpeedAction extends SignAction {
 				String[] split = line.toLowerCase().split(":");
 				if (split.length != 2) continue;
 				if(split[1].contains("x")) isMultiplier = true;
-				 percent = Double.parseDouble(StringUtils.getNumber(split[1].split("x")[0]));
-				 return true;
+				percent = Double.parseDouble(StringUtils.getNumber(split[1].split("x")[0]));
+				return true;
 			}
 		}
 		return false;
@@ -45,7 +43,7 @@ public class SetSpeedAction extends SignAction {
 
 
 	public String getFriendlyName() {
-		return "Set Speed Sign";
+		return "Set Speed " + percent + (isMultiplier ? "x" : "");
 	}
 
 }

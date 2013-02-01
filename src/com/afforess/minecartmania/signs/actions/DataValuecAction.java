@@ -1,9 +1,8 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class DataValuecAction extends SignAction{
 	protected String setting = null;
@@ -23,7 +22,7 @@ public class DataValuecAction extends SignAction{
 	}
 
 	
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		minecart.setDataValue(key, value);
 		return true;
 	}

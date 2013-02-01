@@ -1,22 +1,22 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class JumpAction extends SignAction {
 
 	private double blocks =-1;
 
 	@Override
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (blocks < 0) blocks =com.afforess.minecartmania.config.Settings.defaultJumpHeight;
 		if (blocks <=0) return false;
 		double h =blocks;
 		double v =Math.sqrt(31.119*h);
 		if(v>150) v = 150;
 
-		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().log("jump! v=" + v);
+		com.afforess.minecartmania.debug.Logger.debug("jump! v=" + v);
 
 		minecart.setMotionY(v/20);
 		
@@ -51,7 +51,7 @@ public class JumpAction extends SignAction {
 
 	@Override
 	public String getFriendlyName() {
-		return "Jump Sign";
+		return "Jump";
 	}
 
 }

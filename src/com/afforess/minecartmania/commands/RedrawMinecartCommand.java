@@ -14,10 +14,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class RedrawMinecartCommand extends MinecartManiaCommand{
 
@@ -31,10 +31,10 @@ public class RedrawMinecartCommand extends MinecartManiaCommand{
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player[] online = Bukkit.getServer().getOnlinePlayers();
-		ArrayList<MinecartManiaMinecart> minecarts = MinecartManiaWorld.getMinecartManiaMinecartList();
+		ArrayList<MMMinecart> minecarts = MinecartManiaWorld.getMinecartManiaMinecartList();
 		for (Player p : online) {
 			CraftPlayer player = (CraftPlayer)p;
-			for (final MinecartManiaMinecart minecart : minecarts) {
+			for (final MMMinecart minecart : minecarts) {
 				final Entity passenger = minecart.getPassenger();
 				minecart.eject();
 				Packet packet = new Packet29DestroyEntity(minecart.getEntityId());
@@ -55,8 +55,8 @@ public class RedrawMinecartCommand extends MinecartManiaCommand{
 				if (passenger != null) {
 					Runnable update = new Runnable() {
 						public void run() {
-							minecart.setMotion(motion);
 							minecart.setPassenger(passenger);
+							minecart.setMotion(motion);			
 						}
 					};
 					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), update);
@@ -64,7 +64,7 @@ public class RedrawMinecartCommand extends MinecartManiaCommand{
 				}
 			}
 		}
-		sender.sendMessage(LocaleParser.getTextKey("AdminControlsRedrawMinecarts"));
+		sender.sendMessage(Settings.getLocal("AdminControlsRedrawMinecarts"));
 		return true;
 	}
 

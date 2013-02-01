@@ -5,8 +5,8 @@ import java.util.Arrays;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmaniacore.utils.ItemUtils;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.utils.ItemUtils;
 
 public abstract class SensorConstructor {
 	
@@ -31,7 +31,7 @@ public abstract class SensorConstructor {
 			if (sensorType == SensorType.DETECT_ITEM_OR || sensorType == SensorType.DETECT_ITEM_AND) {
 				if (ItemUtils.getFirstItemStringToMaterial(sign.getLine(2)) == null) {
 					if (player != null) {
-						player.sendMessage(LocaleParser.getTextKey("SignCommandsSensorItemError"));
+						player.sendMessage(Settings.getLocal("SignCommandsSensorItemError"));
 					}
 					return null;
 				}
@@ -39,7 +39,7 @@ public abstract class SensorConstructor {
 			if (sensorType == SensorType.DETECT_PLYR_NAME) {
 				if (sign.getLine(2).trim().isEmpty()) {
 					if (player != null) {
-						player.sendMessage(LocaleParser.getTextKey("SignCommandsSensorPlayerNameError"));
+						player.sendMessage(Settings.getLocal("SignCommandsSensorPlayerNameError"));
 					}
 					return null;
 				}
@@ -72,7 +72,7 @@ public abstract class SensorConstructor {
 				case DETECT_ITEMHELD: sensor = new SensorItemHeld(sensorType, sign, name); break;
 			}
 			if (player != null) {
-				player.sendMessage(LocaleParser.getTextKey("SignCommandsSensorSuccess"));
+				player.sendMessage(Settings.getLocal("SignCommandsSensorSuccess"));
 			}
 			return sensor;
 		}

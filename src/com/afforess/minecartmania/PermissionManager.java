@@ -3,13 +3,13 @@ package com.afforess.minecartmania;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
+import com.afforess.minecartmania.debug.Logger;
 
 public class PermissionManager {
 
 	//private PermissionHandler handler = null;
 	public PermissionManager(Server server) {		
-		MinecartManiaLogger.getInstance().log("Using Bukkit permissions.");
+		Logger.info("Using Bukkit permissions.");
 	}
 
 
@@ -27,7 +27,7 @@ public class PermissionManager {
 			return true;
 		}
 
-		return player.hasPermission("minecartmania.signs.break." + sign) || player.hasPermission("minecartmania.signs.break.*");
+		return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*");
 
 	}
 

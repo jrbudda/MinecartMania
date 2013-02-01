@@ -6,8 +6,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.listeners.VehicleListener;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.utils.MinecartUtils;
+
 
 public class EjectCommand extends MinecartManiaCommand{
 
@@ -31,16 +32,16 @@ public class EjectCommand extends MinecartManiaCommand{
 					if (p.isInsideVehicle())
 						p.leaveVehicle();
 					if (isPermenantEject()) {
-						VehicleListener.toggleBlockFromEntering(p);
+						MinecartUtils.toggleBlockFromEntering(p);
 					}
 				}
 			}
 			else {
-				sender.sendMessage(LocaleParser.getTextKey("AdminControlsNoPlayerFound"));
+				sender.sendMessage(Settings.getLocal("AdminControlsNoPlayerFound"));
 			}
 		}
 		else {
-			sender.sendMessage(LocaleParser.getTextKey("AdminControlsEjectUsage"));
+			sender.sendMessage(Settings.getLocal("AdminControlsEjectUsage"));
 		}
 		return true;
 	}

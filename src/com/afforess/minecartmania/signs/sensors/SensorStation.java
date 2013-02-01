@@ -2,8 +2,8 @@ package com.afforess.minecartmania.signs.sensors;
 
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class SensorStation extends GenericSensor {
 	
@@ -14,7 +14,7 @@ public class SensorStation extends GenericSensor {
 		this.sign = sign;
 	}
 	
-	public void input(MinecartManiaMinecart minecart) {
+	public void input(MMMinecart minecart) {
 		
 		if (minecart != null) {
 			if (minecart.hasPlayerPassenger()){

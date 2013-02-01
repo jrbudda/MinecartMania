@@ -1,82 +1,65 @@
 package com.afforess.minecartmania.config;
 
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import org.bukkit.ChatColor;
+
+import com.afforess.minecartmania.entity.Item;
 
 public  class Settings {
 
-	public static final String StationHelpString = "Usage /st 'station name'";
 	public static final int DefaultPlatformRange = 4;
+	public static int MaxAllowedRange = 5;
+
 	//core
-	public static int DefaultMaxSpeedPercent;
-	public static int MaxAllowedSpeedPercent;
-	public static int DefaultDerailedFrictionPercent = 100;
+
 	public static boolean DefaultSlowWhenEmpty;
-	public static boolean ClearTrack;
-	public static int RangeXZ = 4;
-	public static int RangeY = 4;
-     public static int MaxRange = 5;
-    public static boolean LoadChunksOnTrack;
+	public static boolean RemoveDeadCarts;
+	public static boolean LoadChunksOnTrack;
 	public static boolean KillMobsOnTrack;
 	public static boolean ReturnCartsToOwner;
-	public static boolean StackAllItems;
-	public static boolean LimitedSignRange;
 	public static boolean DisappearonDisconnect;
+
+	//physics
+	public static boolean MinecartCollisions;
+	public static boolean DefaultMagneticRail;
+	public static int DefaultPassengerFrictionPercent;
+	public static int DefaultEmptyFrictionPercent;
+	public static double defaultJumpHeight;
+	public static int DefaultMaxSpeedPercent;
+	public static int MaxAllowedSpeedPercent;
+	public static int DefaultDerailedFrictionPercent;
+	public static int SlopeSpeedPercent;
 	
 	//new
 	public static boolean KillPlayersOnTrack;
-	public static int DefaultPassengerFrictionPercent;
-	public static int DefaultEmptyFrictionPercent;
-	public static boolean DefaultMagneticRail;
-	
-	//Signs
-	public static String AnnouncementPrefix ;
-    public static int SensorDisableDelay = 8;
 
-    //Intersections
+
+	//Signs
+	public static int SensorDisableDelay = 8;
+
+	//Intersections
 	public static int IntersectionPromptsMode;
 	public static int StationParingMode;
 	public static boolean StationCommandSaveAfterUse;
-	
+
+	public static boolean StationsUseOldDirections = false;
+
 	//Admin
 	public static int EmptyMinecartKillTimer;
 	public static int EmptyStorageMinecartKillTimer;
 	public static int EmptyPoweredMinecartKillTimer;
-	public static int RailAdjusterTool;
-	public static int KillPlayersOnTrackMinnimumSpeed = 25;
+	public static Item RailAdjusterTool;
+	public static int KillPlayersOnTrackMinnimumSpeed;
 	public static boolean IgnorePlayersOnTrack;
-	
-	
+
+	public static boolean RememeberEjectionLocations;
+
 	//Chests
-	public static boolean SpawnAtSpeed;
 	public static int	ChestDispenserSpawnDelay;
 	public static int ItemCollectionRange;
-	
-	
+	public static boolean StackAllItems;
+
 	//
-	public static double defaultJumpHeight = 3;
-	
-	public static int getDefaultMinecartDerailedSpeedPercent() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("DefaultMinecartDerailedSpeedPercent",100);
-	}	 
 
-	public static Boolean getDefaultMinecartSlowerWhenEmpty() {
-		return (Boolean)MinecartManiaWorld.getConfigurationValue("MinecartSlowerWhenEmpty",true);
-	}	 
-	public static int getMinecartsClearRailsSetting() {
-		return (Integer)MinecartManiaWorld.getConfigurationValue("MinecartsClearRails", true);
-	}
-
-	public static int getMinecartRange() {
-		return RangeXZ;
-	}
-
-	public static int getMinecartRangeY() {
-		return RangeY;
-	}
-
-	public static int getMinecartMaximumRange() {
-		return MaxRange;
-	}
 
 	public static boolean isKeepMinecartsLoaded() {
 		return LoadChunksOnTrack;
@@ -86,16 +69,18 @@ public  class Settings {
 		return KillMobsOnTrack;
 	}
 
-	public static boolean isStackAllItems() {
-		return StackAllItems;
+
+
+	public static String getLocal(String key, Object ...args ){
+		return String.format(parseColors(com.afforess.minecartmania.MinecartMania.getInstance().getConfig().getString("Messages."+key,"(key not found:" + key+")")),args);
 	}
 
-	public static boolean isLimitedSignRange() {
-		return LimitedSignRange;
-	}
-
-	public static boolean isDisappearOnDisconnect() {
-		return DisappearonDisconnect;
+	public static String parseColors(String str) {
+		for (ChatColor color : ChatColor.values()) {
+			String name = "\\[" + color.name().toUpperCase() + "]";
+			str = str.replaceAll(name, color.toString());
+		}
+		return str;
 	}
 
 }

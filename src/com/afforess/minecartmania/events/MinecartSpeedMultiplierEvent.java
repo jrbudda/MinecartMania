@@ -2,21 +2,21 @@ package com.afforess.minecartmania.events;
 
 import org.bukkit.event.Cancellable;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartSpeedMultiplierEvent extends MinecartManiaEvent implements Cancellable{
 
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	private double multiplier;
 	private final double origMultiplier;
-	public MinecartSpeedMultiplierEvent(MinecartManiaMinecart minecart, double multiplier) {
+	public MinecartSpeedMultiplierEvent(MMMinecart minecart, double multiplier) {
 		super("MinecartSpeedAlterEvent");
 		this.minecart = minecart;
 		this.multiplier = multiplier;
 		this.origMultiplier = multiplier;
 	}
 	
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return this.minecart;
 	}
 	

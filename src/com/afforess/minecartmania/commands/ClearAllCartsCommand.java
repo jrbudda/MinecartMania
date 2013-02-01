@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class ClearAllCartsCommand extends MinecartManiaCommand implements ClearMinecartCommand {
 
@@ -46,22 +46,23 @@ public class ClearAllCartsCommand extends MinecartManiaCommand implements ClearM
 		MinecartManiaWorld.pruneMinecarts();
 		
 		int count = 0;
-		ArrayList<MinecartManiaMinecart> minecartList = MinecartManiaWorld.getMinecartManiaMinecartList();
-		for (MinecartManiaMinecart minecart : minecartList) {
+		ArrayList<MMMinecart> minecartList = MinecartManiaWorld.getMinecartManiaMinecartList();
+		for (MMMinecart minecart : minecartList) {
 			if (!minecart.isDead() && !minecart.isDead()) {
 				if (distance < 0 || (minecart.getLocation().toVector().distance(location) < distance)) {
 					if (shouldRemoveMinecart(minecart)) {
 						count++;
-						minecart.kill(!delete);
+						if(delete) minecart.killNoReturn();
+						else minecart.killOptionalReturn();
 					}
 				}
 			}
 		}
-		sender.sendMessage(LocaleParser.getTextKey("AdminControlsMinecartsRemoved", count));
+		sender.sendMessage(Settings.getLocal("AdminControlsMinecartsRemoved", count));
 		return true;
 	}
 
-	public boolean shouldRemoveMinecart(MinecartManiaMinecart minecart) {
+	public boolean shouldRemoveMinecart(MMMinecart minecart) {
 		return true;
 	}
 

@@ -2,19 +2,19 @@ package com.afforess.minecartmania.events;
 
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartLaunchedEvent extends MinecartManiaEvent implements MinecartEvent {
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	private boolean action = false;
 	private Vector launchSpeed;
-	public MinecartLaunchedEvent(MinecartManiaMinecart cart, Vector speed) {
+	public MinecartLaunchedEvent(MMMinecart cart, Vector speed) {
 		super("MinecartLaunchedEvent");
 		minecart = cart;
 		launchSpeed = speed;
 	}
 
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 	

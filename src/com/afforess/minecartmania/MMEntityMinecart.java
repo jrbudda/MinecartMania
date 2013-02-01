@@ -3,20 +3,20 @@ package com.afforess.minecartmania;
 //CraftBukkit start
 import java.util.List;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Vehicle;
-
 import net.minecraft.server.v1_4_R1.Block;
 import net.minecraft.server.v1_4_R1.BlockMinecartTrack;
 import net.minecraft.server.v1_4_R1.Entity;
 import net.minecraft.server.v1_4_R1.EntityMinecart;
 import net.minecraft.server.v1_4_R1.IUpdatePlayerListBox;
 import net.minecraft.server.v1_4_R1.MathHelper;
-import net.minecraft.server.v1_4_R1.MinecraftServer;
-import net.minecraft.server.v1_4_R1.Vec3D;
-//CraftBukkit end
 import net.minecraft.server.v1_4_R1.World;
 import net.minecraft.server.v1_4_R1.WorldServer;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Vehicle;
+
+import com.afforess.minecartmania.debug.Logger;
+//CraftBukkit end
 
 public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecart {
 	private int e;
@@ -60,7 +60,9 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 	public boolean downhill;
 
 	public boolean magnetic = false;
-	
+	public boolean collisions = false;
+
+
 	public boolean onNormalRail(){
 		return onRails && !onPoweredPoweredRail && !onUnpoweredPoweredRail;
 	}
@@ -92,6 +94,16 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 	}
 
 	private int slopedata = 0;
+
+	private void constrainSpeed(){
+		double ts = Math.sqrt(motX*motX + motZ*motZ);
+
+		if (ts > maxSpeed){
+			motX = motX / ts * maxSpeed;
+			motZ =  motZ / ts * maxSpeed;
+		}
+
+	}
 
 	private void setPArams(){
 		int xBlock = MathHelper.floor(this.locX);
@@ -152,7 +164,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 	public void move() {
 
-		//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j start " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+		//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.info(" j start " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		// CraftBukkit start
 		double prevX = this.locX;
@@ -186,11 +198,11 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		if (!this.world.isStatic && this.world instanceof WorldServer) {
 			this.world.methodProfiler.a("portal");
-			MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
+			//	MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
 
 			i = this.z();
 			if (this.ao) {
-				if (true || minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
+				if (true ){// ||minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
 					if (this.vehicle == null && this.ap++ >= i) {
 						this.ap = i;
 						this.portalCooldown = this.ab();
@@ -227,7 +239,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		if (frozen) return;
 
 		if (this.world.isStatic) {
-			//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j static " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.info(" j static " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 			if (this.j > 0) {
 				double d0 = this.locX + (this.at - this.locX) / (double) this.j;
@@ -252,40 +264,36 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			//TODO: figure our what happens when the speed, location, or frozen state is changed while iterating this.
 
 			//constrain.
-			if (motX < -maxSpeed) {
-				motX = -maxSpeed;
-			}
 
-			if (motX > maxSpeed) {
-				motX = maxSpeed;
-			}
-
-			if (motZ < -maxSpeed) {
-				motZ = -maxSpeed;
-			}
-
-			if (motZ > maxSpeed) {
-				motZ = maxSpeed;
-			}
+			constrainSpeed();
 
 			// move in .5m increments.
 			double spd= Math.sqrt(motX*motX + motZ*motZ);
-			double incspd= spd;
 			double speeddelta = 0;
 
-	//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" incomming speed x:" + motX + " z:" + motZ);
+			if (this.passenger != null) {
+				// there is a passenger
+				double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
+				if (passengerSpeed > .0001D && spd < MaxPushSpeedPercent / 100 * defaultPassengerPushSpeed) {
+					this.motX += this.passenger.motX * 0.2D;
+					this.motZ += this.passenger.motZ * 0.2D;
+					 spd= Math.sqrt(motX*motX + motZ*motZ);
+				}
+				//I think this bumps the cart along? or maybe when the passenger gets in?
+			}	
+			
+			double incspd= spd;
+			
+			Logger.motion(" incomming speed x:" + motX + " z:" + motZ);
 
-			int mod = 1;
 			while (spd > .4) {		
 
 				if (Math.abs(motX) > Math.abs(motZ)){
-					if (motX < 0) mod = -1;
-					motX = .4 * mod;
+					motX = .4 * ((motX < 0) ? -1 :1);
 					motZ = 0;
 				}
 				else if (Math.abs(motZ) > Math.abs(motX)){
-					if (motZ < 0) mod = -1;
-					motZ = .4 * mod;		
+					motZ = .4 * ((motZ < 0) ? -1 :1);		
 					motX = 0;
 				}
 				else {
@@ -295,21 +303,25 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 				nonstaticmove();
 
+				//undo any multiplier
+				if(motX >.4) motX = .4;
+				if(motZ >.4) motZ = .4;
+				if(motX <-.4) motX = -.4;
+				if(motZ <-.4) motZ = -.4;
+
 				double ts = Math.sqrt(motX*motX + motZ*motZ);
 				speeddelta += (.4- ts); //4.8
 				spd -=  .4; 
 			} 
 
-			
+
 			if(spd > 0.0001D || incspd <= 0.0001D){
 				if (Math.abs(motX) > Math.abs(motZ)){
-					if (motX < 0) mod = -1;
-					motX = spd * mod;
+					motX = spd * ((motX < 0) ? -1 :1);
 					motZ = 0;
 				}
 				else if (Math.abs(motZ) > Math.abs(motX)){
-					if (motZ < 0) mod = -1;
-					motZ = spd * mod;		
+					motZ = spd * ((motZ < 0) ? -1 :1);	;		
 					motX = 0;
 				}
 				else {
@@ -343,8 +355,11 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				motX = Math.sqrt(spd*spd/2)  * (motX < 0 ? -1 :1);		
 			}
 
-	//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" outgoing speed x:" + motX + " z:" + motZ + "spd: " + spd + " delta: " + speeddelta);
-//
+			constrainSpeed();
+
+			Logger.motion(" outgoing speed x:" + motX + " z:" + motZ + "spd: " + spd + " delta: " + speeddelta);
+			//
+			
 		}
 
 		//stop motion if very slow.
@@ -395,19 +410,21 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		}
 		else isNew = false;
 
-
+		constrainSpeed();
 
 		// CraftBukkit end
 
-
+		@SuppressWarnings("rawtypes")
 		List list = this.world.getEntities(this, this.boundingBox.grow(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 
 		if (list != null && !list.isEmpty()) {
 			for (int l1 = 0; l1 < list.size(); ++l1) {
 				Entity entity = (Entity) list.get(l1);
-
 				if (entity != this.passenger && entity.M() && entity instanceof EntityMinecart) {
-					entity.collide(this);
+					//bump the other cart.
+					if (!(entity instanceof MMEntityMinecart) ||  !((MMEntityMinecart)entity).frozen){
+						if(this.collisions)	entity.collide(this);
+					}
 				}
 			}
 		}
@@ -437,9 +454,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 	private void nonstaticmove(){
 
-		//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j notstatic " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
-
-
+		com.afforess.minecartmania.debug.Logger.motion(" j notstatic " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		//establish location
 
@@ -450,7 +465,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		int offset = findRailsYOffset();
 
-		if((motY <=0 && offset >=0) || magnetic){
+		if((motY <=0) || magnetic){
 			this.setPosition(this.locX, this.locY + offset , this.locZ);	
 		}
 
@@ -465,7 +480,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		if ((onRails && offset >=0) || (onSlope && offset ==-1)) { //only count as on rails when above when its a slope.
 			//on rails
-		//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j onrails " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			Logger.motion(" j onrails " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 			this.fallDistance = 0.0F;
 			//	Vec3D vec3d = this.a(this.locX, this.locY, this.locZ);
@@ -510,16 +525,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			this.motZ = totalSpeed * dZ / d8;
 
 
-			if (this.passenger != null) {
-				// there is a passenger
-				double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
-				double	cartSpeed = this.motX * this.motX + this.motZ * this.motZ;
-				if (passengerSpeed > .0001D && cartSpeed < MaxPushSpeedPercent / 100 * defaultPassengerPushSpeed) {
-					this.motX += this.passenger.motX * 0.2D;
-					this.motZ += this.passenger.motZ * 0.2D;
-				}
-				//I think this bumps the cart along? or maybe when the passenger gets in?
-			}
 
 
 			double fractionalLocation = 0.0D;
@@ -575,31 +580,17 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			//frictions
 			if(slowWhenEmpty && this.passenger == null){
-				this.motX *= this.emptyFrictionPercent / 100 * this.defaultemptyFriction;
-				this.motZ *=  this.emptyFrictionPercent / 100 * this.defaultemptyFriction;
+				this.motX *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
+				this.motZ *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
 			}
 			else{
-				this.motX *= this.passengerFrictionPercent / 100 * this.defaultpassengerFriction;
-				this.motZ *=  this.passengerFrictionPercent / 100 * this.defaultpassengerFriction;
+				this.motX *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
+				this.motZ *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
 			}
 
 
 			//constrain.
-			if (motX < -maxSpeed) {
-				motX = -maxSpeed;
-			}
-
-			if (motX > maxSpeed) {
-				motX = maxSpeed;
-			}
-
-			if (motZ < -maxSpeed) {
-				motZ = -maxSpeed;
-			}
-
-			if (motZ > maxSpeed) {
-				motZ = maxSpeed;
-			}
+			constrainSpeed();
 
 
 			if (this.uphill) {
@@ -609,14 +600,21 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				this.setPosition(this.locX, yBlock+.5, this.locZ); //avoid collision
 			}
 
-			if (motY < 0 ) motY = 0;
+			if (motY < 0 || magnetic) motY = 0;
 
-		//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j beforemove " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			Logger.motion(" j beforemove " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
-			//move the cart.
-			this.move(motX, motY, motZ);
 
-		//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j aftermove " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			//move the cart. This is where collisions happen, sadly.
+			if(collisions)	this.move(motX, motY, motZ);
+			else {
+				locX += motX;
+				locY += motY;
+				locZ += motZ;
+				this.setPosition(locX, locY, locZ);
+			}
+
+			Logger.motion(" j aftermove " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 
 			//				//oh god what is this.
@@ -650,7 +648,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			//establish new position		
 
 			boolean wasUphill = uphill;
-			
+
 			int newoffset = findRailsYOffset();
 			this.setPosition(this.locX, this.locY + newoffset , this.locZ);
 
@@ -660,14 +658,14 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			setPArams(); //populate the fields, cause im lazy.		
 
-				
+
 			if (newXBlock != xBlock || newZBlock != zBlock) {
-				
+
 				//now in a new block, move speed from x to z if needed, I think.	
 				totalSpeed = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
 				this.motX = totalSpeed * (double) (newXBlock - xBlock);
 				this.motZ = totalSpeed * (double) (newZBlock - zBlock);
-				
+
 				if(!magnetic && !onSlope && wasUphill && !uphill){
 					//Ramp
 					motY = Math.sqrt(totalSpeed * totalSpeed + totalSpeed*totalSpeed);
@@ -704,7 +702,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				this.setPosition(this.locX, this.locY, this.locZ);
 			}
 
-		//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j corrected " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			Logger.motion(" j corrected " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 
 			double d21;
@@ -751,35 +749,21 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		} else {		//not on rails.
 
-	//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j off1 " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			Logger.motion("offrails1" + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
-			if (this.motX < -maxSpeed) {
-				this.motX = -maxSpeed;
-			}
-
-			if (this.motX > maxSpeed) {
-				this.motX = maxSpeed;
-			}
-
-			if (this.motZ < -maxSpeed) {
-				this.motZ = -maxSpeed;
-			}
-
-			if (this.motZ > maxSpeed) {
-				this.motZ = maxSpeed;
-			}
+			constrainSpeed();
 
 			//Don't apply friction if in the block above a rail, cause i think onground retruns true.
 			if (this.onGround && offset !=-1) {
-				this.motX *= this.derailedFrictioPercent / 100 * this.defaultDerailedFriction;
-				this.motZ *=  this.derailedFrictioPercent / 100 * this.defaultDerailedFriction;
+				this.motX *=  ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
+				this.motZ *=   ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
 			}
 
 			this.setPosition(this.locX, this.locY, this.locZ); //necessary when first created
 			this.move(this.motX, this.motY, this.motZ);		
 
 
-	//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" j off2 " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			Logger.motion("offrails2 " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		}
 

@@ -1,9 +1,8 @@
 package com.afforess.minecartmania.signs;
 
-import com.afforess.minecartmania.signs.MMSign;
-import com.afforess.minecartmania.signs.MMSign;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
-import com.afforess.minecartmaniacore.entity.Item;
+import com.afforess.minecartmania.MMSign;
+import com.afforess.minecartmania.debug.Logger;
+import com.afforess.minecartmania.entity.Item;
 
 public class MinecartTypeSign extends MMSign{
 	protected boolean standard = false;
@@ -45,7 +44,7 @@ public class MinecartTypeSign extends MMSign{
 	@Override
 	public void update(org.bukkit.block.Sign sign) {
 		calculated = false;
-		MinecartManiaLogger.getInstance().severe("Updating type sign. Text is: " + lines[0]);
+		Logger.severe("Updating type sign. Text is: " + lines[0]);
 		super.update(sign);
 	}
 	
@@ -61,7 +60,7 @@ public class MinecartTypeSign extends MMSign{
 	}
 	
 	public static boolean isMinecartTypeSign(MMSign sign) {
-		MinecartManiaLogger.getInstance().debug("Testing Sign For Minecart Type Sign, Line 0: " + sign.getLine(0));
+		Logger.debug("Testing Sign For Minecart Type Sign, Line 0: " + sign.getLine(0));
 		if (sign.getLine(0).contains("[Dispenser]")) {
 			sign.setLine(0, "minecart type");
 			sign.addBrackets();
@@ -69,7 +68,7 @@ public class MinecartTypeSign extends MMSign{
 		}
 		if (sign.getLine(0).toLowerCase().contains("minecart type")) {
 			sign.setLine(0, "[Minecart Type]");
-			MinecartManiaLogger.getInstance().debug("Found valid Minecart Type Sign");
+			Logger.debug("Found valid Minecart Type Sign");
 			return true;
 		}
 		return false;

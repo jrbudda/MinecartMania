@@ -1,85 +1,163 @@
+#Server Options
+#This setting will keep chunks containing minecarts loaded in memeory. You should only use this for unattended farming or automation as it does use more memory.
+KeepChunksLoaded: false
+#Not currently working, I dont think
+PreserveMinecartOnLogout: true
+#If true the player or chest that spawns a minecart will have it returned when it is destroyed, otherwise
+ReturnCartsToOwner: false
+#When a player right-clicks a track with this item it will cycle through all available rail types. See items.txt for valid names.
+RailAdjusterTool: WOOD_PICKAXE
+#If true, station rule signs will use the 'old' directions which are rotated 90degrees counter-clockwise from actual compass directions. This is for legacy rail systems only.
+StationsUseOldDirections: false
+#I dunno what this does, something to do with not returning storage minecarts to their owner along with the items.
+RemoveDeadMinecarts: false
 
-RangeXZ: 1
-RangeY: 1
+#[Eject] actions look for [eject at] or [eject here] actions in an 8 block radius. If instructions are not found, this setting dictates
+#whether or not to use any previously encountered [eject at] ot [eject here] actions. Set to false for legacy rail systems with mixed controller/uncontrolled ejections.
+RememberEjectionLocations: true
+
+#The number of seconds after which the specified type of minecart will be removed.
+#Set to -1 to disable.
+EmptyMinecartKillTimer: 60
+EmptyStorageMinecartKillTimer: -1
+EmptyPoweredMinecartKillTimer: 60
+
+#Console Logging Mode. Accepted Values: "None", "Severe", "Normal", "Debug", "Timer"
+#Severe will produce only console logs from severe errors from MM
+#Normal will produce standard startup console logs, and error logs from MM
+#Debug will produce standard startup console logs, error logs, and debugging logs from MM
+#Timer will produce standard startup console logs, error logs, debugging logs, and process time logs, from MM
+LoggingMode: Normal
+
+#This is the method MCM will use to match Station Rule 'st-' conditions to a minecart's destination. Setting 1 is recommened.
+#0 - Match exact station name (ignores case)
+#1 - Pattern matching. 
+#       @ is any letter, ignoring case
+#       # is any digit
+#       ? is any single character
+#       * is anything
+#      Examples:
+#        st-Cityville* would match any station starting with Cityville
+#        st-Cityville-A# would match stations Cityville-A0 through Cityville-A9
+#2 - Full regex parsing.
+StationParsingMethod: 1
+
+#0 - Always prompt rider to tap cart in desired direction at intersections if destination cannot be determined
+#1 - Prompt only when intersection is above a Station block and destination cannot be determined. (Use this if using [Station] signs instead of blocks)
+#2 - Nerver prompt at intersections, unless explicitly on a Prompt block.
+IntersectionPromptsMethod: 0
 
 #Minecart Physics
+
+#When set to false, minecarts will not collide with each other or with blocks or entities while on rails. 
+#   Ensures reliable trasportation. Players can still push carts at low speeds. Recommended setting.
+#When set to true, minecarts behave normally and will bounce off blocks and other minecarts.
+MinecartCollisions: false
+
+#Default magnetic rail value for new minecarts. Magnetic rail prevents the minecart from leaving the track vertically.
+MagneticRail: false
+
+#The default Max Speed for new minecarts, as a percentage of normal minecart max speed.
 MaxSpeedPercent: 200
+
+#The maximum allowed Max Speed as set by signs, as a percentage of normal minecart max speed.
 MaxAllowedSpeedPercent: 500
+
+#The friction applied to minecarts on the ground off the track, as a percentage of the normal minecart derailed friction.
 DerailedFrictionPercent: 100
+
+#The friction applied to minecarts on rail with a passenger or when SlowWhenEmpty is false, as a percentage of the normal minecart passenger friction.
+#Whether to use seperate Frictions for empty and full minecarts. if false, the passenger friction is used.
+#The friction applied to minecarts on rails if SlowWhenEmpty is true, as a percentage of the normal minecart empty friction.
 PassengerFrictionPercent: 100
 SlowWhenEmpty: false
 EmptyFrictionPercent: 100
+
+
+#The maximum speed to which a player can nudge a minecart while riding in it, as a percentage of the normal minecart max speed.
 MaxPushSpeedPercent: 100
+
+#The speed change applied while going up or down slopes, as a percentage of normal minecart max speed.
 SlopeSpeedPercent: 100
+
+#The gravity applied to minecarts while flying through the air, as a percentage of normal minecart gravity.
 GravityPercent: 100
 
-ClearItemsOnTrack: true
+#Entities on Track
+
+#Whether mobs that collide with the minecart should be removed, otherwise they will be ignored.
 KillMobsOnTrack: true
+#Whether players that collide with the minecart should be killed if it is going fast enough, otherwise they will be bumped to the side.
 KillPlayersOnTrack: false
+#The minimum speed required to kill a player on collision, as a percentage of normal minecart max speed.
 KillPlayersOnTrackMinimumSpeed: 90
-IgnorePlayersOnTrack: true
 
-LimitedSignRange: true
-ReturnCartsToOwner: false
 
-AnnouncementPrefix: "&e[Announcement] &f"
-
-ControlBlocks:
+#Control blocks
+#Control blocks are aliases for signs, when the minecart passes over one, it will execute the actions specified.
 #See the items.txt file for the proper name of each block.
-#Actions are like signs. use / between each line.
+#Each entry below the block represents a sign. Use / to seperate the lines on each sign.
+#You can specify a Redstone state for each individual sign by starting line 1 with (ON), (OFF), (TRIGGERON), or (TRIGGEROFF). 
+#    ON and OFF actions are run when the minecart passes over it and the block has the correct power state.
+#    TRIGGERON and TRIGGEROFF actions are run when the redstone power of the block changes to the specified state, whether or not a minecart is nearby.
+#       Only Spawn and Launch can currently be triggered by redstone.
+#Be sure to enclose the whole entry in double quotes ""
+#Refer to the documentation for available signs and their syntax.
+#Example
+#   SOME_BLOCK:
+#     - "[sign 1 line 1]"
+#     - "[sign 2 line 1] / [sign 2 line 2]"
+#     - "(ON) [redstone on sign]"
+#     - "(OFF) [redstone off sign]"
+ControlBlocks:
   GOLD_BLOCK:
-   Redstone: Disables
-   Actions:
-      - "[set speed:1.5x]"    
-  EMERALD_BLOCK:
-   Redstone: Disables
-   Actions:
-      - "[set speed:100]"   
+      - "[set speed:1.5x]"       
   LIGHT_GREEN_WOOL:
-   Redstone: Disables
-   Actions:
-      - "[platform]"
+      - "[platform]" 
   RED_WOOL:
-   Redstone: Disables
-   Actions:
       - "[elevator]"
-      - "[announce] / Elevator!"     
+      - "[announce] / Going up!"       
   WOOL:
-   Actions:
-      - "[set speed:-1x]"   
+      - "[set speed:-1x]"  
+  OBSIDIAN:
+      - "(OFF) [Catch]"
+      - "(TRIGGERON) [previous dir]"      
+  END_STONE:
+      - "[Catch] / hold for 5"
   BRICK:
-   Actions:
-      - "[Station]"    
+      - "[Station]"      
+  NETHER_BRICK:
+      - "[Prompt]"
   DIAMOND_BLOCK:
-   Redstone: TriggerOn
-   Actions:
-      - "[spawn]"
-      - "[launch]"
+      - "(TRIGGERON)[spawn]"
+      - "(ON)[launch]"      
+      - "(OFF)[launch player]"   
+  EMERALD_BLOCK:
+      - "(TRIGGERON)[spawn]"
+      - "(ON)[launch2]"      
+      - "(OFF)[launch2 player]"    
   IRON_BLOCK:
-   Redstone: Disables
-   Actions:
-      - "[eject]"
+      - "[eject]"     
+  LAPIS_ORE:
+      - "[eject here]"
   DIAMOND_ORE:
-   Redstone: Disables
-   Actions:
-       - "[kill]"  
+       - "[kill]"      
   POWERED_RAIL:
-   Redstone: Enables
-   Actions:
-       - "[set speed:16x]"   
+       - "(ON) [set speed:2x]"   
+       - "(OFF) [set speed:0.5x]"
   SPONGE:    
-   Redstone: Disables
-   Actions:
-       - "[jump]"
+       - "(OFF) [jump]"
 
        
+#Item aliases to provide a single name for a group of items. 
+#See the items.txt file for the proper name or ID for each item.
 ItemAliases:
   Ores:
-      - GOLD_ORE
-      - EMERALD_ORE
-      - DIAMOND_ORE
-      - LAPIS_ORE
-      - IRON_ORE
+    - GOLD_ORE
+    - EMERALD_ORE
+    - DIAMOND_ORE
+    - LAPIS_ORE
+    - IRON_ORE
       
   Food:
     - 260
@@ -89,3 +167,56 @@ ItemAliases:
     - 350
     - 319
     - 320 
+
+#Localization messages. 
+Messages: 
+  LackPermissionForCommand: "[RED]You do not have permission to use that command"
+  LackPermission: "[RED]You do not have permission to do that."
+  LackPermissionForSign: "[RED]You do not have permission to create a %s"
+  LackPermissionToRemoveSign: "[RED]You do not have permission to remove a %s"
+  LackPermissionForControlBlock: "[RED]You do not have permission to place a %s"
+  SignCommandsAnnouncementPrefix: "[YELLOW] Announcement: [WHITE]"
+  SignCommandsMinecartLocked: "[YELLOW]Your Minecart Has been Locked."
+  SignCommandsMinecartUnlocked: "[GREEN]Your Minecart Has Been Unlocked"
+  SignCommandsMinecartLockedError: "[YELLOW]Your minecart is locked. \n[YELLOW]It will unlock at your destination."
+  SignCommandsDestination: "[GREEN]You've arrived at your destination"
+  SignCommandsSensorItemError: "[RED]Item Sensors Must Have a Valid Item Name or id, On Line 3"
+  SignCommandsSensorPlayerNameError: "[RED]Player Name Sensors Must Have The Name Of The Player To Detect, On Line 3"
+  SignCommandsSensorSuccess: "[GREEN]Sensor Successfully Created"
+  StationsTapInDirection: "[YELLOW]Tap your minecart in the desired direction"
+  StationsInvalidDirection: "[RED]Not a valid direction."
+  StationsValidDirections: "[YELLOW]You can go %s"
+  AdminReload: "[GREEN] config.yml reloaded."
+  AdminControlsValidDebugModes: "[RED]Valid Debug Modes: %s"
+  AdminControlsDebugMode: "[GREEN]Switched to debug mode: %s"
+  AdminControlsNoPlayerFound: "[RED]No player matches that name"
+  AdminControlsEjectUsage: "[RED]Proper Usage: '/eject [player name]'"
+  AdminControlsPermEjectUsage: "[RED]Proper Usage: '/permeject [player name]'"
+  AdminControlsMinecartsRemoved: "[GREEN]%d minecarts were removed from the server successfully."
+  AdminControlsInvalidValue: "[RED]Invalid Configuration Value"
+  AdminControlsSetConfigKeyUsage: "[RED]Proper Usage: '/setconfigkey [key] [value]'. \nHint: The key and value should be surrounded by brackets."
+  AdminControlsMomentum: "Speed X: %.2f \nSpeed Y: %.2f \nSpeed Z: %.2f"
+  AdminControlsMomentumInvalid: "[RED]You must be in a minecart."
+  AdminControlsStation: "[GREEN]Station Type set to: %s"
+  AdminControlsConfigKey: "The value of '%s' is '%s'"
+  AdminControlsHelp: "The following are valid MinecartMania commands: "
+  AdminControlsConfigKeyUsage: "[RED]Proper Usage: '/getconfigkey [key]'. \nHint: The key should be surrounded by brackets."
+  AdminControlsListConfigKeyPageHeader: "Minecart Mania Configuration Values (Page %d of %d)"
+  AdminControlsListConfigKey: "Key: [GREEN]%s [WHITE]Value: [GREEN]%s"
+  AdminControlsSetConfigKey: "Key '[GREEN]%s[WHITE]' set to '[GREEN]%s[WHITE]'"
+  AdminControlsListConfigKeyPage: "[RED]There is no page %d"
+  AdminControlsThrottleSet: "[GREEN]Throttle set!"
+  AdminControlsThrottleSetOverdrive: "[GREEN]Overdrive Enabled!"
+  AdminControlsThrottleUsage: "[RED]Invalid command. Correct usage is /throttle [number]"
+  AdminControlsBlockMinecartEntry: "[RED]You've been restricted from entering that minecart!"
+  AdminControlsHideMinecarts: "[GREEN]All minecarts successfully hidden"
+  AdminControlsRedrawMinecarts:  "[GREEN]All minecarts successfully redrawn"
+  AdminControlsMMHeader: "[WHITE]----------------[GREEN]Minecart Mania Information[WHITE]---------------"
+  AdminControlsInfoTotalMinecarts: "Total Minecarts: [GREEN]%d"
+  AdminControlsInfoEmptyMinecarts: "Empty Minecarts: [GREEN]%d"
+  AdminControlsInfoOccupiedMinecarts: "Occupied Minecarts: [GREEN]%d"
+  AdminControlsInfoPoweredMinecarts: "Powered Minecarts: [GREEN]%d"
+  AdminControlsInfoStorageMinecarts: "Storage Minecarts: [GREEN]%d"
+  AdminControlsInfoMovingMinecarts: "Moving Minecarts: [GREEN]%d"
+  AdminControlsInfoStalledMinecarts: "Stalled Minecarts: [GREEN]%d"
+  AdminControlsInfoMostOwnedMinecarts: "Owns the most Minecarts: [GREEN]%s [WHITE]([YELLOW]%d[WHITE])"

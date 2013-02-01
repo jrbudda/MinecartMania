@@ -2,8 +2,9 @@ package com.afforess.minecartmania.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.LocaleParser;
+
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.config.Settings;
 
 public class ReloadCommand extends MinecartManiaCommand  {
 
@@ -19,11 +20,11 @@ public class ReloadCommand extends MinecartManiaCommand  {
 
 		com.afforess.minecartmania.MinecartMania.getInstance().reloadMyConfig();
 		
-		sender.sendMessage(LocaleParser.getTextKey("AdminReload"));
+		sender.sendMessage(Settings.getLocal("AdminReload"));
 		return true;
 	}
 
-	public boolean shouldRemoveMinecart(MinecartManiaMinecart minecart) {
+	public boolean shouldRemoveMinecart(MMMinecart minecart) {
 		return true;
 	}
 

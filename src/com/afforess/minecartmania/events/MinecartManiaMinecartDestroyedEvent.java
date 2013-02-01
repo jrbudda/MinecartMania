@@ -1,16 +1,16 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartManiaMinecartDestroyedEvent extends MinecartManiaEvent{
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	
-	public MinecartManiaMinecartDestroyedEvent(MinecartManiaMinecart cart) {
+	public MinecartManiaMinecartDestroyedEvent(MMMinecart cart) {
 		super("MinecartManiaMinecartDestroyedEvent");
 		minecart = cart;
 	}
 
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 }

@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.commands;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class ClearOccupiedCartsCommand extends ClearAllCartsCommand{
 	
@@ -10,7 +10,7 @@ public class ClearOccupiedCartsCommand extends ClearAllCartsCommand{
 	}
 	
 	@Override
-	public boolean shouldRemoveMinecart(MinecartManiaMinecart minecart) {
+	public boolean shouldRemoveMinecart(MMMinecart minecart) {
 		return minecart.isStandardMinecart() && minecart.getPassenger() != null;
 	}
 

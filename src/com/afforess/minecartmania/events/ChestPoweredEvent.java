@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
+import com.afforess.minecartmania.entity.MinecartManiaChest;
 public class ChestPoweredEvent extends MinecartManiaEvent{
 	private MinecartManiaChest chest;
 	private boolean powered;

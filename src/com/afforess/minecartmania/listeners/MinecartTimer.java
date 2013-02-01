@@ -2,26 +2,28 @@ package com.afforess.minecartmania.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
 
 public class MinecartTimer implements Listener{
 
 	@EventHandler
 	public void onMinecartTimeEvent(MinecartTimeEvent event) {
-		MinecartManiaMinecart minecart = event.getMinecart();
+		MMMinecart minecart = event.getMinecart();
 		
 		int timer = -1;
 		if (minecart.isStandardMinecart()) {
-			timer = VehicleListener.getMinecartKillTimer();
+			timer =com.afforess.minecartmania.config.Settings.EmptyMinecartKillTimer;
 		}
 		else if (minecart.isStorageMinecart()) {
-			timer = VehicleListener.getStorageMinecartKillTimer();
+			timer =com.afforess.minecartmania.config.Settings.EmptyStorageMinecartKillTimer;
 		}
 		else {
-			timer = VehicleListener.getPoweredMinecartKillTimer();
+			timer = com.afforess.minecartmania.config.Settings.EmptyPoweredMinecartKillTimer;
 		}
+		
+		
 		boolean kill = minecart.getPassenger() == null && (!minecart.isStorageMinecart() || ((MinecartManiaStorageCart)minecart).isEmpty());
 		
 		if (timer > 0) {
@@ -37,7 +39,7 @@ public class MinecartTimer implements Listener{
 						minecart.setDataValue("Empty Timer", new Integer(timeLeft.intValue()-1));
 					}
 					else {
-						minecart.kill();
+						minecart.killOptionalReturn();
 					}
 				}
 			}
@@ -50,7 +52,7 @@ public class MinecartTimer implements Listener{
 		}
 		else if (timer == 0) {
 			if (kill) {
-				minecart.kill();
+				minecart.killOptionalReturn();
 			}
 		}
 	}

@@ -1,12 +1,11 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.utils.MathUtils;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.MathUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class AlterRangeAction extends SignAction{
 	protected int range = -1;
@@ -15,7 +14,7 @@ public class AlterRangeAction extends SignAction{
 
 	
 	
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (itemRange) {
 			if (minecart.isStorageMinecart()) {
 				((MinecartManiaStorageCart)minecart).setItemRange(this.range);
@@ -45,7 +44,7 @@ public class AlterRangeAction extends SignAction{
 				if (split.length != 2) continue;
 				try {
 					this.range = Integer.parseInt(StringUtils.getNumber(split[1]));
-					this.range = MathUtils.range(this.range, Settings.getMinecartMaximumRange(), 0);
+					this.range = MathUtils.range(this.range, Settings.MaxAllowedRange, 0);
 				}
 				catch (Exception e) {
 					this.range = -1;
@@ -65,7 +64,7 @@ public class AlterRangeAction extends SignAction{
 
 	
 	public String getFriendlyName() {
-		return "Alter Range Sign";
+		return "Alter Range";
 	}
 
 }

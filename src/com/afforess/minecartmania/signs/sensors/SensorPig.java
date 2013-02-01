@@ -3,7 +3,7 @@ package com.afforess.minecartmania.signs.sensors;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Pig;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class SensorPig extends GenericSensor{
 	
@@ -12,7 +12,7 @@ public class SensorPig extends GenericSensor{
 		super(type, sign, name);
 	}
 
-	public void input(MinecartManiaMinecart minecart) {
+	public void input(MMMinecart minecart) {
 		if (minecart != null) {
 			setState(minecart.getPassenger() instanceof Pig);
 		}

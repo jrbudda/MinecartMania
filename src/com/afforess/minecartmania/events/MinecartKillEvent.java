@@ -2,17 +2,17 @@ package com.afforess.minecartmania.events;
 
 import org.bukkit.event.Cancellable;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartKillEvent extends MinecartManiaEvent implements Cancellable{
 	private boolean cancelled = false;
-	private MinecartManiaMinecart minecart;
-	protected MinecartKillEvent(MinecartManiaMinecart minecart) {
+	private MMMinecart minecart;
+	protected MinecartKillEvent(MMMinecart minecart) {
 		super("MinecartKillEvent");
 		this.minecart = minecart;
 	}
 	
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return this.minecart;
 	}
 

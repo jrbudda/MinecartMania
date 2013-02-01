@@ -1,13 +1,12 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class LaunchPlayerAction extends SignAction{
-
-	public boolean execute(MinecartManiaMinecart minecart) {
-		minecart.launchCart();
+	private boolean reverse = false;
+	public boolean execute(MMMinecart minecart) {
+		minecart.launchCart(reverse);
 		minecart.setDataValue("hold sign data", null);
 		return true;
 	}
@@ -20,7 +19,11 @@ public class LaunchPlayerAction extends SignAction{
 
 	public boolean process(String[] lines) {
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[launch player")) {
+			if (line.toLowerCase().contains("[launch pla")) {
+				return true;
+			}
+			else if (line.toLowerCase().contains("[launch2 pla")) {
+				reverse = true;
 				return true;
 			}
 		}
@@ -34,7 +37,7 @@ public class LaunchPlayerAction extends SignAction{
 
 
 	public String getFriendlyName() {
-		return "Launch Player Sign";
+		return "Launch Player";
 	}
 	
 	

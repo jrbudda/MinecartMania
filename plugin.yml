@@ -1,7 +1,7 @@
 name: MinecartMania
 main: com.afforess.minecartmania.MinecartMania
-version: 1.5.1-mod
-author: mze9412, Afforess
+version: 2.0 Alpha
+author: jrbudda, mze9412, Afforess
 database: true
 commands:
   mm:
@@ -43,12 +43,9 @@ permissions:
             minecartmania.commands.hide: true
             minecartmania.commands.momentum: true
             minecartmania.commands.info: true
-            minecartmania.commands.getconfigkey: true
-            minecartmania.commands.listconfigkeys: true
             minecartmania.commands.trucompass: true
             minecartmania.commands.st: true
             minecartmania.commands.throttle: true
-            minecartmania.commands.setconfigkey: true
             minecartmania.commands.reload: true
     minecartmania.commands.eject:
         description: Ejects the given player from a minecart, if they are in one. 
@@ -89,6 +86,9 @@ permissions:
     minecartmania.commands.setconfigkey:
         description: Sets the given configuration key to the given value. The key name and value are case-sensitive. 
         default: op
+    minecartmania.commands.help:
+        description: Sends updates to all connected players to force all clients to redraw minecarts. Causes ~1 second of lag. 
+        default: true
     minecartmania.commands.momentum:
         description: shows the momentum of the minecart the player is in. 
         default: true
@@ -262,158 +262,5 @@ permissions:
         description: Create set speed signs
         default: true
     minecartmania.signs.create.jumpsign:
-        description: Create jump signs
-        default: true
-   
-    minecartmania.signs.break.*:
-        description: Gives access to all minecart mania break signs functionality
-        default: true
-        children:
-            minecartmania.signs.break.launchersign: true
-            minecartmania.signs.break.launchplayersign: true
-            minecartmania.signs.break.holdingsign: true
-            minecartmania.signs.break.alterrangesign: true
-            minecartmania.signs.break.announcementsign: true
-            minecartmania.signs.break.ejectionsign: true
-            minecartmania.signs.break.ejectatsign: true
-            minecartmania.signs.break.ejectionconditionsign: true
-            minecartmania.signs.break.elevatorsign: true
-            minecartmania.signs.break.lockcartsign: true
-            minecartmania.signs.break.unlockcartsign: true
-            minecartmania.signs.break.maxspeedsign: true
-            minecartmania.signs.break.setstationsign: true
-            minecartmania.signs.break.stopatdestinationsign: true
-            minecartmania.signs.break.minecarttypesign: true
-            minecartmania.signs.break.autotillsign: true
-            minecartmania.signs.break.tilloffsign: true
-            minecartmania.signs.break.autoseedsign: true
-            minecartmania.signs.break.seedoffsign: true
-            minecartmania.signs.break.autoharvestsign: true
-            minecartmania.signs.break.harvestoffsign: true
-            minecartmania.signs.break.autosugarsign: true
-            minecartmania.signs.break.sugaroffsign: true
-            minecartmania.signs.break.autoresugarsign: true
-            minecartmania.signs.break.resugaroffsign: true
-            minecartmania.signs.break.autotimbersign: true
-            minecartmania.signs.break.timberoffsign: true
-            minecartmania.signs.break.autoforestsign: true
-            minecartmania.signs.break.forestoffsign: true
-            minecartmania.signs.break.autocactussign: true
-            minecartmania.signs.break.cactusoffsign: true
-            minecartmania.signs.break.autorecactussign: true
-            minecartmania.signs.break.recactusoffsign: true
-            minecartmania.signs.break.farmsign: true
-    minecartmania.signs.break.launchersign:
-        description: Break launch direction signs
-        default: true
-    minecartmania.signs.break.launchplayersign:
-        description: Break launch player signs
-        default: true
-    minecartmania.signs.break.holdingsign:
-        description: Break holding signs
-        default: true
-    minecartmania.signs.break.alterrangesign:
-        description: Break Launch signs
-        default: true
-    minecartmania.signs.break.launchersign:
-        description: Break alter range signs
-        default: true
-    minecartmania.signs.break.announcementsign:
-        description: Break announcement signs
-        default: true
-    minecartmania.signs.break.ejectionsign:
-        description: Break eject here signs
-        default: true
-    minecartmania.signs.break.ejectatsign:
-        description: Break eject at signs
-        default: true
-    minecartmania.signs.break.ejectionconditionsign:
-        description: Break ejection condition signs
-        default: true
-    minecartmania.signs.break.elevatorsign:
-        description: Break elevator signs
-        default: true
-    minecartmania.signs.break.lockcartsign:
-        description: Break lock cart signs
-        default: true
-    minecartmania.signs.break.launchersign:
-        description: Break Launch signs
-        default: true
-    minecartmania.signs.break.unlockcartsign:
-        description: Break unlock cart signs
-        default: true
-    minecartmania.signs.break.maxspeedsign:
-        description: Break max speed signs
-        default: true
-    minecartmania.signs.break.setstationsign:
-        description: Break set station signs
-        default: true
-    minecartmania.signs.break.stopatdestinationsign:
-        description: Break stop at destination signs
-        default: true
-    minecartmania.signs.break.minecarttypesign:
-        description: Break minecart type signs
-        default: true
-    minecartmania.signs.break.autotillsign:
-        description: Break auto till signs
-        default: true
-    minecartmania.signs.break.tilloffsign:
-        description: Break till off signs
-        default: true
-    minecartmania.signs.break.autoseedsign:
-        description: Break auto seed signs
-        default: true
-    minecartmania.signs.break.seedoffsign:
-        description: Break seed off signs
-        default: true
-    minecartmania.signs.break.autoharvestsign:
-        description: Break auto harvest signs
-        default: true
-    minecartmania.signs.break.harvestoffsign:
-        description: Break harvest off signs
-        default: true
-    minecartmania.signs.break.autosugarsign:
-        description: Break auto sugar signs
-        default: true
-    minecartmania.signs.break.sugaroffsign :
-        description: Break sugar off signs
-        default: true
-    minecartmania.signs.break.autoresugarsign:
-        description: Break auto re sugar signs
-        default: true
-    minecartmania.signs.break.resugaroffsign:
-        description: Break re sugar off signs
-        default: true
-    minecartmania.signs.break.autotimbersign:
-        description: Break auto timber signs
-        default: true
-    minecartmania.signs.break.timberoffsign:
-        description: Break timber off signs
-        default: true
-    minecartmania.signs.break.autoforestsign:
-        description: Break auto forest signs
-        default: true
-    minecartmania.signs.break.forestoffsign:
-        description: Break forest off signs
-        default: true
-    minecartmania.signs.break.autocactussign:
-        description: Break auto cactus signs
-        default: true
-    minecartmania.signs.break.cactusoffsign:
-        description: Break cactus off signs
-        default: true
-    minecartmania.signs.break.autorecactussign:
-        description: Break auto recactus signs
-        default: true
-    minecartmania.signs.break.recactusoffsign:
-        description: Break re cactus off signs
-        default: true
-    minecartmania.signs.break.farmsign:
-        description: Break farm signs
-        default: true
-    minecartmania.signs.break.setspeedsign:
-        description: Create set speed signs
-        default: true
-    minecartmania.signs.break.jumpsign:
         description: Create jump signs
         default: true

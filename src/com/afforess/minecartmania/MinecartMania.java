@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
@@ -20,23 +19,25 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.afforess.minecartmania.commands.Command;
 import com.afforess.minecartmania.commands.CommandType;
-import com.afforess.minecartmania.config.AdminControlsSettingParser;
-import com.afforess.minecartmania.config.ChestControlSettingParser;
-import com.afforess.minecartmania.config.CoreSettingParser;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.config.MinecartManiaConfigurationParser;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.config.SignCommandsSettingParser;
-import com.afforess.minecartmania.listeners.*;
+import com.afforess.minecartmania.debug.Logger;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartOwner;
+import com.afforess.minecartmania.listeners.BlockListener;
+import com.afforess.minecartmania.listeners.ChestActionListener;
+import com.afforess.minecartmania.listeners.ChunkListener;
+import com.afforess.minecartmania.listeners.CoreListener;
+import com.afforess.minecartmania.listeners.FarmingActionListener;
+import com.afforess.minecartmania.listeners.MinecartTimer;
+import com.afforess.minecartmania.listeners.PlayerListener;
+import com.afforess.minecartmania.listeners.SignsActionListener;
+import com.afforess.minecartmania.listeners.StationsActionListener;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaMinecartDataTable;
-import com.afforess.minecartmaniacore.entity.MinecartOwner;
+import com.afforess.minecartmania.signs.sensors.Sensor;
+import com.afforess.minecartmania.signs.sensors.SensorDataTable;
+import com.afforess.minecartmania.signs.sensors.SensorManager;
 
 public class MinecartMania extends JavaPlugin {
-
-	public static MinecartManiaLogger log = MinecartManiaLogger.getInstance();
 
 	public static PermissionManager permissions;
 
@@ -44,12 +45,7 @@ public class MinecartMania extends JavaPlugin {
 	public static Plugin instance;
 	public static File file;
 
-	@Deprecated
-	public static String dataDirectory = "plugins" + File.separator + "MinecartMania";
-
-
-
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	public void onLoad() {
 		setNaggable(false);
@@ -61,11 +57,12 @@ public class MinecartMania extends JavaPlugin {
 
 		writeItemsFile();
 
-		MinecartManiaConfigurationParser.read("MinecartManiaConfiguration.xml", dataDirectory, new CoreSettingParser());
-		MinecartManiaConfigurationParser.read("MinecartManiaLocale.xml", dataDirectory, new LocaleParser());
+		//	MinecartManiaConfigurationParser.read("MinecartManiaConfiguration.xml", dataDirectory, new CoreSettingParser());
+		//	MinecartManiaConfigurationParser.read("MinecartManiaLocale.xml", getDataFolder(), new LocaleParser());
 		//MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new AdminControlsSettingParser());
 		//MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new SignCommandsSettingParser());
 		//	MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new ChestControlSettingParser());
+
 
 		permissions = new PermissionManager(getServer());
 
@@ -73,7 +70,6 @@ public class MinecartMania extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChunkListener(), this);
 		getServer().getPluginManager().registerEvents( new BlockListener(), this);
 		getServer().getPluginManager().registerEvents( new PlayerListener(), this);
-		getServer().getPluginManager().registerEvents( new VehicleListener(), this);
 		getServer().getPluginManager().registerEvents( new MinecartTimer(), this);
 
 		//TODO - don't use these anymore
@@ -85,9 +81,7 @@ public class MinecartMania extends JavaPlugin {
 
 		reloadMyConfig();
 
-		log.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
-
-
+		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 
 		//database setup
 		File ebeans = new File(new File(this.getDataFolder().getParent()).getParent(), "ebean.properties");
@@ -105,13 +99,67 @@ public class MinecartMania extends JavaPlugin {
 		}
 
 		setupDatabase();
+		
+		loadSensors();
+		
+	//	if(SensorManager.getCount() == 0) tryLoadOldSensors();
 
-		log.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
+		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 	}
+
+
+	private void loadSensors(){
+		//load sensors
+		int maxId = 0;
+		List<SensorDataTable> data = null;
+
+		try {
+			data = getDatabase().find(SensorDataTable.class).findList();
+		} catch (Exception e) {
+			Logger.severe("Could not load Sensors");
+		}
+
+		for (SensorDataTable temp : data) {
+			if (temp.hasValidLocation()) {
+				Block block = temp.getLocation().getBlock();
+				if (SensorManager.isSign(block)) {
+					SensorManager.getSensor(block, true); //force load of sensor
+					if (temp.getId() > maxId) {
+						maxId = temp.getId();
+					}
+				}
+			}
+		}
+
+		SensorDataTable.lastId = maxId;
+
+	}
+
+	private void tryLoadOldSensors(){
+		
+	
+		MinecartManiaSignCommands sc = new MinecartManiaSignCommands();
+		sc.onEnable();
+		SensorManager.database = sc.getDatabase();
+		sc.loadsensors();
+		SensorManager.database = this.getDatabase();
+		if (SensorManager.getCount() > 0) {
+			Logger.severe("Found sensors in old db, moving...");
+			// loaded old sensors
+			for	  (Sensor s :SensorManager.getSensorList().values() ){
+				SensorManager.saveSensor(s);
+			}
+			Logger.severe("Complete. Removing old db.");
+		}
+
+		sc.removedb();
+
+	}
+
 
 	public void onDisable(){
 		getServer().getScheduler().cancelTasks(this);
-		log.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is disabled!" );
+		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is disabled!" );
 	}
 
 
@@ -120,9 +168,11 @@ public class MinecartMania extends JavaPlugin {
 		String commandPrefix;
 		if (commandLabel.equals("mm")) {
 			if (args == null || args.length == 0) {
+				new com.afforess.minecartmania.commands.HelpCommand().onCommand(sender, cmd, commandLabel, args);
 				return false;
 			}
 			commandPrefix = args[0];
+
 			if (args.length > 1) {
 				args = Arrays.copyOfRange(args, 1, args.length);
 			}
@@ -130,6 +180,7 @@ public class MinecartMania extends JavaPlugin {
 				String[] temp = {};
 				args = temp;
 			}
+
 		}
 		else {
 			commandPrefix = commandLabel;
@@ -138,13 +189,14 @@ public class MinecartMania extends JavaPlugin {
 
 		Command command = getMinecartManiaCommand(commandPrefix);
 		if (command == null) {
-			return false;
+			command =	new com.afforess.minecartmania.commands.HelpCommand();
 		}
+
 		if (command.canExecuteCommand(sender)) {
 			command.onCommand(sender, cmd, commandPrefix, args);
 		}
 		else {
-			sender.sendMessage(LocaleParser.getTextKey("LackPermissionForCommand"));
+			sender.sendMessage(Settings.getLocal("LackPermissionForCommand"));
 		}
 
 
@@ -163,7 +215,7 @@ public class MinecartMania extends JavaPlugin {
 
 	private void writeItemsFile() {
 		try {
-			File items = new File(dataDirectory + File.separator + "items.txt");
+			File items = new File("plugins" + File.separator + "MinecartMania" + File.separator + "items.txt");
 			PrintWriter pw = new PrintWriter(items);
 			pw.append("This file is a list of all the data values, and matching item names for Minecart Mania. \nThis list is never used, and changes made to this file will be ignored");
 			pw.append("\n");
@@ -209,6 +261,11 @@ public class MinecartMania extends JavaPlugin {
 		} catch (PersistenceException ex) {
 			return 2;
 		}
+		try {
+			getDatabase().find(SensorDataTable.class).findList();
+		} catch (PersistenceException ex) {
+			return 3;
+		}
 		return DATABASE_VERSION;
 	}
 
@@ -216,9 +273,10 @@ public class MinecartMania extends JavaPlugin {
 		try {
 			getDatabase().find(MinecartOwner.class).findRowCount();
 			getDatabase().find(MinecartManiaMinecartDataTable.class).findRowCount();
+			getDatabase().find(SensorDataTable.class).findRowCount();
 		}
 		catch (PersistenceException ex) {
-			log.info("Installing database");
+			Logger.debug("Installing database");
 			installDDL();
 		}
 	}
@@ -229,13 +287,14 @@ public class MinecartMania extends JavaPlugin {
 		case 0: setupInitialDatabase(); break;
 		case 1: upgradeDatabase(1); break;
 		case 2: upgradeDatabase(2); break;
-		case 3: /*up to date database*/break;
+		case 3: upgradeDatabase(3); break;
+		case 4: /*up to date database*/break;
 		}
 	}
 
 	private void upgradeDatabase(int current) {
-		log.info(String.format("Upgrading database from version %d to version %d", current, DATABASE_VERSION));
-		if (current == 1 || current == 2) {
+		Logger.info(String.format("Upgrading database from version %d to version %d", current, DATABASE_VERSION));
+		if (current != DATABASE_VERSION) {
 			this.removeDDL();
 			setupInitialDatabase();
 		}
@@ -250,6 +309,7 @@ public class MinecartMania extends JavaPlugin {
 		List<Class<?>> list = new ArrayList<Class<?>>();
 		list.add(MinecartOwner.class);
 		list.add(MinecartManiaMinecartDataTable.class);
+		list.add(SensorDataTable.class);
 		return list;
 	}
 
@@ -266,10 +326,6 @@ public class MinecartMania extends JavaPlugin {
 	}
 
 
-	public static String getDataDirectoryRelativePath() {
-		return dataDirectory;
-	}
-
 	public static void callEvent(Event event) {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
@@ -278,78 +334,117 @@ public class MinecartMania extends JavaPlugin {
 		this.saveDefaultConfig();
 		this.reloadConfig();
 
-		Settings.RangeXZ = getConfig().getInt("RangeXZ",4);
-		Settings.RangeY = getConfig().getInt("RangeY",4);
+		Logger.switchDebugMode(com.afforess.minecartmania.debug.DebugMode.debugModeFromString(getConfig().getString("LoggingMode","Normal")));
+
+		Settings.MaxAllowedRange = getConfig().getInt("MaxAllowedRange");
+
 		Settings.DefaultDerailedFrictionPercent = getConfig().getInt("DerailedFrictionPercent",100);
 		Settings.DefaultPassengerFrictionPercent = getConfig().getInt("PassengerFrictionPercent",100);
 		Settings.DefaultEmptyFrictionPercent = getConfig().getInt("EmptyFrictionPercent",100);
 		Settings.KillPlayersOnTrackMinnimumSpeed = getConfig().getInt("KillPlayersOnTrackMinnimumSpeed",90);
 
-		Settings.ClearTrack = getConfig().getBoolean("ClearItemsOnTrack",true);
 		Settings.KillMobsOnTrack = getConfig().getBoolean("KillMobsOnTrack",true);
 		Settings.KillPlayersOnTrack = getConfig().getBoolean("KillPlayersOnTrack",false);		
-		Settings.IgnorePlayersOnTrack = getConfig().getBoolean("IgnorePlayersOnTrack", true);
-		Settings.LimitedSignRange = getConfig().getBoolean("LimitedSignRange",true);
+
 		Settings.DefaultSlowWhenEmpty = getConfig().getBoolean("SlowWhenEmpty",true); 
+		Settings.LoadChunksOnTrack = getConfig().getBoolean("KeepChunksLoaded",false); 
 		Settings.ReturnCartsToOwner= getConfig().getBoolean("ReturnCartsToOwner",false); 
+
+		Settings.StationParingMode = getConfig().getInt("StationParsingMethod",0);
+		Settings.IntersectionPromptsMode = getConfig().getInt("IntersectionPromptsMethod",0);
+
+		Settings.RemoveDeadCarts = getConfig().getBoolean("RemoveDeadMinecarts",false); 
 
 		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",200);
 		Settings.MaxAllowedSpeedPercent = getConfig().getInt("MaxAllowedSpeedPercent",500);
-		
-		Settings.DisappearonDisconnect = getConfig().getBoolean("SlowWhenEmpty",true); 
-		
-		Settings.DefaultMagneticRail =  getConfig().getBoolean("DefaultMagneticRail",false); 
 
-		
-		Settings.AnnouncementPrefix = getConfig().getString("AnnouncementPrefix","&e[Announcement] &f");
+		Settings.MinecartCollisions =  getConfig().getBoolean("MinecartCollisions",false); 
+		Settings.SlopeSpeedPercent = getConfig().getInt("SlopeSpeedPercent",100);
+		Settings.DisappearonDisconnect = getConfig().getBoolean("PreserveMinecartOnLogout",true); 
+		Settings.DefaultMagneticRail =  getConfig().getBoolean("MagneticRail",false); 
+		Settings.EmptyMinecartKillTimer = getConfig().getInt("EmptyMinecartKillTimer",60);
+		Settings.EmptyPoweredMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
+		Settings.EmptyStorageMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
+
+		Settings.RememeberEjectionLocations = getConfig().getBoolean("RememberEjectionLocations",true); 
+
+		Settings.StationsUseOldDirections = getConfig().getBoolean("StationsUseOldDirections",false);
+
+		Settings.RailAdjusterTool =  Item.getNearestMatchingItem(getConfig().getString("RailAdjusterTool","270"));
+
+		com.afforess.minecartmania.config.Settings.StationCommandSaveAfterUse = true;
 
 		ConfigurationSection blocks = getConfig().getConfigurationSection("ControlBlocks");
-
 		if(blocks !=null){
 			com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.clear();
-
 			for (String  block : blocks.getKeys(false)){
-				log("Adding control block: " + block);
-				Item item = Item.getItem(block);
+
+				Logger.info("Adding control block: " + block);
+
+				Item item = Item.getItembyName(block);
 				if(item == null) {
-					log("Invalid Block Item: " + block);
+					Logger.severe("Invalid Block Item: " + block);
 					continue;
 				}
 
-				ConfigurationSection blockdata = blocks.getConfigurationSection(block);	
+				List<String> signs = blocks.getStringList(block);
 
-				List<String> signs = blockdata.getStringList("Actions");
-
-				List<SignAction> actions = new LinkedList<SignAction>();
+				List<SignAction> actions = new ArrayList<SignAction>();
 
 				for (String sign : signs){
+
+					Logger.debug("processing sign: " + sign);
+
 					String[] lines = sign.split("/");
 
 					List<SignAction> thiactions = com.afforess.minecartmania.signs.ActionList.getSignActionsforLines(lines);
 
 					for(SignAction a:thiactions){
-						log("Adding action " + a.getFriendlyName() + " to " + item);
+						Logger.info("Adding " + a.getFriendlyName() +  "(restone " + a.redstonestate + ")");
 						actions.add(a );
 					}
 				}
 
-				if(actions.size() > 0){	
-					com.afforess.minecartmania.config.NewControlBlock ncb = new com.afforess.minecartmania.config.NewControlBlock(item, actions);
-
-					if(blockdata.contains("Redstone"))	ncb.redstoneEffect = com.afforess.minecartmania.config.RedstoneState.valueOf(blockdata.getString("Redstone"));
-
-					com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.put(item, ncb);
+				if(actions.size() > 0){					
+					com.afforess.minecartmania.config.NewControlBlockList.controlBlocks.put(item, new com.afforess.minecartmania.config.NewControlBlock(item, actions));
 				}
-
+				else Logger.severe("No valid actions found for " + item + "!");
 			}
-
 		}
 
+		ConfigurationSection aliases = getConfig().getConfigurationSection("ItemAliases");
+
+		if(aliases !=null){
+
+			com.afforess.minecartmania.config.ItemAliasList.clear();
+
+			for (String  aliasname : aliases.getKeys(false)){
+				Logger.info("Adding alias: " + aliasname);
+
+
+				List<String> itemstrings = aliases.getStringList(aliasname);
+				List<Item> items = new ArrayList<Item>();
+
+				for (String i : itemstrings){
+
+					Item item = Item.getNearestMatchingItem(i);
+
+					if (i == null){
+						Logger.severe("Invalid item '" + i + "'  in alias: " + aliasname) ;
+					}
+					else items.add(item);
+
+				}
+
+				if(items.size() > 0){					
+					com.afforess.minecartmania.config.ItemAliasList.add(aliasname, items);
+				}
+			}
+		}
+
+
 	}
 
 
-	public static void log(String str){
-		MinecartManiaLogger.getInstance().info(str);
-	}
 
 }

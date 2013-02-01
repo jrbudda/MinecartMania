@@ -8,8 +8,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
+import com.afforess.minecartmania.MMSign;
+import com.afforess.minecartmania.debug.Logger;
 
 public class SignManager {
 	private static ConcurrentHashMap<Location, MMSign> signList = new ConcurrentHashMap<Location, MMSign>();
@@ -50,21 +50,21 @@ public class SignManager {
 			//new
 			reregister = true;
 			existing = new MMSign(sign);
-			MinecartManiaLogger.getInstance().info("Found new sign: " + existing.getLine(0));
+			Logger.debug("Found new sign: " + existing.getLine(0));
 		}
 		else{
 			if(!existing.textMatches(sign)) {
 				//changed
 				reregister = true;
 				existing = new MMSign(sign);
-				MinecartManiaLogger.getInstance().info("Found updated sign: " + existing.getLine(0));
+				Logger.debug("Found updated sign: " + existing.getLine(0));
 			}
 		}
 		if (reregister){
 			List<SignAction> actions = ActionList.getSignActionsforLines(sign.getLines());
 			if (actions.size() > 0) existing.addBrackets();
 				for (SignAction action : actions)	{
-				MinecartManiaLogger.getInstance().info("adding action: " + action.getFriendlyName());
+				Logger.debug("adding action: " + action.getFriendlyName());
 				action.loc = existing.getLocation();
 				existing.addSignAction(action);
 			}

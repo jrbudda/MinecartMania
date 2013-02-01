@@ -1,11 +1,12 @@
 package com.afforess.minecartmania.signs;
 
 import java.lang.reflect.Constructor;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.signs.actions.*;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
+import com.afforess.minecartmania.signs.actions.UnlockCartAction;
 
 public enum ActionList {
 	LaunchPlayerSign(LaunchPlayerAction.class),
@@ -34,13 +35,11 @@ public enum ActionList {
 	AutoReCactusOffSign(DataValuecAction.class, "ReCactus Off", "AutoReCactus", null),
 	AlterRangeSign(AlterRangeAction.class),
 	SetMaximumSpeedSign(SetMaxSpeedAction.class),
-	EjectionSign(EjectionAction.class),
+	EjectionSign(EjectAction.class),
 	AnnouncementSign(AnnouncementAction.class),
 	HoldingForSign(HoldingForAction.class),
 	ElevatorSign(ElevatorAction.class),
-	PassPlayerSign(PassPlayerAction.class),
 	EjectAtSign(EjectAtAction.class),
-	EjectionConditionAction(EjectionConditionAction.class),
 	FarmSign(FarmAction.class),
 	MinimumItemSign(MinimumItemAction.class),
 	MaximumItemSign(MaximumItemAction.class),
@@ -49,8 +48,10 @@ public enum ActionList {
 	KillSign(KillAction.class),
 	PlatformSign(PlatformAction.class),
 	SpawnSign(SpawnAction.class),
-	SetSpeedSign(SetSpeedAction.class)
-	
+	SetSpeedSign(SetSpeedAction.class),
+	MagnetSign(MagnetAction.class),
+	PromptSign(PromptAction.class),
+	CatchSign(CatchAction.class)
 	;
 
 	ActionList(final Class<? extends SignAction> action) {
@@ -83,17 +84,44 @@ public enum ActionList {
 	}
 
 	public static java.util.List<SignAction> getSignActionsforLines(String[] lines){
-		List<SignAction> out = new LinkedList<SignAction>();
+		List<SignAction> out = new ArrayList<SignAction>();
+
+		com.afforess.minecartmania.config.RedstoneState rs = com.afforess.minecartmania.config.RedstoneState.NoEffect;
+
+		if(lines[0].contains("(ON)")) {
+			rs= com.afforess.minecartmania.config.RedstoneState.Enables;
+			lines[0] = lines[0].replace("(ON)","");
+		}
+		else if(lines[0].contains("(OFF)")) {
+			rs = com.afforess.minecartmania.config.RedstoneState.Disables;
+			lines[0] = lines[0].replace("(OFF)","");
+		}
+		else if(lines[0].contains("(TRIGGERON)")){
+			rs = com.afforess.minecartmania.config.RedstoneState.TriggerOn;
+			lines[0] = lines[0].replace("(TRIGGERON)","");
+		}
+		else if(lines[0].contains("(TRIGGEROFF)")){
+			rs= com.afforess.minecartmania.config.RedstoneState.TriggerOff;	
+			lines[0] = lines[0].replace("(TRIGGEROFF)","");
+		}
+
 		for (ActionList type : ActionList.values()) {
-			SignAction action = type.getSignAction();
-			if (action.process(lines)) {
+			//TODO dont make instances unless sucessfull.
+			SignAction action = type.getInstance();
+
+			if(lines.length == 0) continue;
+
+			//the following will determine the redstone state of the whole sign.
+			if (action.process(lines)) {	
+				action.redstonestate = rs;
 				out.add(action);
 			}
+
 		}
 		return out;
 	}
 
-	public SignAction getSignAction() {
+	public SignAction getInstance() {
 		try {
 			Constructor<? extends SignAction> constructor;
 			SignAction action;
@@ -111,8 +139,8 @@ public enum ActionList {
 			}
 			return action;
 		} catch (Exception e) {
-			MinecartManiaLogger.getInstance().severe("Failed to read sign!");
-			MinecartManiaLogger.getInstance().severe("Sign was :" + this.action);
+			Logger.severe("Failed to read sign!");
+			Logger.severe("Sign was :" + this.action);
 			e.printStackTrace();
 		}
 		return null;

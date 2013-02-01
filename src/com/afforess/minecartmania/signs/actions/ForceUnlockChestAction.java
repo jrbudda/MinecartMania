@@ -1,13 +1,12 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class ForceUnlockChestAction extends SignAction{
 	protected boolean valid = false;
 
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		return valid;
 	}
 
@@ -30,6 +29,6 @@ public class ForceUnlockChestAction extends SignAction{
 	}
 
 	public String getFriendlyName() {
-		return "Force Unlock Chest Sign";
+		return "Force Unlock Chest";
 	}
 }

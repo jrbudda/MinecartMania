@@ -5,9 +5,9 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.StorageMinecartUtils;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class WheatFarming
 {

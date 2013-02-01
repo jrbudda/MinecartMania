@@ -3,7 +3,7 @@ package com.afforess.minecartmania.events;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 
-import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
+import com.afforess.minecartmania.entity.MinecartManiaChest;
 
 public class ChestSpawnMinecartEvent extends MinecartManiaEvent implements Cancellable{
 	private MinecartManiaChest chest;

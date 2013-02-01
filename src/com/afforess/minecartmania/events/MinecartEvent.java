@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public interface MinecartEvent{
 	
@@ -8,6 +8,6 @@ public interface MinecartEvent{
 	
 	public void setActionTaken(boolean Action);
 	
-	public MinecartManiaMinecart getMinecart();
+	public MMMinecart getMinecart();
 
 }

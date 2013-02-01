@@ -1,40 +1,33 @@
 package com.afforess.minecartmania.listeners;
 
-import java.util.ArrayList;
-import org.bukkit.block.Sign;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
-import org.bukkit.util.Vector;
 
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.debug.Logger;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.events.MinecartClickedEvent;
 import com.afforess.minecartmania.events.MinecartDirectionChangeEvent;
-import com.afforess.minecartmania.events.MinecartIntersectionEvent;
 import com.afforess.minecartmania.events.MinecartMotionStartEvent;
 import com.afforess.minecartmania.events.MinecartMotionStopEvent;
-import com.afforess.minecartmania.signs.SignManager;
-import com.afforess.minecartmania.signs.actions.LaunchPlayerAction;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.MinecartUtils;
-import com.afforess.minecartmaniacore.utils.SignUtils;
-import com.afforess.minecartmaniacore.utils.WordUtils;
+import com.afforess.minecartmania.signs.actions.StationAction;
+import com.afforess.minecartmania.utils.MinecartUtils;
+import com.afforess.minecartmania.utils.SignCommands;
 
 public class CoreListener implements Listener{
 	public CoreListener() {
@@ -45,13 +38,13 @@ public class CoreListener implements Listener{
 	public void onVehicleUpdate(VehicleUpdateEvent event) {
 		if (event.getVehicle() instanceof Minecart) {
 			Minecart cart = (Minecart)event.getVehicle();
-			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart);
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart);
 
 			if (minecart.isDead()) {
 				return;
 			}
 
-			//	MinecartManiaLogger.getInstance().info(minecart.getEntityId() + ":" + WordUtils.printLoc(minecart.getLocation()) + " " + WordUtils.printVec(minecart.getMotion())+ " " + minecart.isOnRails());
+			//	MinecartManiaLogger.info(minecart.getEntityId() + ":" + WordUtils.printLoc(minecart.getLocation()) + " " + WordUtils.printVec(minecart.getMotion())+ " " + minecart.isOnRails());
 
 			minecart.updateCalendar(); 
 			if (minecart.isMoving()) {
@@ -67,6 +60,7 @@ public class CoreListener implements Listener{
 				MinecartMania.callEvent(mmse);
 				mmse.logProcessTime();
 			}
+
 			else if (!minecart.wasMovingLastTick() && minecart.isMoving()) {
 				MinecartMotionStartEvent mmse = new MinecartMotionStartEvent(minecart);
 				MinecartMania.callEvent(mmse);
@@ -74,22 +68,30 @@ public class CoreListener implements Listener{
 			}
 
 			minecart.setWasMovingLastTick(minecart.isMoving());
-		//	minecart.doLauncherBlock();
+			//	minecart.doLauncherBlock();
 
 			//total hack workaround because of the inability to create runnables/threads w/o IllegalAccessError
 			if (minecart.getDataValue("launch") != null) {
-				MinecartManiaLogger.getInstance().debug("launch");
-				minecart.launchCart();
+				minecart.launchCart(false);
 				minecart.setDataValue("launch", null);
 			}
 
+
 			if (minecart.hasChangedPosition() || minecart.createdLastTick) {
 				minecart.updateChunks();
+
 				if (minecart.isAtIntersection()) {
-					MinecartIntersectionEvent mie = new MinecartIntersectionEvent(minecart);
-					MinecartManiaLogger.getInstance().info("intersection");
-					MinecartMania.callEvent(mie);
-					mie.logProcessTime();
+					Logger.debug("intersection");
+
+					if (NewControlBlockList.hasSignAction(minecart.getBlockBeneath(), StationAction.class)) {
+						//on a station block, do nothing, the block run will itsself.
+
+					}		
+					else if(Settings.IntersectionPromptsMode == 0 ) {
+						//always prompt
+						new com.afforess.minecartmania.signs.actions.PromptAction().executeAsBlock(minecart, minecart.getLocation());
+
+					}
 				}
 
 				if (!minecart.createdLastTick) {
@@ -98,48 +100,40 @@ public class CoreListener implements Listener{
 					mae.logProcessTime();
 				}
 
-				if(minecart.isOnControlBlock()){
-					//there isnt that better?
-					
-					org.bukkit.block.Block block = minecart.getBlockBeneath(); // this will return the rail block if its set as a control block.
-					com.afforess.minecartmania.config.NewControlBlock cb = NewControlBlockList.getControlBlock(Item.getItem(block));
-				
-					if (NewControlBlockList.isCorrectState(block, cb.redstoneEffect)){
-					
-						cb.execute(minecart, block.getLocation());			
-					}
-
-					//					minecart.doSpeedMultiplierBlock();
-					//					minecart.doCatcherBlock();
-					//					minecart.doPlatformBlock(); //platform must be after catcher block
-					//					minecart.doElevatorBlock();
-					//					minecart.doEjectorBlock();
-				}
+				minecart.handleControlBlocksAndSigns();
 
 				MinecartUtils.updateNearbyItems(minecart);
 
-				minecart.updateLocation();
+				if (minecart.isOnRails()){
+					SignCommands.updateSensors(minecart);
+				}	
 
-				//should do last
-		//		minecart.doKillBlock();
-				
+				minecart.updateLocation();
 				minecart.createdLastTick = false;
 			}
+
+
+
+
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onVehicleDestroy(VehicleDestroyEvent event) {
-		if (event.getVehicle() instanceof Minecart && !event.isCancelled()) {
-			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
-			minecart.kill(false);
+		//does this go off?
+		if (event.getVehicle() instanceof Minecart) {
+			Logger.debug("ondestroy");
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
+			event.setCancelled(true);
+			minecart.killOptionalReturn();
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onVehicleDamage(VehicleDamageEvent event) {
+
 		if (event.getVehicle() instanceof Minecart) {
-			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 			//Start workaround for double damage events
 			long lastDamage = -1;
 			if (minecart.getDataValue("Last Damage") != null) {
@@ -152,109 +146,125 @@ public class CoreListener implements Listener{
 			}
 			minecart.setDataValue("Last Damage", System.currentTimeMillis());
 			//End Workaround
-			if (!event.isCancelled()) {
-				MinecartManiaLogger.getInstance().debug("Damage: " + event.getDamage() + " Existing: " + minecart.getDamage());
-				if ((event.getDamage() * 10) + minecart.getDamage() > 40) {
-					minecart.kill();
-					event.setCancelled(true);
-					event.setDamage(0);
-				}
-				if (minecart.getPassenger() != null) {
-					if (minecart.isOnRails()) {
-						if(event.getAttacker() != null && event.getAttacker().getEntityId() == minecart.getPassenger().getEntityId()) {
-							MinecartClickedEvent mce = new MinecartClickedEvent(minecart);
-							MinecartMania.callEvent(mce);
-							if (mce.isActionTaken()) {
-								event.setDamage(0);
-								event.setCancelled(true);
-							}
-						}
+
+			Logger.debug("Damage: " + event.getDamage() + " Existing: " + minecart.getDamage());
+
+			if (minecart.getPassenger() != null) {
+				if (minecart.isOnRails()) {
+					if(event.getAttacker() != null && event.getAttacker().getEntityId() == minecart.getPassenger().getEntityId()) {
+						MinecartClickedEvent mce = new MinecartClickedEvent(minecart);
+						MinecartMania.callEvent(mce);
+
+						//dont break carts youre riding in.
+						event.setDamage(0);
+						event.setCancelled(true);
+
 					}
 				}
 			}
 		}
 	}
 
-	@EventHandler
-	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {
+	@EventHandler(ignoreCancelled = true)
+	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {	
+		// this is not effectinve at doing anything except canceling pickup
+
+
 		if (event.getVehicle() instanceof Minecart) {
-			Minecart cart = (Minecart)event.getVehicle();
-			MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart);
+
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 			Entity collisioner = event.getEntity();
 
-			if (minecart.doCatcherBlock()) {
+			Logger.debug("Collision! " + event.getVehicle().getLocation() + " " + collisioner);
+
+			if (minecart.isFrozen()){
 				event.setCancelled(true);
 				event.setCollisionCancelled(true);
 				event.setPickupCancelled(true);
 				return;
 			}
 
-			if (collisioner instanceof LivingEntity) {
-				LivingEntity victim = (LivingEntity)(collisioner);
-				if (!(victim instanceof Player) && !(victim instanceof Wolf)) {				
-					if (Settings.isMinecartsKillMobs()) {
-						if (minecart.isMoving()) {
-							victim.remove();
-							event.setCancelled(true);
-							event.setCollisionCancelled(true);
-							event.setPickupCancelled(true);
-						}
-					}
-					else {
-						event.setCancelled(true);
-						event.setCollisionCancelled(true);
-						event.setPickupCancelled(true);
-						victim.setVelocity(minecart.getMotion().clone().setY(1));
-					}
+			if(collisioner instanceof Minecart) {
+				MMMinecart otherminecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart) collisioner);
+				if (otherminecart.isFrozen()){
+					event.setCancelled(true);
+					event.setCollisionCancelled(true);
+					return;
 				}
-				else if (victim instanceof Player){
-					if (minecart.getMotion().length() > Settings.KillPlayersOnTrackMinnimumSpeed / 100 * .4){
-						event.setCancelled(true);
-						event.setCollisionCancelled(true);
-						event.setPickupCancelled(true);			
-						if(Settings.KillPlayersOnTrack ){
-							//die
-							victim.setHealth(0);
-						}
-						else if(minecart.getMotion().length() > Settings.KillPlayersOnTrackMinnimumSpeed){
-							//get out the way
-							double mag = minecart.getMotionX() * .5 + minecart.getMotionZ() * .5;
-							victim.setVelocity(new Vector(mag, mag/4 ,mag));
-						}	
-					}
-				}
-				else if(collisioner instanceof Minecart) {
-					MinecartManiaMinecart otherminecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart) collisioner);
-					if (minecart.isFrozen() || otherminecart.isFrozen()){
-						event.setCancelled(true);
-						event.setCollisionCancelled(true);
-						event.setPickupCancelled(true);
-					}
-				}		
+			}	
+			else if (collisioner instanceof LivingEntity){
+				event.setPickupCancelled(true);				 
+			}		
+		}
+
+	}
+
+
+	//	@EventHandler
+	//	public void onVehicleEnter(VehicleEnterEvent event) {
+
+	//TODO: ensure launch player on enter still works
+
+	//		//		if (ControlBlockList.getLaunchSpeed(minecart.getItemBeneath()) != 0.0D) {
+	//		//			if (!minecart.isMoving()) {
+	//		//				ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, 2);
+	//		//				for (Sign s : signs) {
+	//		//					com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(s.getBlock());
+	//		//					if (sign.executeAction(minecart, LaunchPlayerAction.class)) {
+	//		//						break;
+	//		//					}
+	//		//				}
+	//		//			}
+	//		//		}
+
+	//	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onVehicleEnter(VehicleEnterEvent event) {
+
+		if(!(event.getVehicle() instanceof Minecart))return; 
+
+		if (event.getEntered() instanceof Player) {
+			if (MinecartUtils.isBlockedFromEntering((Player)event.getEntered())) {
+				event.setCancelled(true);
+				((Player)event.getEntered()).sendMessage(Settings.getLocal("AdminControlsBlockMinecartEntry"));
+				return;
 			}
+		}
+
+		final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
+
+		if (minecart !=null && minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
+
+			if (minecart.hasPlayerPassenger()) {
+				minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
+			}
+
+			event.setCancelled(true);
+			return;
+		}
+
+		//proc the cart on sucessful entity entrance.
+		if (event.isCancelled() == false) minecart.handleControlBlocksAndSigns();
+		SignCommands.updateSensors(minecart);
+
+	}
+
+	@EventHandler
+	public void onVehicleExit(VehicleExitEvent event) {
+		if (event.getVehicle() instanceof Minecart) {
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
+			SignCommands.updateSensors(minecart);
 		}
 	}
 
 	@EventHandler
-	public void onVehicleEnter(VehicleEnterEvent event) {
-		if (event.isCancelled() || !(event.getVehicle() instanceof Minecart)) {
-			return;
-		}
+	public void onVehicleBounce(org.bukkit.event.vehicle.VehicleBlockCollisionEvent event) {
+		//this event is still called if you cancel a vehicleentitycollision event.
 
-		final MinecartManiaMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
-		if (minecart.getPassenger() != null) {
-			return;
-		}
-		if (ControlBlockList.getLaunchSpeed(minecart.getItemBeneath()) != 0.0D) {
-			if (!minecart.isMoving()) {
-				ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, 2);
-				for (Sign s : signs) {
-					com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(s.getBlock());
-					if (sign.executeAction(minecart, LaunchPlayerAction.class)) {
-						break;
-					}
-				}
-			}
+		if (event.getVehicle() instanceof Minecart) {
+			Logger.debug("Bounce! " + event.getVehicle().getLocation() + " " + event.getBlock().toString());
+			//	event.getBlock().setType(org.bukkit.Material.PUMPKIN);
 		}
 	}
 

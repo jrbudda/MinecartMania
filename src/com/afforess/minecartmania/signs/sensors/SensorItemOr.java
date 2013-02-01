@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.entity.AbstractItem;
-import com.afforess.minecartmaniacore.entity.MinecartManiaPlayer;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.AbstractItem;
+import com.afforess.minecartmania.entity.MinecartManiaPlayer;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class SensorItemOr extends GenericSensor{
 	private List<AbstractItem> detect = new ArrayList<AbstractItem>();
@@ -19,7 +19,7 @@ public class SensorItemOr extends GenericSensor{
 		this.detect = item;
 	}
 
-	public void input(MinecartManiaMinecart minecart) {
+	public void input(MMMinecart minecart) {
 		boolean state = false;
 		if (minecart != null) {
 			for (AbstractItem item : detect) {

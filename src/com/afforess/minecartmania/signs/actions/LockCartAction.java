@@ -1,8 +1,7 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.config.Settings;
 
 public class LockCartAction extends DataValuecAction{
 	public static final String name = "Lock Cart";
@@ -12,10 +11,10 @@ public class LockCartAction extends DataValuecAction{
 	}
 	
 	@Override
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (minecart.hasPlayerPassenger()) {
 			if (minecart.getDataValue(this.key) == null) {
-				minecart.getPlayerPassenger().sendMessage(LocaleParser.getTextKey("SignCommandsMinecartLocked"));
+				minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLocked"));
 			}
 		}
 		return super.execute(minecart);

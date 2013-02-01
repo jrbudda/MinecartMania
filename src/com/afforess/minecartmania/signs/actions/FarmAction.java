@@ -1,7 +1,6 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class FarmAction extends SignAction
@@ -10,7 +9,7 @@ public class FarmAction extends SignAction
   protected String farmType = "";
 
 
-  public boolean execute(MinecartManiaMinecart minecart)
+  public boolean execute(MMMinecart minecart)
   {
     if (minecart.isStorageMinecart())
     {
@@ -63,6 +62,6 @@ public class FarmAction extends SignAction
 
   public String getFriendlyName()
   {
-    return "Farm Sign";
+    return "Farm";
   }
 }

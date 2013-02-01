@@ -1,37 +1,76 @@
 package com.afforess.minecartmania.config;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
+import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.Item;
 
 public class NewControlBlock {
-	private List<SignAction> actions = new LinkedList<SignAction>();
-	private Item item = null;
-	public RedstoneState redstoneEffect = RedstoneState.Default;
+	private List<SignAction> actions = new ArrayList<SignAction>();
 
 	public NewControlBlock(Item item, List<SignAction> actions){
-		this.item = item;
 		this.actions = actions;
 	}
 
-	public boolean execute(com.afforess.minecartmania.MinecartManiaMinecart minecart, Location loc) {
+	public boolean execute(com.afforess.minecartmania.MMMinecart minecart, Location loc) {
 		boolean success = false;
 
 		for (SignAction a:actions){	
-			if(minecart != null || ((minecart == null) && a.getexecuteAcceptsNull())){
-				com.afforess.minecartmania.MinecartMania.log("executing " + a.getFriendlyName());
-				if (a.execute(minecart, loc) ) success = true;;	
+			if(minecart != null || ((minecart == null) && a.getexecuteAcceptsNull())){		
+
+				if (isCorrectState(loc.getBlock(), a.redstonestate)){
+					if (a.executeAsBlock(minecart, loc) ) {
+						success = true;
+					}				
+				}
+				else com.afforess.minecartmania.debug.Logger.debug("wrong restone state for " + a.getFriendlyName());		
+
 			}		
 		}
 
 		return success;
 	}
 
+	public static boolean isCorrectState(Block block, RedstoneState state) {
+		boolean power = block.isBlockIndirectlyPowered() || block.getRelative(org.bukkit.block.BlockFace.UP).isBlockIndirectlyPowered();
+
+		if (block.getTypeId() == Item.POWERED_RAIL.getId()) {
+			power = (block.getData() & 0x8) != 0;
+		}
+
+		switch(state) {
+		case NoEffect: return true;
+		case Enables: return power;
+		case Disables: return !power;
+		case TriggerOff: 
+		case TriggerOn:
+			boolean on = false;
+			boolean off = false;
+			boolean last = false;
+
+			if(block.hasMetadata("LastPower")){
+				last = block.getMetadata("LastPower").get(0).asBoolean();
+			}
+			
+			if(block.hasMetadata("ThisPower")){
+				power = block.getMetadata("ThisPower").get(0).asBoolean();
+			}
+
+			off = last && !power;
+			on = power && !last;
+
+			com.afforess.minecartmania.debug.Logger.debug(on + " " + off + " " +  last);
+
+			return (on && state ==RedstoneState.TriggerOn) || (off && state ==RedstoneState.TriggerOff);
+		}
+
+		return false;
+	}
 
 	public boolean hasSignAction(Class<? extends SignAction> action) {
 		Iterator<SignAction> i = actions.iterator();

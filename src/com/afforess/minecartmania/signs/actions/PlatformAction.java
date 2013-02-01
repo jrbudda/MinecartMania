@@ -4,25 +4,20 @@ import java.util.List;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 
-import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class PlatformAction extends SignAction {
 
 	private int range = -1;
 
 	@Override
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (range <=0) return false;
-		if ( minecart.isStandardMinecart() && minecart.getPassenger() == null) {
-			List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range, range, range);
+		if ( minecart.isStandardMinecart() && minecart.hasPassenger() == false) {
+			List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range*2, range*2, range*2);
 
 			LivingEntity closest = null;
 			double distance = -1;
@@ -36,13 +31,10 @@ public class PlatformAction extends SignAction {
 			}
 
 			if (closest != null ) {
-				//Let the world know about this
-				VehicleEnterEvent vee = new VehicleEnterEvent(minecart.getBukkitEntity(), closest);
-				MinecartMania.callEvent(vee);
-				if (!vee.isCancelled()) {
-					minecart.setPassenger(closest);
-					return true;
-				}
+
+				minecart.setPassenger(closest);		
+				
+				return true;
 			}
 		}
 
@@ -77,7 +69,7 @@ public class PlatformAction extends SignAction {
 
 	@Override
 	public String getFriendlyName() {
-		return "Platform Sign";
+		return "Platform";
 	}
 
 }

@@ -1,40 +1,32 @@
 package com.afforess.minecartmania.signs.actions;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.events.MinecartPassengerEjectEvent;
-import com.afforess.minecartmania.signs.FailureReason;
-import com.afforess.minecartmania.signs.MMSign;
+import org.bukkit.Location;
+
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class EjectAtAction extends SignAction  {
 	Location teleport = null;
+	boolean here = false;
 
-
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (minecart.getPassenger() == null) {
 			return false;
 		}
-		if (!ControlBlockList.isValidEjectorBlock(minecart)) {
-			return false;
+
+		if(here && loc !=null){
+			teleport = loc.clone();
+			teleport.setYaw(0);
+			teleport.setPitch(0);
 		}
-		Entity passenger = minecart.getPassenger();
-		minecart.setDataValue("Eject At Sign", true);
-		MinecartPassengerEjectEvent mpee = new MinecartPassengerEjectEvent(minecart, passenger);
-		Bukkit.getServer().getPluginManager().callEvent(mpee);
-		minecart.setDataValue("Eject At Sign", null);
-		if (!mpee.isCancelled()) {
-			minecart.eject();
-			teleport.setWorld(minecart.getWorld());
-			return passenger.teleport(teleport);
-		}
-		return false;
+
+
+		teleport.setWorld(minecart.getWorld());
+		minecart.setDataValue("Eject At", teleport);
+
+		return true;
 	}
 
 
@@ -71,14 +63,18 @@ public class EjectAtAction extends SignAction  {
 				}
 				teleport.setPitch(pitch);
 				teleport.setYaw(yaw);
-
+				return true;
 			}
 			catch (Exception e) {
 				return false;
 			}
 		}
+		else if (lines[0].toLowerCase().contains("[eject here")){
+			here = true;	
+			return true;
+		}
 
-		return (teleport != null );
+		return false;
 	}
 
 
@@ -88,7 +84,8 @@ public class EjectAtAction extends SignAction  {
 
 
 	public String getFriendlyName() {
-		return "Eject At Sign";
+		String loc = ((teleport == null) ? "Location" : (teleport.getBlockX() + "," + teleport.getBlockY() + "," + teleport.getBlockZ()));
+		return "Eject At " + loc  ;
 	}
 
 

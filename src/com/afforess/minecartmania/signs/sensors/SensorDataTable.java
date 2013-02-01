@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmaniacore.utils.ItemUtils;
+import com.afforess.minecartmania.utils.ItemUtils;
 import com.avaje.ebean.validation.NotNull;
 @Entity()
 @Table(name = "sensors")

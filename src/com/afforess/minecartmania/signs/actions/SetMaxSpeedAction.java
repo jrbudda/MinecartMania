@@ -1,16 +1,16 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.StringUtils;
 
 public class SetMaxSpeedAction extends SignAction {
 	
 	protected int percent = -1;
 	
 	
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		minecart.setMaxSpeed(0.4D * percent / 100);
 		return true;
 	}
@@ -24,7 +24,7 @@ public class SetMaxSpeedAction extends SignAction {
 	public boolean process(String[] lines) {
 		
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[max speed")) {
+			if (line.toLowerCase().contains("max speed")) {
 				String[] split = line.split(":");
 				if (split.length != 2) return false;
 				double percent = Double.parseDouble(StringUtils.getNumber(split[1]));
@@ -44,7 +44,7 @@ public class SetMaxSpeedAction extends SignAction {
 
 	
 	public String getFriendlyName() {
-		return "Max Speed Sign";
+		return "Max Speed";
 	}
 
 }

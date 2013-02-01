@@ -12,10 +12,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.DirectionUtils;
+import com.afforess.minecartmania.debug.Logger;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.utils.DirectionUtils;
 
 
 public abstract class GenericSensor implements Sensor {
@@ -63,7 +62,7 @@ public abstract class GenericSensor implements Sensor {
 				ArrayList<GenericSensor> slaves = getSlaves();
 				for (GenericSensor sensor : slaves) {
 					if (sensor.master) {
-						MinecartManiaLogger.getInstance().severe("Duplicate Master sensors found! Attempting to correct...");
+						Logger.severe("Duplicate Master sensors found! Attempting to correct...");
 						sensor.master = false; //should not happen
 						sensor.clearCache();
 					}	
@@ -92,7 +91,7 @@ public abstract class GenericSensor implements Sensor {
 				}
 			}
 		};
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), task, (Integer)MinecartManiaWorld.getConfigurationValue("SensorDisabledDelay"));
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), task, com.afforess.minecartmania.config.Settings.SensorDisableDelay);
 	}
 	
 	private void disable() {
@@ -213,12 +212,12 @@ public abstract class GenericSensor implements Sensor {
 	
 	public void clearCache() {
 		pairedSensors = null;
-		MinecartManiaLogger.getInstance().debug("Sensor Cache Cleared");
+		Logger.debug("Sensor Cache Cleared");
 	}
 	
 	public void checkCache() {
 		if (pairedSensors == null) {
-			MinecartManiaLogger.getInstance().debug("Sensor Cache Re-Calculated");
+			Logger.debug("Sensor Cache Re-Calculated");
 			boolean masterFound = false;
 			masterSensor = null;
 			pairedSensors = new ArrayList<GenericSensor>();
@@ -235,7 +234,7 @@ public abstract class GenericSensor implements Sensor {
 								masterSensor = (GenericSensor)e.getValue();
 							}
 							else {
-								MinecartManiaLogger.getInstance().severe("Duplicate Master sensors found! Attempting to correct...");
+								Logger.severe("Duplicate Master sensors found! Attempting to correct...");
 								((GenericSensor)e.getValue()).master = false;
 							}
 						}

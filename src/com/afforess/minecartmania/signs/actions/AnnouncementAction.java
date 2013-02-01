@@ -1,17 +1,16 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class AnnouncementAction extends SignAction{
 
 	protected String[] announcement;
 	protected CompassDirection direction = CompassDirection.NO_DIRECTION;
 
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (minecart.hasPlayerPassenger()) {
 			if(direction == CompassDirection.NO_DIRECTION || minecart.getDirectionOfMotion() == direction){
 				for (int i = 0; i < 3; i++) {
@@ -35,7 +34,7 @@ public class AnnouncementAction extends SignAction{
 		if (lines.length < 2) return false;
 		if (lines[0].toLowerCase().contains("[announce")) {
 
-			final String title = org.bukkit.ChatColor.translateAlternateColorCodes('&', Settings.AnnouncementPrefix);
+			final String title = Settings.getLocal("SignCommandsAnnouncementPrefix");
 
 			if(lines[0].contains(":")){
 				String[] linesplit = lines[0].split(":");
@@ -83,7 +82,7 @@ public class AnnouncementAction extends SignAction{
 
 
 	public String getFriendlyName() {
-		return "Announcement Sign";
+		return "Announcement";
 	}
 
 }

@@ -1,17 +1,16 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.AbstractItem;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.AbstractItem;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.utils.ItemUtils;
+import com.afforess.minecartmania.utils.ItemUtils;
 
 public class MaximumItemAction extends SignAction{
 	protected AbstractItem items[] = null;
 
 	
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if (minecart.isStorageMinecart()) {
 			for (AbstractItem item : items) {
 				((MinecartManiaStorageCart)minecart).setMaximumItem(item.type(), item.getAmount());
@@ -42,7 +41,7 @@ public class MaximumItemAction extends SignAction{
 
 	
 	public String getFriendlyName() {
-		return "Maximum Item Sign";
+		return "Maximum Item";
 	}
 
 }

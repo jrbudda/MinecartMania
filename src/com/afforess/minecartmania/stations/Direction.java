@@ -1,8 +1,7 @@
 package com.afforess.minecartmania.stations;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmania.MMMinecart;
 
 public interface Direction {
-	CompassDirection direction(MinecartManiaMinecart input, String str);
+	boolean execute(MMMinecart input, String str);
 }

@@ -1,7 +1,8 @@
 package com.afforess.minecartmania.stations;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public interface Condition {
-	boolean result(MinecartManiaMinecart input, String str);
+	boolean result(MMMinecart input, String str);
+	
 }

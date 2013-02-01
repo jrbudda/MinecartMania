@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.utils.StorageMinecartUtils;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class PumpkinFarming extends FarmingBase {    
 	public static void doAutoFarm(MinecartManiaStorageCart minecart)

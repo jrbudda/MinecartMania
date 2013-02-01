@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.afforess.minecartmaniacore.entity.Item;
+import com.afforess.minecartmania.entity.Item;
 
 public class ItemAliasList{
 	public static ConcurrentHashMap<String, List<Item>> aliases = new ConcurrentHashMap<String, List<Item>>();
-	
+
 	public static boolean isAlias(String alias) {
 		Iterator<Entry<String, List<Item>>> i = aliases.entrySet().iterator();
 		while(i.hasNext()) {
@@ -22,7 +22,7 @@ public class ItemAliasList{
 		}
 		return false;
 	}
-	
+
 	public static List<Item> getItemsForAlias(String alias) {
 		Iterator<Entry<String, List<Item>>> i = aliases.entrySet().iterator();
 		while(i.hasNext()) {
@@ -34,4 +34,13 @@ public class ItemAliasList{
 		}
 		return new ArrayList<Item>();
 	}
+
+	public static void clear(){
+		aliases.clear();
+	}
+
+	public static void add(String s, List<Item> i){
+		aliases.put(s, i);
+	}
+
 }

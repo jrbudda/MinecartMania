@@ -3,9 +3,9 @@ package com.afforess.minecartmania.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmaniacore.debug.DebugMode;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.debug.DebugMode;
+import com.afforess.minecartmania.debug.Logger;
 
 public class DebugCommand extends MinecartManiaCommand{
 
@@ -27,8 +27,8 @@ public class DebugCommand extends MinecartManiaCommand{
 				}
 			}
 			if (mode != null) {
-				MinecartMania.log.switchDebugMode(mode);
-				sender.sendMessage(LocaleParser.getTextKey("AdminControlsDebugMode", mode.name()));
+				Logger.switchDebugMode(mode);
+				sender.sendMessage(Settings.getLocal("AdminControlsDebugMode", mode.name()));
 				
 			}
 		}
@@ -38,7 +38,7 @@ public class DebugCommand extends MinecartManiaCommand{
 				modes += m.name().toLowerCase() + ", ";
 			}
 			modes.substring(0, modes.length() - 3);
-			sender.sendMessage(LocaleParser.getTextKey("AdminControlsValidDebugModes", modes));
+			sender.sendMessage(Settings.getLocal("AdminControlsValidDebugModes", modes));
 		}
 		return true;
 	}

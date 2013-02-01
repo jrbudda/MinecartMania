@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmaniacore.utils.DirectionUtils;
+import com.afforess.minecartmania.utils.DirectionUtils;
 
 public class TruCompassCommand extends MinecartManiaCommand{
 

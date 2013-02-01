@@ -1,17 +1,17 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartActionEvent extends MinecartManiaEvent implements MinecartEvent {
 	private boolean action = false;
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	
-	public MinecartActionEvent(MinecartManiaMinecart cart) {
+	public MinecartActionEvent(MMMinecart cart) {
 		super("MinecartActionEvent");
 		minecart = cart;
 	}
 	
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 	

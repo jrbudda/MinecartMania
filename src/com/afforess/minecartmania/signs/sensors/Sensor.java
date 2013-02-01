@@ -3,11 +3,11 @@ package com.afforess.minecartmania.signs.sensors;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public interface Sensor{
 
-	public void input(MinecartManiaMinecart minecart);
+	public void input(MMMinecart minecart);
 	
 	public boolean output();
 	

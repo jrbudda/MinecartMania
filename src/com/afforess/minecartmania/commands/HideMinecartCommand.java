@@ -11,9 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.LocaleParser;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class HideMinecartCommand extends MinecartManiaCommand{
 
@@ -27,15 +27,15 @@ public class HideMinecartCommand extends MinecartManiaCommand{
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player[] online = Bukkit.getServer().getOnlinePlayers();
-		ArrayList<MinecartManiaMinecart> minecarts = MinecartManiaWorld.getMinecartManiaMinecartList();
+		ArrayList<MMMinecart> minecarts = MinecartManiaWorld.getMinecartManiaMinecartList();
 		for (Player p : online) {
 			CraftPlayer player = (CraftPlayer)p;
-			for (MinecartManiaMinecart minecart : minecarts) {
+			for (MMMinecart minecart : minecarts) {
 				Packet packet = new Packet29DestroyEntity(minecart.getEntityId());
 				player.getHandle().playerConnection.sendPacket(packet);
 			}
 		}
-		sender.sendMessage(LocaleParser.getTextKey("AdminControlsHideMinecarts"));
+		sender.sendMessage(Settings.getLocal("AdminControlsHideMinecarts"));
 		return true;
 	}
 

@@ -2,20 +2,17 @@ package com.afforess.minecartmania.signs.actions;
 
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
-import com.afforess.minecartmaniacore.utils.MinecartUtils;
+import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmania.utils.MinecartUtils;
 
 public class LaunchMinecartAction extends SignAction {
 	private volatile Vector launchSpeed = null;
 	private volatile boolean previous = false;
+	private boolean reverse = false;
 
-
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 		if(minecart == null){
 			minecart = MinecartUtils.getNearestMinecartInRange(loc, 2);
 		}
@@ -26,7 +23,7 @@ public class LaunchMinecartAction extends SignAction {
 			return false;
 		}
 
-		final MinecartManiaMinecart mc = minecart;
+		final MMMinecart mc = minecart;
 
 		if (previous) {
 			if (minecart.isFrozen()){
@@ -41,24 +38,7 @@ public class LaunchMinecartAction extends SignAction {
 			mc.setMotion(launchSpeed);		
 		}
 		else		{
-			Vector spd = null;
-			if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.NORTH)){
-				com.afforess.minecartmaniacore.debug.MinecartManiaLogger.getInstance().info(" launch north");
-				spd = new Vector(0, 0, -0.6D);
-			}
-			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.SOUTH)){
-				spd = new Vector(0, 0, 0.6D);
-			}
-			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.EAST)){
-				spd = new Vector(0.6D, 0, 0);
-			}
-			else if(	MinecartUtils.validMinecartTrack(minecart.getLocation(),1,CompassDirection.WEST)){
-				spd = new Vector(-0.6D, 0, 0);
-			}
-
-			if (spd !=null){
-				mc.setMotion(spd);		
-			}
+			minecart.launchCart(reverse);
 		}
 
 		return false;
@@ -96,7 +76,11 @@ public class LaunchMinecartAction extends SignAction {
 					launchSpeed = new Vector(-0.6D, 0, 0);
 					break;
 				}
-				else if (line.toLowerCase().contains("[launch")) {
+				else if (line.toLowerCase().contains("[launch2") && !line.toLowerCase().contains("player")) {
+					reverse = true;
+					return true;
+				}
+				else if (line.toLowerCase().contains("[launch") && !line.toLowerCase().contains("player")) {
 					return true;
 				}
 
@@ -113,7 +97,7 @@ public class LaunchMinecartAction extends SignAction {
 
 
 	public String getFriendlyName() {
-		return "Launcher Sign";
+		return "Launcher";
 	}
 
 }

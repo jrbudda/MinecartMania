@@ -2,7 +2,7 @@ package com.afforess.minecartmania.signs.sensors;
 
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class SensorPlayerName extends GenericSensor{
 	private String player;
@@ -12,7 +12,7 @@ public class SensorPlayerName extends GenericSensor{
 		this.player = player;
 	}
 
-	public void input(MinecartManiaMinecart minecart) {
+	public void input(MMMinecart minecart) {
 		boolean state = false;
 		if (minecart != null) {
 			if (minecart.hasPlayerPassenger()) {

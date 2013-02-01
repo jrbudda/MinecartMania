@@ -2,13 +2,13 @@ package com.afforess.minecartmania.config;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
+import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.Item;
 
 public class NewControlBlockList {
 	public static HashMap<Item,NewControlBlock> controlBlocks = new HashMap<Item,NewControlBlock>();
@@ -27,29 +27,6 @@ public class NewControlBlockList {
 		else return null;
 	}
 
-	public static boolean isCorrectState(boolean power, RedstoneState state) {
-		switch(state) {
-		case Default: return true;
-		case Enables: return power;
-		case Disables: return !power;
-		default:
-			return false;
-		}
-	}
-
-	public static boolean isCorrectState(Block block, RedstoneState state) {
-		boolean power = block.isBlockIndirectlyPowered() || block.getRelative(0, -1, 0).isBlockIndirectlyPowered();
-		if (block.getTypeId() == Item.POWERED_RAIL.getId()) {
-			power = (block.getData() & 0x8) != 0;
-		}
-		switch(state) {
-		case Default: return true;
-		case Enables: return power;
-		case Disables: return !power;
-		default:
-			return false;
-		}
-	}
 
 	public static boolean hasSignAction(Block block, Class<? extends SignAction> action){
 		if (block ==null) return false;
@@ -58,6 +35,24 @@ public class NewControlBlockList {
 		if (!isControlBlock(i)) return false;
 		return getControlBlock(i).hasSignAction(action);
 
+	}
+
+	public static Map<Location,NewControlBlock> getControlBlocksNearby(Location loc, int range) {
+		Map<Location,NewControlBlock> out = new HashMap<Location,NewControlBlock>();
+		for (int dx = -(range); dx <= range; dx++){
+			for (int dy = -(range); dy <= range; dy++){
+				for (int dz = -(range); dz <= range; dz++){
+					
+					Item i = Item.getItem(loc.getWorld().getBlockAt(loc.getBlockX() + dx, loc.getBlockY() + dy, loc.getBlockZ() + dz));
+					
+					if(i !=null && isControlBlock(i)){
+						out.put(new Location(loc.getWorld(),loc.getBlockX() + dx, loc.getBlockY() + dy, loc.getBlockZ() + dz), getControlBlock(i));
+					}
+
+				}
+			}
+		}
+		return out;
 	}
 
 }

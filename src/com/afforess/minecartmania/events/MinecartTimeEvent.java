@@ -2,13 +2,13 @@ package com.afforess.minecartmania.events;
 
 import java.util.Calendar;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 
 public class MinecartTimeEvent extends MinecartManiaEvent {
-	private MinecartManiaMinecart minecart;	
+	private MMMinecart minecart;	
 	private Calendar oldCalendar;
 	private Calendar currentCalendar;
-	public MinecartTimeEvent(MinecartManiaMinecart cart, Calendar oldCal, Calendar newCal) {
+	public MinecartTimeEvent(MMMinecart cart, Calendar oldCal, Calendar newCal) {
 		super("MinecartTimeEvent");
 		minecart = cart;
 		oldCalendar = oldCal;
@@ -16,7 +16,7 @@ public class MinecartTimeEvent extends MinecartManiaEvent {
 	}
 	
 	
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 	

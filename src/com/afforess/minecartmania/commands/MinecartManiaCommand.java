@@ -6,12 +6,13 @@ import org.bukkit.entity.Player;
 import com.afforess.minecartmania.MinecartMania;
 
 public abstract class MinecartManiaCommand implements Command{
-	
+
 	public boolean canExecuteCommand(CommandSender sender) {
 		if (!(sender instanceof Player) && isPlayerOnly()) {
 			return false;
 		}
 		if (sender.isOp()) {
+			//console is op
 			return true;
 		}
 		if (!(sender instanceof Player)) {
@@ -23,7 +24,7 @@ public abstract class MinecartManiaCommand implements Command{
 		}
 		return MinecartMania.permissions.canUseCommand((Player)sender, command);
 	}
-	
+
 	public boolean isValidCommand(String command, String[] args){
 		return command.equalsIgnoreCase(getCommand().name());
 	}

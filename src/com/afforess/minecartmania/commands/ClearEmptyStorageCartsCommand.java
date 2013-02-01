@@ -1,7 +1,7 @@
 package com.afforess.minecartmania.commands;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 
 public class ClearEmptyStorageCartsCommand extends ClearAllCartsCommand{
 	
@@ -11,7 +11,7 @@ public class ClearEmptyStorageCartsCommand extends ClearAllCartsCommand{
 	}
 	
 	@Override
-	public boolean shouldRemoveMinecart(MinecartManiaMinecart minecart) {
+	public boolean shouldRemoveMinecart(MMMinecart minecart) {
 		return minecart.isStorageMinecart() && ((MinecartManiaStorageCart)minecart).isEmpty();
 	}
 

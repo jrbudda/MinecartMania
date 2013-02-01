@@ -2,7 +2,7 @@ package com.afforess.minecartmania.events;
 
 import org.bukkit.event.HandlerList;
 
-import com.afforess.minecartmaniacore.debug.DebugTimer;
+import com.afforess.minecartmania.debug.DebugTimer;
 
 public abstract class MinecartManiaEvent extends org.bukkit.event.Event{
 	private final DebugTimer timer;

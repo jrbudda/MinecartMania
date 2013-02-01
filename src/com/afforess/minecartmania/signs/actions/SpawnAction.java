@@ -5,28 +5,25 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 
-import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmania.config.ControlBlockList;
-import com.afforess.minecartmania.signs.MMSign;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.MMSign;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.signs.MinecartTypeSign;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.SignUtils;
-import com.afforess.minecartmaniacore.utils.StringUtils;
+import com.afforess.minecartmania.utils.SignUtils;
 
 public class SpawnAction extends SignAction {
 	private HashMap<Location, Long> lastSpawn = new HashMap<Location, Long>();
 
 	@Override
-	public boolean execute(MinecartManiaMinecart minecart) {
+	public boolean execute(MMMinecart minecart) {
 
 		Long lastSpawn = this.lastSpawn.get(loc); //cooldown on spawner
 		if (lastSpawn == null || (Math.abs(System.currentTimeMillis() - lastSpawn) > 1000)) {
 
 			Location spawn = loc.clone().add(0, 1, 0);
-			final MinecartManiaMinecart newminecart = MinecartManiaWorld.spawnMinecart(spawn, getMinecartType(spawn), null);
+			final MMMinecart newminecart = MinecartManiaWorld.spawnMinecart(spawn, getMinecartType(spawn), null);
 
 			this.lastSpawn.put(loc, System.currentTimeMillis());
 
@@ -92,7 +89,7 @@ public class SpawnAction extends SignAction {
 
 	@Override
 	public String getFriendlyName() {
-		return "Spawn Sign";
+		return "Spawn";
 	}
 
 }

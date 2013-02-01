@@ -8,20 +8,19 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.chests.ItemCollectionManager;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartManiaChest;
+import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.events.ChestPoweredEvent;
 import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.events.MinecartDirectionChangeEvent;
-import com.afforess.minecartmaniachestcontrol.itemcontainer.ItemCollectionManager;
-import com.afforess.minecartmaniacore.entity.Item;
-import com.afforess.minecartmaniacore.entity.MinecartManiaChest;
-import com.afforess.minecartmaniacore.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.entity.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.BlockUtils;
-import com.afforess.minecartmaniacore.utils.ChestStorageUtil;
-import com.afforess.minecartmaniacore.utils.ChestUtil;
-import com.afforess.minecartmaniacore.utils.ComparableLocation;
-import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmania.utils.BlockUtils;
+import com.afforess.minecartmania.utils.ChestStorageUtil;
+import com.afforess.minecartmania.utils.ChestUtil;
+import com.afforess.minecartmania.utils.ComparableLocation;
 
 public class ChestActionListener implements Listener{
 	
@@ -37,9 +36,10 @@ public class ChestActionListener implements Listener{
 			}
 			if (spawnLocation != null && chest.contains(minecartType)) {
 				if (chest.canSpawnMinecart() && chest.removeItem(minecartType.getId())) {
-					CompassDirection direction = ChestUtil.getDirection(chest.getLocation(), spawnLocation);
-					MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
-					minecart.setMotion(direction, (Double)MinecartManiaWorld.getConfigurationValue("SpawnAtSpeed",.4));
+					
+		//			CompassDirection direction = ChestUtil.getDirection(chest.getLocation(), spawnLocation);
+			 MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
+		//			minecart.setMotion(direction, (Double)MinecartManiaWorld.getConfigurationValue("SpawnAtSpeed",.4));
 					event.setActionTaken(true);
 				}
 			}
@@ -50,7 +50,7 @@ public class ChestActionListener implements Listener{
 	@EventHandler
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		if (!event.isActionTaken()) {
-			final MinecartManiaMinecart minecart = event.getMinecart();
+			final MMMinecart minecart = event.getMinecart();
 			
 			boolean action = false;
 			

@@ -1,13 +1,13 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
+import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class KillAction extends SignAction {
 
 	@Override
-	public boolean execute(MinecartManiaMinecart minecart) {
-		minecart.kill(com.afforess.minecartmania.config.Settings.ReturnCartsToOwner);
+	public boolean execute(MMMinecart minecart) {
+		minecart.killOptionalReturn();
 		return true;
 	}
 
@@ -33,7 +33,7 @@ public class KillAction extends SignAction {
 
 	@Override
 	public String getFriendlyName() {
-		return "Kill Sign";
+		return "Kill";
 	}
 
 }

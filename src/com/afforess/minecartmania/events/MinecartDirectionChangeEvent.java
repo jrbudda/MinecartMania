@@ -1,20 +1,20 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
+import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class MinecartDirectionChangeEvent extends MinecartManiaEvent{
-	private MinecartManiaMinecart minecart;
+	private MMMinecart minecart;
 	private CompassDirection previous;
 	private CompassDirection current;
-	public MinecartDirectionChangeEvent(MinecartManiaMinecart minecart, CompassDirection previous, CompassDirection current) {
+	public MinecartDirectionChangeEvent(MMMinecart minecart, CompassDirection previous, CompassDirection current) {
 		super("MinecartDirectionChangeEvent");
 		this.minecart = minecart;
 		this.previous = previous;
 		this.current = current;
 	}
 	
-	public MinecartManiaMinecart getMinecart() {
+	public MMMinecart getMinecart() {
 		return minecart;
 	}
 	

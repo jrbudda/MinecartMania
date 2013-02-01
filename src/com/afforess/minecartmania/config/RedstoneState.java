@@ -1,7 +1,7 @@
 package com.afforess.minecartmania.config;
 
 public enum RedstoneState {
-	Default,
+	NoEffect,
 	Enables,
 	Disables,
 	TriggerOn,
