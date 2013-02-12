@@ -43,11 +43,9 @@ public class EjectAction extends SignAction{
 
 		com.afforess.minecartmania.debug.Logger.debug("Looking for [eject at] signs");
 		//look around for unprocessed ejectat signs
-		ArrayList<MMSign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 8, true);
+		ArrayList<MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), 8);
 		Double dist = null;
 		
-		SignUtils.sortByDistance(minecart.getLocation().getBlock(), list);	
-	
 		for (com.afforess.minecartmania.MMSign sign : list) {
 			if (sign.executeAction(minecart, EjectAtAction.class)  && ( dist == null || sign.getLocation().distanceSquared(minecart.getLocation()) < dist )) {
 				location = (Location) minecart.getDataValue("Eject At");
@@ -86,7 +84,7 @@ public class EjectAction extends SignAction{
 			Entity passenger = minecart.getPassenger();
 	
 			Location flocation = EntityUtils.getValidLocation(location.getBlock(), 3);
-			
+			if(flocation == null) flocation = location.clone();
 			flocation.setPitch(location.getPitch());
 			flocation.setYaw(location.getYaw());
 			

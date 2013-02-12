@@ -5,7 +5,6 @@ import org.bukkit.event.Listener;
 
 import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.events.MinecartCaughtEvent;
 import com.afforess.minecartmania.events.MinecartLaunchedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
@@ -29,16 +28,6 @@ public class SignsActionListener implements Listener{
 		}
 	}
 
-	@EventHandler
-	public void onMinecartCaughtEvent(MinecartCaughtEvent event) {
-		if (event.isActionTaken()) {
-			return;
-		}
-		if (event.getMinecart().hasPlayerPassenger() && SignCommands.doPassPlayer(event.getMinecart())) {
-			event.setActionTaken(true);
-			return;
-		}
-	}
 
 	@EventHandler
 	public void onMinecartManiaMinecartCreatedEvent(MinecartManiaMinecartCreatedEvent event) {

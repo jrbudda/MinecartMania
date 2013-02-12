@@ -1,5 +1,6 @@
 package com.afforess.minecartmania.signs.sensors;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -65,6 +66,7 @@ public class SensorManager {
 											deleteSensor(s);
 											s = null;
 										}
+										Logger.debug("Loading sensor from db " + s.getName());
 										sensors.put(loc, s);
 									}
 								}
@@ -100,9 +102,26 @@ public class SensorManager {
 
 	public static int getCount(){
 		return sensors.size();
-
 	}
 
+	public static void loadsensors(){
+		int maxId = 0;
+		List<SensorDataTable> data = database.find(SensorDataTable.class).findList();
+		for (SensorDataTable temp : data) {
+			if (temp.hasValidLocation()) {
+				Block block = temp.getLocation().getBlock();
+				if (isSign(block)) {
+					getSensor(block, true); //force load of sensor
+					if (temp.getId() > maxId) {
+						maxId = temp.getId();
+					}
+				}
+			}
+		}
+
+		SensorDataTable.lastId = maxId;
+	}
+	
 	public static boolean delSensor(Location loc) {
 		return sensors.remove(loc) != null;
 	}

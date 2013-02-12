@@ -6,9 +6,13 @@ import com.afforess.minecartmania.signs.SignAction;
 public class LaunchPlayerAction extends SignAction{
 	private boolean reverse = false;
 	public boolean execute(MMMinecart minecart) {
+	if(minecart.hasPlayerPassenger()){
 		minecart.launchCart(reverse);
 		minecart.setDataValue("hold sign data", null);
 		return true;
+	}
+
+	return false;
 	}
 
 

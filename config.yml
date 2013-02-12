@@ -1,7 +1,7 @@
 #Server Options
 #This setting will keep chunks containing minecarts loaded in memeory. You should only use this for unattended farming or automation as it does use more memory.
 KeepChunksLoaded: false
-#Not currently working, I dont think
+#If a player logs out while riding a minecart, the minecart is removed. When the player logs back in, the minecart is recreated and the player is placed into it.
 PreserveMinecartOnLogout: true
 #If true the player or chest that spawns a minecart will have it returned when it is destroyed, otherwise
 ReturnCartsToOwner: false
@@ -9,8 +9,8 @@ ReturnCartsToOwner: false
 RailAdjusterTool: WOOD_PICKAXE
 #If true, station rule signs will use the 'old' directions which are rotated 90degrees counter-clockwise from actual compass directions. This is for legacy rail systems only.
 StationsUseOldDirections: false
-#I dunno what this does, something to do with not returning storage minecarts to their owner along with the items.
-RemoveDeadMinecarts: false
+#When a minecart is destroyed it will not drop as an item if this is set to true.
+RemoveDeadMinecarts: true
 
 #[Eject] actions look for [eject at] or [eject here] actions in an 8 block radius. If instructions are not found, this setting dictates
 #whether or not to use any previously encountered [eject at] ot [eject here] actions. Set to false for legacy rail systems with mixed controller/uncontrolled ejections.
@@ -75,13 +75,16 @@ EmptyFrictionPercent: 100
 
 
 #The maximum speed to which a player can nudge a minecart while riding in it, as a percentage of the normal minecart max speed.
-MaxPushSpeedPercent: 100
+MaxPushSpeedPercent: 25
 
 #The speed change applied while going up or down slopes, as a percentage of normal minecart max speed.
 SlopeSpeedPercent: 100
 
 #The gravity applied to minecarts while flying through the air, as a percentage of normal minecart gravity.
 GravityPercent: 100
+
+#The number of blocks to jump when a minecart is clicked by the rider, or a [jump] action is encountered.
+DefaultJumpHeight: 4
 
 #Entities on Track
 
@@ -121,6 +124,7 @@ ControlBlocks:
       - "[set speed:-1x]"  
   OBSIDIAN:
       - "(OFF) [Catch]"
+      - "(ON) [launch]"      
       - "(TRIGGERON) [previous dir]"      
   END_STONE:
       - "[Catch] / hold for 5"

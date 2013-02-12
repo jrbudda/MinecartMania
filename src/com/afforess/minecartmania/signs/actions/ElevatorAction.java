@@ -41,12 +41,14 @@ public class ElevatorAction extends SignAction{
 
 				Set<CompassDirection> dirs = MinecartUtils.getValidDirections(search.getBlock());
 		
-				Logger.debug("elevator: looking for exit at y= " + i + "valid dirs " + dirs.size());		
+				Logger.debug("elevator: looking for exit at y= " + search.getBlockY() + "valid dirs " + dirs.size());		
 
 				if(dirs.contains(minecart.getDirection())) return search;
 
 				else{
 					if (!dirs.isEmpty()){
+						CompassDirection dir = dirs.iterator().next();
+						Logger.debug("elevator: sending minecart to the " + dir.toString());
 						minecart.setMotion(dirs.iterator().next(), minecart.getMotion().length());
 						return search;
 					}
@@ -63,7 +65,9 @@ public class ElevatorAction extends SignAction{
 	public boolean execute(MMMinecart minecart) {
 		Location teleport = calculateElevatorStop(minecart);
 		if (teleport != null) {
-			minecart.teleport(teleport);
+			if(minecart.teleport(teleport) == null) {
+				Logger.debug("Teleport failed!");
+			}
 			return true;
 		}
 		Logger.debug("could not find exit for elevator");

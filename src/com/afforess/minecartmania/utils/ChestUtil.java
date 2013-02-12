@@ -15,7 +15,7 @@ import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 public class ChestUtil {
 
 	public static boolean isNoCollection(MinecartManiaChest chest) {
-		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
 		for (MMSign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
 				if (sign.getLine(i).toLowerCase().contains("no collection")) {
@@ -28,7 +28,7 @@ public class ChestUtil {
 	}
 
 	public static Item getMinecartType(MinecartManiaChest chest) {
-		ArrayList<com.afforess.minecartmania.MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		ArrayList<com.afforess.minecartmania.MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
 		for (com.afforess.minecartmania.MMSign sign : signList) {
 			if (sign instanceof MinecartTypeSign) {
 				MinecartTypeSign type = (MinecartTypeSign)sign;
@@ -56,7 +56,7 @@ public class ChestUtil {
 	}
 
 	public static Location getSpawnLocationSignOverride(MinecartManiaChest chest) {
-		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
 		Location spawn = chest.getLocation();
 		Location result = null;
 		Block neighbor = chest.getNeighborChest() != null ? chest.getNeighborChest().getLocation().getBlock() : null;

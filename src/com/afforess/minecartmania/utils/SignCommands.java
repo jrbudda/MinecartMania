@@ -1,10 +1,8 @@
 package com.afforess.minecartmania.utils;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 
 import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.sensors.Sensor;
@@ -51,19 +49,5 @@ public class SignCommands {
 		updateSensors(minecart, minecart);
 	}
 
-	public static boolean doPassPlayer(MMMinecart minecart) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
-		for (Sign sign : signList) {
-			for (int i = 0; i < 4; i++) {
-				if (sign.getLine(i).toLowerCase().contains("pass player")) {
-					sign.setLine(i, "[Pass Player]");
-					sign.update();
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-		
+
 }

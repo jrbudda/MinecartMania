@@ -5,7 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.afforess.minecartmania.debug.Logger;
-import com.afforess.minecartmania.signs.actions.*;
+import com.afforess.minecartmania.signs.actions.AlterRangeAction;
+import com.afforess.minecartmania.signs.actions.AnnouncementAction;
+import com.afforess.minecartmania.signs.actions.CatchAction;
+import com.afforess.minecartmania.signs.actions.DataValuecAction;
+import com.afforess.minecartmania.signs.actions.EjectAction;
+import com.afforess.minecartmania.signs.actions.EjectAtAction;
+import com.afforess.minecartmania.signs.actions.ElevatorAction;
+import com.afforess.minecartmania.signs.actions.FarmAction;
+import com.afforess.minecartmania.signs.actions.HoldingForAction;
+import com.afforess.minecartmania.signs.actions.JumpAction;
+import com.afforess.minecartmania.signs.actions.KillAction;
+import com.afforess.minecartmania.signs.actions.LaunchMinecartAction;
+import com.afforess.minecartmania.signs.actions.LaunchPlayerAction;
+import com.afforess.minecartmania.signs.actions.LockCartAction;
+import com.afforess.minecartmania.signs.actions.MagnetAction;
+import com.afforess.minecartmania.signs.actions.MaximumItemAction;
+import com.afforess.minecartmania.signs.actions.MinimumItemAction;
+import com.afforess.minecartmania.signs.actions.PlatformAction;
+import com.afforess.minecartmania.signs.actions.PromptAction;
+import com.afforess.minecartmania.signs.actions.SetMaxSpeedAction;
+import com.afforess.minecartmania.signs.actions.SetSpeedAction;
+import com.afforess.minecartmania.signs.actions.SetStationAction;
+import com.afforess.minecartmania.signs.actions.SpawnAction;
+import com.afforess.minecartmania.signs.actions.StationAction;
+import com.afforess.minecartmania.signs.actions.StopAtDestinationAction;
 import com.afforess.minecartmania.signs.actions.UnlockCartAction;
 
 public enum ActionList {

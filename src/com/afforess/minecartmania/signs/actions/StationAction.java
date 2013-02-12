@@ -1,6 +1,8 @@
 package com.afforess.minecartmania.signs.actions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.block.Sign;
 
@@ -29,7 +31,7 @@ public class StationAction extends SignAction {
 	}
 
 	public boolean processStation(MMMinecart minecart) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), 2);
 
 		for (Sign sign : signList) {
 			convertCraftBookSorter(sign);
@@ -147,9 +149,9 @@ public class StationAction extends SignAction {
 		}
 	}
 
-	public static ArrayList<CompassDirection> getRestrictedDirections(MMMinecart minecart) {
-		ArrayList<CompassDirection> restricted = new ArrayList<CompassDirection>(4);
-		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+	public static Set<CompassDirection> getRestrictedDirections(MMMinecart minecart) {
+		Set<CompassDirection> restricted = new HashSet<CompassDirection>();
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), 2);
 		for (Sign sign : signList) {
 			for (int i = 0; i < 4; i++) {
 				if (sign.getLine(i).toLowerCase().contains("restrict")) {

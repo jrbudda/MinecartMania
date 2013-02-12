@@ -28,24 +28,6 @@ public class MinecartManiaSignCommands extends org.bukkit.plugin.java.JavaPlugin
 	}
 
 
-	public void loadsensors(){
-		if (getDatabase() == null) return;
-		int maxId = 0;
-		List<SensorDataTable> data = getDatabase().find(SensorDataTable.class).findList();
-		for (SensorDataTable temp : data) {
-			if (temp.hasValidLocation()) {
-				Block block = temp.getLocation().getBlock();
-				if (SensorManager.isSign(block)) {
-					SensorManager.getSensor(block, true); //force load of sensor
-					if (temp.getId() > maxId) {
-						maxId = temp.getId();
-					}
-				}
-			}
-		}
-
-		SensorDataTable.lastId = maxId;
-	}
 
 	public static MinecartManiaSignCommands getInstance(){
 		return instance;

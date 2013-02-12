@@ -60,19 +60,19 @@ public class LaunchMinecartAction extends SignAction {
 					previous = true;
 					break;
 				}
-				else if (line.toLowerCase().contains("[launch north")) {
+				else if (line.toLowerCase().contains("[launch n")) {
 					launchSpeed = new Vector(0, 0, -0.6D);
 					break;
 				}
-				else if (line.toLowerCase().contains("[launch east")) {
+				else if (line.toLowerCase().contains("[launch e")) {
 					launchSpeed = new Vector(0.6D, 0, 0);
 					break;
 				}
-				else if (line.toLowerCase().contains("[launch south")) {
+				else if (line.toLowerCase().contains("[launch s")) {
 					launchSpeed = new Vector(0, 0, 0.6D);
 					break;
 				}
-				else if (line.toLowerCase().contains("[launch west")) {
+				else if (line.toLowerCase().contains("[launch w")) {
 					launchSpeed = new Vector(-0.6D, 0, 0);
 					break;
 				}
@@ -97,7 +97,7 @@ public class LaunchMinecartAction extends SignAction {
 
 
 	public String getFriendlyName() {
-		return "Launcher";
+		return "Launcher " + (reverse ? "Reverse" : "");
 	}
 
 }

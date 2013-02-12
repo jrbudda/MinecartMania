@@ -19,6 +19,7 @@ public class ChunkListener implements Listener{
     		if (Settings.isKeepMinecartsLoaded()) {
     			ArrayList<MMMinecart> minecarts = MinecartManiaWorld.getMinecartManiaMinecartList();
     			for (MMMinecart minecart : minecarts) {
+    				if(event.getWorld() != minecart.getWorld()) continue;
     				if (Math.abs(event.getChunk().getX() - minecart.getLocation().getBlock().getChunk().getX()) > CHUNK_RANGE) {
     					continue;
     				}

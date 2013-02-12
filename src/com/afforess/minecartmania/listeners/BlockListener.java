@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -170,7 +171,7 @@ public class BlockListener implements Listener{
 
 	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event) {
-		if (event.getBlock().getState() instanceof MMSign) {
+		if (event.getBlock().getState() instanceof Sign) {
 			Sensor previous = SensorManager.getSensor(event.getBlock().getLocation());
 			if (previous == null) {
 				Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)event.getBlock().getState(), event.getPlayer());

@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.utils;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 import org.bukkit.util.Vector;
 
@@ -95,7 +95,7 @@ public class StationUtil {
 		return null;
 	}
 
-	public static String buildValidDirectionString(ArrayList<CompassDirection> restricted) {
+	public static String buildValidDirectionString(Set<CompassDirection> restricted) {
 		String valid = "";
 		boolean first = true;
 		if (!restricted.contains(CompassDirection.NORTH)){
@@ -130,7 +130,7 @@ public class StationUtil {
 	}
 
 	public static boolean isValidDirection(CompassDirection facingDir, MMMinecart minecart) {
-		ArrayList<CompassDirection> restricted = StationAction.getRestrictedDirections(minecart);
+		Set<CompassDirection> restricted = StationAction.getRestrictedDirections(minecart);
 		//Check if the direction is valid
 		if (!MinecartUtils.validMinecartTrack(minecart.getLocation(), CompassDirection.NORTH)) {
 			if (!restricted.contains(CompassDirection.NORTH)) {

@@ -138,7 +138,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
 	 }
 	 
 	 private boolean isIgnoreProtection() {
-		 ArrayList<MMSign> signs = SignUtils.getAdjacentMinecartManiaSignList(getLocation(), 1);
+		 ArrayList<MMSign> signs = SignUtils.getAdjacentMMSignList(getLocation(), 1);
 		 for (MMSign sign : signs) {
 			 if (sign.executeAction(null, ForceUnlockChestAction.class)) {
 				 return true;

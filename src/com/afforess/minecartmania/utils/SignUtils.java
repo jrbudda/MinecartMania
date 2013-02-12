@@ -1,19 +1,16 @@
 package com.afforess.minecartmania.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.signs.SignManager;
 
 public class SignUtils {
+	
+	
 	public static boolean signMatches(Sign s1, Sign s2) {
 		return s1.getBlock().getLocation().equals(s2.getBlock().getLocation());
 	}
@@ -36,27 +33,13 @@ public class SignUtils {
 		}
 	}
 
-	public static ArrayList<Sign> getAdjacentSignList(MMMinecart minecart, int range) {
-		return getAdjacentSignList(minecart.getLocation(), range);
-	}
-
-	public static ArrayList<Sign> getAdjacentSignList(MMMinecart minecart, int range, boolean force) {
-		return getAdjacentSignList(minecart.getLocation(), range, force);
-	}
 
 	public static ArrayList<Sign> getAdjacentSignList(Location location, int range) {
-		return getAdjacentSignList(location.getWorld(), location.getBlockX(), location.getBlockY()-1, location.getBlockZ(), range);
+		return getAdjacentSignList(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), range);
 	}
 
-	public static ArrayList<Sign> getAdjacentSignList(Location location, int range, boolean force) {
-		return getAdjacentSignList(location.getWorld(), location.getBlockX(), location.getBlockY()-1, location.getBlockZ(), range);
-	}
 
-	public static ArrayList<Sign> getAdjacentSignList(World w, int x, int y, int z, int range) { 
-		return getAdjacentSignList(w, x, y, z, range, false);
-	}
-
-	public static ArrayList<Sign> getAdjacentSignList(World w, int x, int y, int z, int range, boolean force) {
+	private  static ArrayList<Sign> getAdjacentSignList(World w, int x, int y, int z, int range) {
 		ArrayList<Sign> signList = new ArrayList<Sign>();
 
 		//		if (!force && Settings.isLimitedSignRange()) {
@@ -68,6 +51,7 @@ public class SignUtils {
 		for (int dx = -(range); dx <= range; dx++){
 			for (int dy = -(range); dy <= range; dy++){
 				for (int dz = -(range); dz <= range; dz++){
+					
 					Sign sign = getSignAt(w, x+dx, y+dy, z+dz);
 					if (sign != null) {
 						signList.add(sign);
@@ -80,7 +64,7 @@ public class SignUtils {
 
 
 
-	public static ArrayList<com.afforess.minecartmania.MMSign> getAdjacentMinecartManiaSignList(Location location, int range) {
+	public static ArrayList<com.afforess.minecartmania.MMSign> getAdjacentMMSignList(Location location, int range) {
 		ArrayList<Sign> list = getAdjacentSignList(location, range);
 		ArrayList<com.afforess.minecartmania.MMSign> signList = new ArrayList<com.afforess.minecartmania.MMSign>(list.size());
 		for (Sign s : list) {
@@ -89,172 +73,7 @@ public class SignUtils {
 		return signList;
 	}
 
-	public static ArrayList<com.afforess.minecartmania.MMSign> getAdjacentMinecartManiaSignList(Location location, int range, boolean force) {
-		ArrayList<Sign> list = getAdjacentSignList(location, range, force);
-		ArrayList<com.afforess.minecartmania.MMSign> signList = new ArrayList<com.afforess.minecartmania.MMSign>(list.size());
-		for (Sign s : list) {
-			signList.add(SignManager.getOrCreateMMSign(s.getBlock()));
-		}
-		return signList;
-	}
-
-	public static ArrayList<com.afforess.minecartmania.MMSign> getMinecartManiaSignBeneathList(Location location, int range) {
-		ArrayList<Sign> list = getSignBeneathList(location, range);
-		ArrayList<com.afforess.minecartmania.MMSign> signList = new ArrayList<com.afforess.minecartmania.MMSign>(list.size());
-		for (Sign s : list) {
-			signList.add(SignManager.getOrCreateMMSign(s.getBlock()));
-		}
-		return signList;
-	}
-
-	public static ArrayList<Sign> getParallelSignList(MMMinecart minecart) {
-		return getParallelSignList(minecart.getLocation());
-	}
-
-	public static ArrayList<Sign> getParallelSignList(Location location) {
-		return getParallelSignList(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
-	}
-
-	public static ArrayList<Sign> getParallelSignList(World w, int x, int y, int z){
-		int range = 1;
-		ArrayList<Sign> signList = new ArrayList<Sign>();
-		for (int dx = -(range); dx <= range; dx++){
-			Sign sign = getSignAt(w, x+dx, y, z);
-			if (sign != null) {
-				signList.add(sign);
-			}
-		}
-		for (int dz = -(range); dz <= range; dz++){
-			Sign sign = getSignAt(w, x, y, z+dz);
-			if (sign != null) {
-				signList.add(sign);
-			}
-		}
-		return signList;
-	}
-
-	public static ArrayList<Sign> getSignBeneathList(MMMinecart minecart, int range) {
-		return getSignBeneathList(minecart.getLocation(), range);
-	}
-
-	public static ArrayList<Sign> getSignBeneathList(Location location, int range) {
-		return getSignBeneathList(location.getWorld(), location.getBlockX(), location.getBlockY()-1, location.getBlockZ(), range);
-	}
-
-	public static ArrayList<Sign> getSignBeneathList(World w, int x, int y, int z, int range) {
-		ArrayList<Sign> signList = new ArrayList<Sign>();
-
-		for (int dy = -range; dy <= 0; dy++) {
-			Sign sign = getSignAt(w, x, y+dy, z);
-			if (sign != null) {
-				signList.add(sign);
-			}
-		}
-		return signList;
 
 
-	}
-
-	public static void sortByDistance(Block block, List<com.afforess.minecartmania.MMSign> signs) {
-		Collections.sort(signs, new SignDistanceComparator(block.getX(),block.getY(),block.getZ()));
-	}
 
 }
-
-
-class SignDistanceComparator implements Comparator<com.afforess.minecartmania.MMSign>
-{
-	private int x,y,z;
-
-	public SignDistanceComparator(int x, int y,int z)
-	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
-	protected int getSquaredDistanceFromLocation(com.afforess.minecartmania.MMSign sign)
-	{
-		int x = sign.getX() - this.x;
-		int y = sign.getY() - this.y;
-		int z = sign.getZ() - this.z;
-		return x*x + y*y + z*z;
-	}
-
-	public int compare(com.afforess.minecartmania.MMSign sign1, com.afforess.minecartmania.MMSign sign2)
-	{
-		int i1 = getSquaredDistanceFromLocation(sign1);
-		int i2 = getSquaredDistanceFromLocation(sign1);
-
-		// If the distance differs, threshold it and return.
-		if (i1 != i2)
-			return (int)Math.min(Math.max(i1 - i2,-1), 1);
-
-		int d;
-
-		// If the distance of two blocks is the same, sort them by x, then y, then z.
-		// There's no particular reason for this, just that we don't want to claim 
-		// that two different blocks are the same
-
-		d = (sign1.getX() - sign2.getX());
-		if (d != 0)
-			return Math.min(Math.max(d, -1), 1);
-
-		d = (sign1.getY() - sign2.getY());
-		if (d != 0)
-			return Math.min(Math.max(d, -1), 1);
-
-		d = (sign1.getZ() - sign2.getZ());
-
-		return Math.min(Math.max(d, -1), 1);
-	}
-
-}
-class LocationDistanceComparator implements Comparator<Location> {
-	private int x,y,z;
-
-	public LocationDistanceComparator(int x, int y,int z)
-	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
-	protected int getSquaredDistanceFromLocation(Location sign)
-	{
-		int x = sign.getBlockX() - this.x;
-		int y = sign.getBlockY() - this.y;
-		int z = sign.getBlockZ() - this.z;
-		return x*x + y*y + z*z;
-	}
-
-	public int compare(Location sign1, Location sign2)
-	{
-		int i1 = getSquaredDistanceFromLocation(sign1);
-		int i2 = getSquaredDistanceFromLocation(sign1);
-
-		// If the distance differs, threshold it and return.
-		if (i1 != i2)
-			return (int)Math.min(Math.max(i1 - i2,-1), 1);
-
-		int d;
-
-		// If the distance of two blocks is the same, sort them by x, then y, then z.
-		// There's no particular reason for this, just that we don't want to claim 
-		// that two different blocks are the same
-
-		d = (sign1.getBlockX() - sign2.getBlockX());
-		if (d != 0)
-			return Math.min(Math.max(d, -1), 1);
-
-		d = (sign1.getBlockY() - sign2.getBlockY());
-		if (d != 0)
-			return Math.min(Math.max(d, -1), 1);
-
-		d = (sign1.getBlockZ() - sign2.getBlockZ());
-
-		return Math.min(Math.max(d, -1), 1);
-	}
-
-}
-

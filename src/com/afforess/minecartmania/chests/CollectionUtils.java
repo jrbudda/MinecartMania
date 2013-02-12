@@ -26,27 +26,28 @@ import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.ItemUtils;
 import com.afforess.minecartmania.utils.StringUtils;
 
-public class ItemCollectionManager {
-	
+public class CollectionUtils {
+
 	public static boolean isItemCollectionSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("collect item");
+		return sign.getLine(0).toLowerCase().contains("[collect item");
 	}
-	
+
 	public static boolean isItemDepositSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("deposit item");
+		return sign.getLine(0).toLowerCase().contains("[deposit item");
 	}
-	
+
 	public static boolean isTrashItemSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("trash item");
+		return sign.getLine(0).toLowerCase().contains("[trash item");
 	}
-	
+
 	public static boolean isFurnaceFuelLine(String line) {
-		return line.toLowerCase().contains("fuel:");
+		return line.toLowerCase().contains("[fuel:");
 	}
-	
+
 	public static boolean isFurnaceSmeltLine(String line) {
-		return line.toLowerCase().contains("smelt:");
+		return line.toLowerCase().contains("[smelt:");
 	}
+
 	/**
 	 * Merges lines on a sign into a single line for processing, when the direction on the lines match. Needed for support of the '!' character.
 	 */
@@ -69,7 +70,7 @@ public class ItemCollectionManager {
 				}
 			}
 		}
-		
+
 		Logger.debug("Merged Item Strings");
 		Iterator<Entry<CompassDirection, String>> i = directions.entrySet().iterator();
 		while (i.hasNext()) {
@@ -79,7 +80,7 @@ public class ItemCollectionManager {
 		}
 		return lines;
 	}
-	
+
 	public static MinecartManiaInventory getMinecartManiaInventory(Block block) {
 		MinecartManiaInventory inventory = null;
 		if (block.getState() instanceof Chest) {
@@ -97,7 +98,7 @@ public class ItemCollectionManager {
 		}
 		return inventory;
 	}
-	
+
 	public static ArrayList<ItemContainer> getItemContainers(Location location, CompassDirection direction, boolean collection) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		HashSet<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
@@ -136,7 +137,7 @@ public class ItemCollectionManager {
 		}
 		return containers;
 	}
-	
+
 	public static ArrayList<ItemContainer> getTrashItemContainers(Location location, CompassDirection direction) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		ArrayList<String> lines = getItemLines(((Sign)location.getBlock().getState()));
@@ -147,7 +148,7 @@ public class ItemCollectionManager {
 		}
 		return containers;
 	}
-	
+
 	public static ArrayList<ItemContainer> getFurnaceContainers(Location location, CompassDirection direction) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		HashSet<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
@@ -157,9 +158,11 @@ public class ItemCollectionManager {
 				for (int line = 0; line < 4; line++) {
 					String text = ((Sign)location.getBlock().getState()).getLine(line);
 					if (isFurnaceFuelLine(text)) {
+						Logger.debug("Found Furnece to add Fuel to");
 						containers.add(new FurnaceFuelContainer(furnace, text, direction));
 					}
 					else if (isFurnaceSmeltLine(text)) {
+						Logger.debug("Found Furnece to add materials to");
 						containers.add(new FurnaceSmeltContainer(furnace, text, direction));
 					}
 				}
@@ -167,7 +170,7 @@ public class ItemCollectionManager {
 		}
 		return containers;
 	}
-	
+
 	private static void bracketizeSign(Sign sign) {
 		for (int line = 0; line < 4; line++) {
 			if (!sign.getLine(line).trim().isEmpty())
@@ -175,11 +178,10 @@ public class ItemCollectionManager {
 		}
 	}
 
-	
-	public static void createItemContainers(MinecartManiaStorageCart minecart, HashSet<ComparableLocation> available) {
+	public static 	 ArrayList<ItemContainer>   getItemContainers(MinecartManiaStorageCart minecart, ArrayList<Sign> signs) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
-		for (Location loc : available) {
-			Sign sign = (Sign)loc.getBlock().getState();
+
+		for (Sign sign : signs) {
 			if (isItemCollectionSign(sign)) {
 				Logger.debug("Found Collect Item Sign");
 				bracketizeSign(sign);
@@ -197,27 +199,9 @@ public class ItemCollectionManager {
 			}
 			containers.addAll(getFurnaceContainers(sign.getBlock().getLocation(), minecart.getDirection()));
 		}
-		minecart.setDataValue("ItemContainerList", containers);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void updateContainerDirections(MinecartManiaStorageCart minecart) {
-		ArrayList<ItemContainer> containers = (ArrayList<ItemContainer>) minecart.getDataValue("ItemContainerList");
-		if (containers != null) {
-			for (ItemContainer container : containers) {
-				container.addDirection(minecart.getDirectionOfMotion());
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static void processItemContainer(MinecartManiaStorageCart minecart) {
-		ArrayList<ItemContainer> containers = (ArrayList<ItemContainer>) minecart.getDataValue("ItemContainerList");
-		if (containers != null) {
-			for (ItemContainer container : containers) {
-				container.doCollection(minecart);
-			}
-		}
+
+		return containers;
+		
 	}
 
 }

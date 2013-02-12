@@ -7,7 +7,7 @@ import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.ItemUtils;
 
 public abstract class GenericItemContainer implements ItemContainer{
-	protected String line;
+	protected String line = "";
 	protected final HashSet<CompassDirection> directions = new HashSet<CompassDirection>(4);
 	public GenericItemContainer(String line, CompassDirection direction) {
 		directions.add(direction);
@@ -19,6 +19,10 @@ public abstract class GenericItemContainer implements ItemContainer{
 		return line.contains("+");
 	}
 
+	@Override
+	public java.lang.String toString() {
+		return "Collection Container " + line;
+	}
 	
 	public boolean hasAmountCondition() {
 		return line.contains("@");

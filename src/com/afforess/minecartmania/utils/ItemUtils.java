@@ -102,18 +102,13 @@ public class ItemUtils {
 					if(item.getAmount() == -2)
 						items.remove(item);
 					else if(item.getAmount() != -1) {
-						if(items.contains(item))
-							items.remove(item);
-						
+						if(items.contains(item)) items.remove(item);		
 						items.add(item);
 					} else
 						items.add(item);
-				}
-					
-			}
-			
+				}		
+			}	
 		}
-		
 		
 		//Remove Air from the list
 		Iterator<AbstractItem> i = items.iterator();
@@ -182,6 +177,7 @@ public class ItemUtils {
 			return null;
 		}
 	}
+	
 	private static List<AbstractItem> parseAmount(String part){
 		String[] split   = part.split(TYPE.AMOUNT.getTag());
 		List<AbstractItem> items = parsePart(split[0]);
@@ -194,6 +190,7 @@ public class ItemUtils {
 		
 		return items;
 	}
+	
 	private static List<AbstractItem> parseNegative(String part){
 		part = part.replace(TYPE.REMOVE.getTag(), "");
 		List<AbstractItem> items = parsePart(part);
@@ -204,6 +201,7 @@ public class ItemUtils {
 		
 		return items;
 	}
+	
 	private static List<AbstractItem> parseRange(String part){
 		String[] split   = part.split(TYPE.RANGE.getTag());
 		List<AbstractItem> start = parsePart(split[0]);
@@ -232,6 +230,7 @@ public class ItemUtils {
 		}
 		return items;
 	}
+	
 	private static AbstractItem parseData(String part){
 		String[] split   = part.split(TYPE.DATA.getTag());
 		List<AbstractItem> items = parsePart(split[0]);
@@ -242,6 +241,7 @@ public class ItemUtils {
 		
 		return null;
 	}
+	
 	private static List<AbstractItem> parseNormal(String part){
 		try {
 			return AbstractItem.getItem(Integer.parseInt(part));

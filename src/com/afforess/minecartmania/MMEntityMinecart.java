@@ -35,7 +35,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 	private final double defaultgravity = 0.03999999910593033D;
 	private final double DefaultslopeSpeed = 0.0078125D;
 	private final double defaultDerailedFriction  = 0.8;
-	private final double defaultPassengerPushSpeed = 0.1D;
 
 	public double derailedFrictioPercent = 100;
 	public double passengerFrictionPercent = 100;
@@ -83,7 +82,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		int yBlock = MathHelper.floor(this.locY);
 		int zBlock = MathHelper.floor(this.locZ);
 
-		for(int i = -1; i <=4 ;i++){
+		for(int i = -1; i <=2 ;i++){
 			if (BlockMinecartTrack.e(this.world.getTypeId(xBlock, yBlock + i, zBlock))) {
 				return i ;
 			}
@@ -267,78 +266,67 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			constrainSpeed();
 
-			// move in .5m increments.
+			// move in  increments.
 			double spd= Math.sqrt(motX*motX + motZ*motZ);
 			double speeddelta = 0;
 
 			if (this.passenger != null) {
 				// there is a passenger
 				double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
-				if (passengerSpeed > .0001D && spd < MaxPushSpeedPercent / 100 * defaultPassengerPushSpeed) {
+				if (passengerSpeed > .0001D && spd < MaxPushSpeedPercent / 100 * .4) {
 					this.motX += this.passenger.motX * 0.2D;
 					this.motZ += this.passenger.motZ * 0.2D;
-					 spd= Math.sqrt(motX*motX + motZ*motZ);
+					spd= Math.sqrt(motX*motX + motZ*motZ);
 				}
 				//I think this bumps the cart along? or maybe when the passenger gets in?
 			}	
-			
-			double incspd= spd;
-			
-			Logger.motion(" incomming speed x:" + motX + " z:" + motZ);
 
-			while (spd > .4) {		
+			double incspd= spd;
+
+
+
+			//move in  increments.
+			double ii=Math.floor(incspd/.4);
+			double itspd; 
+			do{
+				//this shouldnt loop.. cause math, i think.
+				++ii;
+				itspd = Math.abs(incspd)/ii;
+			} while (itspd >= .4);
+
+
+			Logger.motion(" incomming speed x:" + motX + " z:" + motZ + " itsped " + itspd + " spd " + spd);
+
+			for(int derp = 0; derp < ii;derp++) {		
 
 				if (Math.abs(motX) > Math.abs(motZ)){
-					motX = .4 * ((motX < 0) ? -1 :1);
+					motX = itspd * ((motX < 0) ? -1 :1);
 					motZ = 0;
 				}
 				else if (Math.abs(motZ) > Math.abs(motX)){
-					motZ = .4 * ((motZ < 0) ? -1 :1);		
+					motZ = itspd * ((motZ < 0) ? -1 :1);		
 					motX = 0;
 				}
 				else {
-					motZ = Math.sqrt(.4*.4/2) *  (motZ < 0 ? -1 :1);	
-					motX = Math.sqrt(.4*.4/2)  * (motX < 0 ? -1 :1);
+					motZ = itspd/Math.sqrt(2) * (motZ < 0 ? -1 :1);	
+					motX =itspd/Math.sqrt(2) * (motX < 0 ? -1 :1);
 				}	
 
 				nonstaticmove();
 
-				//undo any multiplier
+				double ts = Math.sqrt(motX*motX + motZ*motZ);
+				speeddelta += (itspd- ts); //4.8
+
+				//undo any multiplier just for this iteration.
 				if(motX >.4) motX = .4;
 				if(motZ >.4) motZ = .4;
 				if(motX <-.4) motX = -.4;
 				if(motZ <-.4) motZ = -.4;
 
-				double ts = Math.sqrt(motX*motX + motZ*motZ);
-				speeddelta += (.4- ts); //4.8
-				spd -=  .4; 
 			} 
 
 
-			if(spd > 0.0001D || incspd <= 0.0001D){
-				if (Math.abs(motX) > Math.abs(motZ)){
-					motX = spd * ((motX < 0) ? -1 :1);
-					motZ = 0;
-				}
-				else if (Math.abs(motZ) > Math.abs(motX)){
-					motZ = spd * ((motZ < 0) ? -1 :1);	;		
-					motX = 0;
-				}
-				else {
-					motZ = Math.sqrt(spd*spd/2) *  (motZ < 0 ? -1 :1);	
-					motX = Math.sqrt(spd*spd/2)  * (motX < 0 ? -1 :1);
-				}		
-
-				// remainder speed sent to last call    .0024
-
-				nonstaticmove();
-			}
-
 			//have to repopulate the vars with the original speed minus the total change, so the real speed is available to external code.
-
-			double ts = Math.sqrt(motX*motX + motZ*motZ);    //.0023
-
-			speeddelta += (spd- ts); //4.8		
 
 			spd = incspd - speeddelta;
 
@@ -351,15 +339,55 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				motX = 0;
 			}
 			else{		
-				motZ = Math.sqrt(spd*spd/2) *  (motZ < 0 ? -1 :1);	
-				motX = Math.sqrt(spd*spd/2)  * (motX < 0 ? -1 :1);		
+				motZ = itspd/Math.sqrt(2) *  (motZ < 0 ? -1 :1);	
+				motX =itspd/Math.sqrt(2) * (motX < 0 ? -1 :1);		
 			}
 
 			constrainSpeed();
 
 			Logger.motion(" outgoing speed x:" + motX + " z:" + motZ + "spd: " + spd + " delta: " + speeddelta);
 			//
-			
+
+		}
+
+		//modify speed
+
+		//slopes
+		if (this.onRails){
+
+
+			if (slopedata == 2) {
+				this.motX -= DefaultslopeSpeed * slopeSpeedPercent/100;
+			}
+
+			if (slopedata == 3) {
+				this.motX += DefaultslopeSpeed * slopeSpeedPercent/100;
+			}
+
+			if (slopedata == 4) {
+				this.motZ += DefaultslopeSpeed * slopeSpeedPercent/100;
+			}
+
+			if (slopedata == 5) {
+				this.motZ -=DefaultslopeSpeed * slopeSpeedPercent/100;
+			}
+
+			//frictions
+			if(slowWhenEmpty && this.passenger == null){
+				this.motX *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
+				this.motZ *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
+			}
+			else{
+				this.motX *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
+				this.motZ *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
+			}
+		}
+		else {
+			//Don't apply friction if in the block above a rail, cause i think onground retruns true.
+			if (this.onGround) {
+				this.motX *=  ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
+				this.motZ *=   ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
+			}
 		}
 
 		//stop motion if very slow.
@@ -485,25 +513,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			this.fallDistance = 0.0F;
 			//	Vec3D vec3d = this.a(this.locX, this.locY, this.locZ);
 
-			//modify speed
-
-			//slopes
-
-			if (slopedata == 2) {
-				this.motX -= DefaultslopeSpeed * slopeSpeedPercent/100;
-			}
-
-			if (slopedata == 3) {
-				this.motX += DefaultslopeSpeed * slopeSpeedPercent/100;
-			}
-
-			if (slopedata == 4) {
-				this.motZ += DefaultslopeSpeed * slopeSpeedPercent/100;
-			}
-
-			if (slopedata == 5) {
-				this.motZ -=DefaultslopeSpeed * slopeSpeedPercent/100;
-			}
 
 
 			//Curves
@@ -578,15 +587,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				}
 			}
 
-			//frictions
-			if(slowWhenEmpty && this.passenger == null){
-				this.motX *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
-				this.motZ *= ((1-this.defaultemptyFriction) * (100-this.emptyFrictionPercent) / 100)  + this.defaultemptyFriction;
-			}
-			else{
-				this.motX *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
-				this.motZ *= ((1-this.defaultpassengerFriction) * (100-this.passengerFrictionPercent) / 100)  + this.defaultpassengerFriction;
-			}
+
 
 
 			//constrain.
@@ -753,11 +754,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			constrainSpeed();
 
-			//Don't apply friction if in the block above a rail, cause i think onground retruns true.
-			if (this.onGround && offset !=-1) {
-				this.motX *=  ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
-				this.motZ *=   ((1-this.defaultDerailedFriction) * (100-this.derailedFrictioPercent) / 100)  + this.defaultDerailedFriction;
-			}
+
 
 			this.setPosition(this.locX, this.locY, this.locZ); //necessary when first created
 			this.move(this.motX, this.motY, this.motZ);		

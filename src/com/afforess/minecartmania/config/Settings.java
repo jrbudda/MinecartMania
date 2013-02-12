@@ -21,14 +21,14 @@ public  class Settings {
 	//physics
 	public static boolean MinecartCollisions;
 	public static boolean DefaultMagneticRail;
-	public static int DefaultPassengerFrictionPercent;
-	public static int DefaultEmptyFrictionPercent;
+	public static double DefaultPassengerFrictionPercent;
+	public static double DefaultEmptyFrictionPercent;
 	public static double defaultJumpHeight;
-	public static int DefaultMaxSpeedPercent;
-	public static int MaxAllowedSpeedPercent;
-	public static int DefaultDerailedFrictionPercent;
-	public static int SlopeSpeedPercent;
-	
+	public static double DefaultMaxSpeedPercent;
+	public static double MaxAllowedSpeedPercent;
+	public static double DefaultDerailedFrictionPercent;
+	public static double SlopeSpeedPercent;
+	public static double MaxPassengerPushPercent;
 	//new
 	public static boolean KillPlayersOnTrack;
 
@@ -48,7 +48,7 @@ public  class Settings {
 	public static int EmptyStorageMinecartKillTimer;
 	public static int EmptyPoweredMinecartKillTimer;
 	public static Item RailAdjusterTool;
-	public static int KillPlayersOnTrackMinnimumSpeed;
+	public static double KillPlayersOnTrackMinnimumSpeed;
 	public static boolean IgnorePlayersOnTrack;
 
 	public static boolean RememeberEjectionLocations;

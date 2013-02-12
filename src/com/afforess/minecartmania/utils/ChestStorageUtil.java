@@ -6,12 +6,10 @@ import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.MMSign;
-import com.afforess.minecartmania.entity.AbstractItem;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
@@ -59,6 +57,8 @@ public abstract class ChestStorageUtil {
 	public static boolean doMinecartCollection(MMMinecart minecart) {
 		if (minecart.getBlockTypeAhead() != null) {
 			if (minecart.getBlockTypeAhead().getType().getId() == Item.CHEST.getId()) {
+				
+				
 				MinecartManiaChest chest = MinecartManiaWorld.getMinecartManiaChest((Chest)minecart.getBlockTypeAhead().getState());
 				
 				if (ChestUtil.isNoCollection(chest)) {
@@ -93,7 +93,7 @@ public abstract class ChestStorageUtil {
 		for (Block block : blockList) {
 			if (block.getState() instanceof Chest) {
 				MinecartManiaChest chest = MinecartManiaWorld.getMinecartManiaChest((Chest)block.getState());
-				ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 1);
+				ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 1);
 				for (MMSign sign : signList) {
 					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("parallel")) {
@@ -116,7 +116,7 @@ public abstract class ChestStorageUtil {
 		HashSet<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
-				ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(block.getLocation(), 2);
+				ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(block.getLocation(), 2);
 				for (MMSign sign : signList) {
 					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("compress items")) { 

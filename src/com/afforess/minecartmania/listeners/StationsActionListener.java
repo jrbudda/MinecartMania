@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 
 import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.MinecartManiaPlayer;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.events.MinecartActionEvent;
@@ -136,14 +137,12 @@ public class StationsActionListener implements Listener {
 		//responding to chat direction prompt
 		if (minecart.isAtIntersection() && minecart.hasPlayerPassenger()) {
 			if (StationUtil.isValidDirection(facingDir, minecart)) {
-				com.afforess.minecartmania.debug.Logger.info("intersection click: valid dir" );
+				Logger.info("intersection click: valid dir" );
 				int data = DirectionUtils.getMinetrackRailDataForDirection(facingDir, minecart.getDirection());
 				if (data != -1) {
 					MinecartManiaWorld.setBlockData(minecart.getWorld(), minecart.getX(), minecart.getY(), minecart.getZ(), data);
 				}
-				com.afforess.minecartmania.debug.Logger.info("intersection click: unfreezer" );
 				minecart.setFrozen(false);
-				//	minecart.setDataValue("preintersection velocity", null);
 			}
 
 			event.setActionTaken(true);

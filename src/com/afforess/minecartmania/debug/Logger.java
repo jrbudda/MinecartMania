@@ -21,7 +21,12 @@ public  class Logger {
 				queue( s);
 		}
 	}
+	public static void debug(String s) {
+		debugCore(s, true, new Object[0]);
+	}
 
+	
+	
 	public static void debug(String s, Object ...args) {
 		debugCore(s, true, args);
 	}

@@ -219,10 +219,12 @@ public class CoreListener implements Listener{
 
 	//	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
 	public void onVehicleEnter(VehicleEnterEvent event) {
 
 		if(!(event.getVehicle() instanceof Minecart))return; 
+
+		Logger.debug(event.getEntered().toString() + " enters cart " + event.getVehicle().getEntityId());
 
 		if (event.getEntered() instanceof Player) {
 			if (MinecartUtils.isBlockedFromEntering((Player)event.getEntered())) {
@@ -244,15 +246,25 @@ public class CoreListener implements Listener{
 			return;
 		}
 
-		//proc the cart on sucessful entity entrance.
-		if (event.isCancelled() == false) minecart.handleControlBlocksAndSigns();
-		SignCommands.updateSensors(minecart);
+		//proc the cart on sucessful entity entrance. Delay one tick so the passenger shows up to the actions.
+		if (event.isCancelled() == false){
+			MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(), new Runnable(){
+				@Override
+				public void run() {
+					minecart.handleControlBlocksAndSigns();
+					SignCommands.updateSensors(minecart);
+				}
+			});
+
+		}
+
 
 	}
 
 	@EventHandler
 	public void onVehicleExit(VehicleExitEvent event) {
 		if (event.getVehicle() instanceof Minecart) {
+			Logger.debug("Vehicle exit " + event.getExited().toString());
 			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 			SignCommands.updateSensors(minecart);
 		}

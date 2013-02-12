@@ -548,20 +548,26 @@ public class MinecartManiaWorld {
 	 ** @param Material type of minecart to spawn
 	 ** @param Owner of this minecart (player or chest). Can be null
 	 **/
-	public static MMMinecart spawnMinecart(World w, int x, int y, int z, Item type, Object owner) {
+	private  static MMMinecart spawnMinecart(World w, int x, int y, int z, Item type, Object owner) {
 		Location loc = new Location(w, x + 0.5D, y, z + 0.5D);
-		Minecart m;
+		Minecart m = null;
+
+
 		if (type == null || type.getId() == Item.MINECART.getId()) {
 			m = (Minecart)w.spawn(loc, Minecart.class);
 		}
 		else if (type.getId() == Item.POWERED_MINECART.getId()) {
 			m = (Minecart)w.spawn(loc, PoweredMinecart.class);
 		}
-		else {
+		else if (type.getId() == Item.STORAGE_MINECART.getId()) {
 			m = (Minecart)w.spawn(loc, StorageMinecart.class);
 		}
 
-		if(!m.isValid()) return null;
+		if(m == null || !m.isValid()){
+			Logger.debug("Invalid entity spawning minecart at " + loc.toString());
+			return null;
+
+		}
 
 		MMMinecart minecart = null;
 		String ownerName = "none";

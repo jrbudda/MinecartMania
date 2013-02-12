@@ -36,7 +36,7 @@ public class FurnaceFuelContainer extends GenericItemContainer implements ItemCo
 					}
 					short data = (short) (item.hasData() ? item.getData() : -1);
 					//does not match the item already in the slot, continue
-					if (furnace.getItem(SLOT) != null && !item.equals(Item.getItem(furnace.getItem(SLOT)))) {
+					if (furnace.getItem(SLOT) != null && !item.equals(Item.getItem(furnace.getItem(SLOT)))) {				
 						continue;
 					}
 					int toAdd = Math.min(item.getAmount(), withdraw.amount(item.type()));

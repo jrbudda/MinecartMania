@@ -2,6 +2,7 @@ package com.afforess.minecartmania;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.v1_4_R1.EntityMinecart;
@@ -22,6 +23,7 @@ import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.afforess.minecartmania.chests.ItemContainer;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
@@ -31,39 +33,43 @@ import com.afforess.minecartmania.entity.MinecartManiaInventory;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.entity.MinecartOwner;
-import com.afforess.minecartmania.events.MinecartLaunchedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
-import com.afforess.minecartmania.signs.actions.LaunchMinecartAction;
 import com.afforess.minecartmania.utils.BlockUtils;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.MinecartUtils;
 import com.afforess.minecartmania.utils.SignUtils;
 import com.afforess.minecartmania.utils.ThreadSafe;
+import com.avaje.ebean.EbeanServer;
 
 
 public class MMMinecart {
 	public static final double MAXIMUM_MOMENTUM = 1E150D;
 	protected Calendar cal;
+	private long cooldown;
 	public boolean createdLastTick = true;
+	protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 	//protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 	protected volatile boolean dead = false;
+	private boolean hasPassenger;
 	protected Minecart minecart;
 	protected MinecartOwner owner = null;
 	protected volatile CompassDirection previousFacingDir = DirectionUtils.CompassDirection.NO_DIRECTION;
 	protected volatile Vector previousLocation;
 	protected volatile int range = 4;
 	protected volatile int rangeY = 4;
+
 	protected volatile boolean wasMovingLastTick;
-	protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 
 	public MMMinecart(Minecart cart) {
 		minecart = replaceCart(cart); 
 		initialize();
 		findOwner();
 	}
+
+
 
 	public MMMinecart(Minecart cart, String owner) {
 		minecart = replaceCart(cart);
@@ -80,42 +86,66 @@ public class MMMinecart {
 		MinecartManiaCore.instance.getDatabase().save(this.owner);*/
 		initialize();
 	}
+	public boolean eject() {
+		return minecart.eject();
+	}
 
-	public Minecart replaceCart(Minecart m){
-		EntityMinecart mhandle = ((CraftMinecart) m).getHandle();
-		if(!(mhandle instanceof MMEntityMinecart) ) {	
-			World nmsworld = ((org.bukkit.craftbukkit.v1_4_R1.CraftWorld) m.getWorld()).getHandle();
-			MMEntityMinecart nmscart = new MMEntityMinecart(nmsworld);
-			nmscart.type = mhandle.type;	
-			nmscart.locX = m.getLocation().getX();
-			nmscart.locY =  m.getLocation().getY();
-			nmscart.locZ = m.getLocation().getZ();
-			nmscart.yaw = mhandle.yaw;
-			nmscart.pitch = mhandle.pitch;
-			if (nmsworld.addEntity(nmscart)){
-				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id);
-				m.remove();	
+	/**
+	 ** Attempts to find the player that spawned this minecart.
+	 */
+	private void findOwner() {
+		final EbeanServer db = MinecartMania.getInstance().getDatabase();
+		try {
+			MinecartOwner temp = db.find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findUnique();
+			if (temp != null) {
+				owner = temp;
+				return;
 			}
-			return	(Minecart) nmscart.getBukkitEntity();
 		}
-		return m;
+		catch (Exception e) {
+			//clear duplicates
+			Logger.debug("Clearing Duplicate Minecart Id's : " + minecart.getEntityId());
+			try {
+				List<MinecartOwner> list = db.find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findList();
+				for (MinecartOwner temp : list) {
+					db.delete(temp);
+				}
+			}
+			catch (NullPointerException npe) {
+				Logger.info("Failed to clear duplicate minecart entities!");
+			}
+			catch (Exception ex){
+				Logger.info("db error " + ex.getMessage());
+			}
+		}
+		double closest = Double.MAX_VALUE;
 
+		Player closestPlayer = null;
+		for (LivingEntity le : minecart.getWorld().getLivingEntities()) {
+			if (le instanceof Player) {
+				double distance = le.getLocation().toVector().distance(minecart.getLocation().toVector());
+				if (distance < closest) {
+					closestPlayer = (Player)le;
+					closest = distance;
+				}
+			}
+		}
+		if (closestPlayer != null) {
+			owner = new MinecartOwner(closestPlayer.getName());
+		}
+		else {
+			owner = new MinecartOwner();
+		}
+		owner.setId(minecart.getEntityId());
+		owner.setWorld(minecart.getWorld().getName());
+
+		if (owner.hasOwner()) {
+			db.save(this.owner);
+		}
 	}
 
-
-	private long cooldown;
-	public boolean isCooledDown(){
-		return System.currentTimeMillis() > cooldown;
-
-	}
-
-	public void setCooldown(){
-		cooldown = 	 System.currentTimeMillis() +1000;
-	}
-
-	private MMMinecart replaceEntity(Minecart newMinecart) {
-		this.minecart = replaceCart(newMinecart);
-		return this;
+	public HashSet<Block> getAdjacentBlocks(int range) {
+		return BlockUtils.getAdjacentBlocks(getLocation(), range);
 	}
 
 	//	public boolean doCatcherBlock() {
@@ -133,6 +163,7 @@ public class MMMinecart {
 	//	}
 	//
 	//
+
 	//	public boolean doEjectorBlock() {
 	//		if (ControlBlockList.isValidEjectorBlock(this)) {
 	//			if (minecart.getPassenger() != null) {
@@ -153,7 +184,7 @@ public class MMMinecart {
 	//		}
 	//		return false;
 	//	}
-
+	
 	//	public boolean doElevatorBlock() {
 	//		if (ControlBlockList.isValidElevatorBlock(this)) {
 	//			//Get where we are
@@ -191,6 +222,7 @@ public class MMMinecart {
 	//		return false;
 	//	}
 
+
 	//	public boolean doKillBlock() {
 	//		if (ControlBlockList.isValidKillMinecartBlock(this)) {
 	//			kill(getOwner() instanceof MinecartManiaChest);
@@ -210,36 +242,14 @@ public class MMMinecart {
 	//	}
 
 
-	public void handleControlBlocksAndSigns(){
-		if(isOnControlBlock() && isOnRails()){
-			//there isnt that better?
+	public MMMinecart getAdjacentMinecartFromDirection(DirectionUtils.CompassDirection direction) {
 
-			org.bukkit.block.Block block = getBlockBeneath(); // this will return the rail block if its set as a control block.
-			com.afforess.minecartmania.config.NewControlBlock cb = NewControlBlockList.getControlBlock(Item.getItem(block));
+		if (direction == DirectionUtils.CompassDirection.NORTH) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX(), getY(), getZ() - 1);
+		if (direction == DirectionUtils.CompassDirection.EAST) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX() + 1, getY(), getZ());
+		if (direction == DirectionUtils.CompassDirection.SOUTH) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX(), getY(), getZ() + 1);
+		if (direction == DirectionUtils.CompassDirection.WEST) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX() - 1, getY(), getZ());
 
-			cb.execute(this, block.getLocation());			
-
-
-			//					minecart.doSpeedMultiplierBlock();
-			//					minecart.doCatcherBlock();
-			//					minecart.doPlatformBlock(); //platform must be after catcher block
-			//					minecart.doElevatorBlock();
-			//					minecart.doEjectorBlock();
-
-		}
-
-
-		if(isOnRails()){
-			ArrayList<com.afforess.minecartmania.MMSign> list = SignUtils.getAdjacentMinecartManiaSignList(minecart.getLocation(), 2);
-			for (com.afforess.minecartmania.MMSign sign : list) {
-				com.afforess.minecartmania.debug.Logger.debug("Processing sign " + sign.getLine(0));
-				sign.executeActions(this);
-			}	
-		}
-
-
-
-
+		return null;
 	}
 
 
@@ -271,8 +281,15 @@ public class MMMinecart {
 	//		return false;
 	//	}
 
-	public Minecart getBukkitEntity(){
-		return this.minecart;
+	public Block getBlockBeneath() {
+		if (NewControlBlockList.getControlBlock(Item.getItem(getLocation().getBlock())) != null) {
+			//control rail
+			return getLocation().getBlock();
+		}
+		else {
+			//block under rail;
+			return  getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN);
+		}
 	}
 
 	//	public boolean doSpeedMultiplierBlock() {
@@ -299,84 +316,6 @@ public class MMMinecart {
 	//		return false;
 	//	}
 
-	public boolean eject() {
-		return minecart.eject();
-	}
-
-	/**
-	 ** Attempts to find the player that spawned this minecart.
-	 */
-	private void findOwner() {
-		/*final EbeanServer db = MinecartManiaCore.instance.getDatabase();
-		try {
-			MinecartOwner temp = db.find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findUnique();
-			if (temp != null) {
-				owner = temp;
-				return;
-			}
-		}
-		catch (Exception e) {
-			//clear duplicates
-			MinecartManiaLogger.debug("Clearing Duplicate Minecart Id's : " + minecart.getEntityId());
-			try {
-				List<MinecartOwner> list = db.find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findList();
-				for (MinecartOwner temp : list) {
-					db.delete(temp);
-				}
-			}
-			catch (NullPointerException npe) {
-				MinecartManiaLogger.info("Failed to clear duplicate minecart entities!");
-			}
-		}*/
-		double closest = Double.MAX_VALUE;
-		Player closestPlayer = null;
-		for (LivingEntity le : minecart.getWorld().getLivingEntities()) {
-			if (le instanceof Player) {
-				double distance = le.getLocation().toVector().distance(minecart.getLocation().toVector());
-				if (distance < closest) {
-					closestPlayer = (Player)le;
-					closest = distance;
-				}
-			}
-		}
-		if (closestPlayer != null) {
-			owner = new MinecartOwner(closestPlayer.getName());
-		}
-		else {
-			owner = new MinecartOwner();
-		}
-		owner.setId(minecart.getEntityId());
-		owner.setWorld(minecart.getWorld().getName());
-		if (owner.hasOwner()) {
-			//	db.save(this.owner);
-		}
-	}
-
-	public HashSet<Block> getAdjacentBlocks(int range) {
-		return BlockUtils.getAdjacentBlocks(getLocation(), range);
-	}
-
-	public MMMinecart getAdjacentMinecartFromDirection(DirectionUtils.CompassDirection direction) {
-
-		if (direction == DirectionUtils.CompassDirection.NORTH) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX(), getY(), getZ() - 1);
-		if (direction == DirectionUtils.CompassDirection.EAST) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX() + 1, getY(), getZ());
-		if (direction == DirectionUtils.CompassDirection.SOUTH) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX(), getY(), getZ() + 1);
-		if (direction == DirectionUtils.CompassDirection.WEST) return MinecartManiaWorld.getMinecartManiaMinecartAt(getX() - 1, getY(), getZ());
-
-		return null;
-	}
-
-	public Block getBlockBeneath() {
-		if (NewControlBlockList.getControlBlock(Item.getItem(getLocation().getBlock())) != null) {
-			//control rail
-			return getLocation().getBlock();
-		}
-		else {
-			//block under rail;
-			return  getLocation().add(0, -1, 0).getBlock();
-		}
-	}
-
 	public int getBlockIdBeneath() {
 		return getBlockBeneath().getTypeId();
 	}
@@ -393,12 +332,20 @@ public class MMMinecart {
 		return DirectionUtils.getBlockTypeAhead(minecart.getWorld(), DirectionUtils.getOppositeDirection(getDirectionOfMotion()), getX(), getY(), getZ());
 	}
 
+	public Minecart getBukkitEntity(){
+		return this.minecart;
+	}
+
 	/**
 	 * Get's the chunk this minecart is at
 	 * @return chunk
 	 */
 	public final Chunk getChunkAt() {
 		return getLocation().getBlock().getChunk();
+	}
+
+	public int getDamage() {
+		return minecart.getDamage();
 	}
 
 	/**
@@ -434,6 +381,10 @@ public class MMMinecart {
 		if (getMotionX() < 0.0D) return CompassDirection.WEST;
 
 		return CompassDirection.NO_DIRECTION;
+	}
+
+	public int getEntityId() {
+		return minecart.getEntityId();
 	}
 
 	public MMEntityMinecart getHandle(){
@@ -573,7 +524,6 @@ public class MMMinecart {
 		return blocks;
 	}
 
-
 	/**
 	 * Get's the previous position (from the last tick) of the minecart in the world
 	 * @return previous position
@@ -592,10 +542,10 @@ public class MMMinecart {
 		return previousLocation.toLocation(minecart.getWorld());
 	}
 
+
 	public int getRange() {
 		return range;
 	}
-
 
 	public int getRangeY() {
 		return rangeY;
@@ -611,6 +561,7 @@ public class MMMinecart {
 
 		return Item.MINECART;
 	}
+
 
 	/**
 	 * Get's the world this minecart is in
@@ -642,6 +593,38 @@ public class MMMinecart {
 	 */
 	public final int getZ(){
 		return getLocation().getBlockZ();
+	}
+
+	public void handleControlBlocksAndSigns(){
+		if(isOnControlBlock() && isOnRails()){
+			//there isnt that better?
+
+			org.bukkit.block.Block block = getBlockBeneath(); // this will return the rail block if its set as a control block.
+			com.afforess.minecartmania.config.NewControlBlock cb = NewControlBlockList.getControlBlock(Item.getItem(block));
+
+			cb.execute(this, block.getLocation());			
+
+
+			//					minecart.doSpeedMultiplierBlock();
+			//					minecart.doCatcherBlock();
+			//					minecart.doPlatformBlock(); //platform must be after catcher block
+			//					minecart.doElevatorBlock();
+			//					minecart.doEjectorBlock();
+
+		}
+
+
+		if(isOnRails()){
+			ArrayList<com.afforess.minecartmania.MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), 2);
+			for (com.afforess.minecartmania.MMSign sign : list) {
+				com.afforess.minecartmania.debug.Logger.debug("Processing sign " + sign.getLine(0));
+				sign.executeActions(this);
+			}	
+		}
+
+
+
+
 	}
 
 	/**
@@ -693,7 +676,7 @@ public class MMMinecart {
 		getHandle().passengerFrictionPercent = Settings.DefaultPassengerFrictionPercent;
 		getHandle().magnetic = Settings.DefaultMagneticRail;
 		getHandle().collisions = Settings.MinecartCollisions;
-
+		getHandle().MaxPushSpeedPercent = Settings.MaxAllowedSpeedPercent;
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
 
@@ -734,6 +717,11 @@ public class MMMinecart {
 		return false;
 	}
 
+	public boolean isCooledDown(){
+		return System.currentTimeMillis() > cooldown;
+
+	}
+
 	/**
 	 * Is true if the minecart is dead, and has yet to be removed by the garbage collector
 	 * @return is dead
@@ -746,6 +734,19 @@ public class MMMinecart {
 		return dead;
 	}
 
+	public boolean isFrozen(){
+		return getHandle().frozen;
+	}
+
+
+	public boolean isGoingDownhill(){
+		return getHandle().uphill;
+	}
+
+	public boolean isGoingUphill(){
+		return getHandle().uphill;
+	}
+
 	/**
 	 * Returns true if the minecart is moving
 	 * @return true if moving
@@ -754,7 +755,6 @@ public class MMMinecart {
 		if(isFrozen()) return false;
 		return getMotionX() != 0D || getMotionY() != 0D || getMotionZ() != 0D;
 	}
-
 
 	public boolean isMovingAway(Location l) {
 
@@ -786,30 +786,22 @@ public class MMMinecart {
 		return NewControlBlockList.isControlBlock(getItemBeneath());
 	}
 
-	public boolean isOnRails() {
-		return getHandle().onRails;
-	}
-
 	public boolean isOnPoweredRails() {
 		return getHandle().onPoweredPoweredRail;
 	}
 
-	public boolean isOnUnPoweredRails() {
-		return getHandle().onUnpoweredPoweredRail;
-	}
-
-	public boolean isGoingUphill(){
-		return getHandle().uphill;
-	}
-
-	public boolean isGoingDownhill(){
-		return getHandle().uphill;
+	public boolean isOnRails() {
+		return getHandle().onRails;
 	}
 
 	public boolean isOnSlope(){
 		return getHandle().uphill || getHandle().downhill;
 	}
 
+
+	public boolean isOnUnPoweredRails() {
+		return getHandle().onUnpoweredPoweredRail;
+	}
 
 	/**
 	 * Attempts to determine if the given object is the owner if this minecart.
@@ -861,14 +853,6 @@ public class MMMinecart {
 
 	public boolean isStorageMinecart() {
 		return minecart instanceof StorageMinecart;
-	}
-
-	public void killNoReturn() {
-		kill(false);
-	}
-
-	public void killOptionalReturn() {
-		kill(Settings.ReturnCartsToOwner);
 	}
 
 	private void kill(boolean returnToOwner) {
@@ -932,6 +916,14 @@ public class MMMinecart {
 		}
 	}
 
+	public void killNoReturn() {
+		kill(false);
+	}
+
+	public void killOptionalReturn() {
+		kill(Settings.ReturnCartsToOwner);
+	}
+
 	public void launchCart(boolean reverseSearch) {
 		launchCart(0.6D, reverseSearch);
 	}
@@ -947,21 +939,21 @@ public class MMMinecart {
 		//		}
 
 		if (!isMoving()) {
-			
+
 			setFrozen(false);
-			
+
 			if(reverseSearch){
 				if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.WEST)) {
-					setMotion(DirectionUtils.CompassDirection.NORTH, speed);
+					setMotion(DirectionUtils.CompassDirection.WEST, speed);
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.SOUTH)) {
-					setMotion(DirectionUtils.CompassDirection.EAST, speed);
-				}
-				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.EAST)) {
 					setMotion(DirectionUtils.CompassDirection.SOUTH, speed);
 				}
+				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.EAST)) {
+					setMotion(DirectionUtils.CompassDirection.EAST, speed);
+				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.NORTH)) {
-					setMotion(DirectionUtils.CompassDirection.WEST, speed);
+					setMotion(DirectionUtils.CompassDirection.NORTH, speed);
 				}			
 			}
 			else {
@@ -977,12 +969,8 @@ public class MMMinecart {
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.WEST)) {
 					setMotion(DirectionUtils.CompassDirection.WEST, speed);
 				}
-				
-			}
-			
 
-			
-			
+			}	
 		}
 
 		//		//Create event, then stop the cart and wait for the results
@@ -1013,10 +1001,40 @@ public class MMMinecart {
 		}
 	}
 
+	public Minecart replaceCart(Minecart m){
+		EntityMinecart mhandle = ((CraftMinecart) m).getHandle();
+		if(!(mhandle instanceof MMEntityMinecart) ) {	
+			World nmsworld = ((org.bukkit.craftbukkit.v1_4_R1.CraftWorld) m.getWorld()).getHandle();
+			MMEntityMinecart nmscart = new MMEntityMinecart(nmsworld);
+			nmscart.type = mhandle.type;	
+			nmscart.locX = m.getLocation().getX();
+			nmscart.locY =  m.getLocation().getY();
+			nmscart.locZ = m.getLocation().getZ();
+			nmscart.yaw = mhandle.yaw;
+			nmscart.pitch = mhandle.pitch;
+			if (nmsworld.addEntity(nmscart)){
+				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id);
+				m.remove();	
+			}
+			return	(Minecart) nmscart.getBukkitEntity();
+		}
+		return m;
+
+	}
+
+	private MMMinecart replaceEntity(Minecart newMinecart) {
+		this.minecart = replaceCart(newMinecart);
+		return this;
+	}
+
 	public void reverse() {
 		setMotionX(getMotionX() * -1);
 		setMotionY(getMotionY() * -1);
 		setMotionZ(getMotionZ() * -1);
+	}
+
+	public void setCooldown(){
+		cooldown = 	 System.currentTimeMillis() +1000;
 	}
 
 	/**
@@ -1033,6 +1051,23 @@ public class MMMinecart {
 		}
 	}
 
+	/**
+	 * Frozen carts do not move, but retain their velocty. The do not raise update events.
+	 * @param freeze
+	 */
+	public void setFrozen(boolean freeze){
+		getHandle().frozen = freeze;
+	}
+
+	public void setMagnetic(boolean val) {
+		getHandle().magnetic = val;
+
+	}
+
+	public void setMaxSpeed(double d) {
+		minecart.setMaxSpeed(d);
+
+	}
 	public void setMotion(CompassDirection direction, double speed) {
 		setMotionX(0);
 		setMotionZ(0);
@@ -1084,7 +1119,6 @@ public class MMMinecart {
 		getHandle().motZ = (motionZ <= minecart.getMaxSpeed()) ?  motionZ : minecart.getMaxSpeed();
 	}
 
-	private boolean hasPassenger;
 	public void setPassenger(Entity entity) {
 		hasPassenger = true; //prevent looping from block procs on vehicleenter
 
@@ -1106,6 +1140,7 @@ public class MMMinecart {
 		this.range = range;
 	}
 
+
 	public void setRangeY(int range) {
 		this.rangeY = range;
 	}
@@ -1121,17 +1156,6 @@ public class MMMinecart {
 		if (isMoving()) setMotion(0D, 0D, 0D);
 	}
 
-	/**
-	 * Frozen carts do not move, but retain their velocty. The do not raise update events.
-	 * @param freeze
-	 */
-	public void setFrozen(boolean freeze){
-		getHandle().frozen = freeze;
-	}
-
-	public boolean isFrozen(){
-		return getHandle().frozen;
-	}
 
 	/**
 	 * Teleports this minecart to the given location. Works with locations in other worlds
@@ -1175,13 +1199,17 @@ public class MMMinecart {
 			//			kill(false);
 			//			return newMinecartManiaMinecart;
 		}
+		else{
 
-		if (minecart.teleport(location)) {
+			getHandle().setLocation(location.getX(), location.getY(), location.getZ(), minecart.getLocation().getYaw(), minecart.getLocation().getPitch());
 			return this;
 		}
+
+		//		if (minecart.teleport(location,org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+		//			return this;
+		//		}
 		return null;
 	}
-
 
 	public void updateCalendar() {
 		Calendar current = Calendar.getInstance();
@@ -1205,26 +1233,7 @@ public class MMMinecart {
 		previousLocation = minecart.getLocation().toVector().clone();
 	}
 
-
 	public boolean wasMovingLastTick() {
 		return wasMovingLastTick;
-	}
-
-	public int getEntityId() {
-		return minecart.getEntityId();
-	}
-
-	public void setMaxSpeed(double d) {
-		minecart.setMaxSpeed(d);
-
-	}
-
-	public int getDamage() {
-		return minecart.getDamage();
-	}
-
-	public void setMagnetic(boolean val) {
-		getHandle().magnetic = val;
-
 	}
 }

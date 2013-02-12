@@ -18,12 +18,12 @@ import com.afforess.minecartmania.utils.DirectionUtils;
 
 
 public abstract class GenericSensor implements Sensor {
-	protected boolean state = false;
+	public boolean state = false;
 	protected Location sign;
 	protected SensorType type;
 	protected String name;
-	protected boolean master = true;
-	protected SensorDataTable data = null;
+	public boolean master = true;
+	public SensorDataTable data = null;
 	protected ArrayList<GenericSensor> pairedSensors = null;
 	protected GenericSensor masterSensor = null;
 	

@@ -21,6 +21,7 @@ public class ItemCollectionContainer extends GenericItemContainer implements Ite
 		this.inventory = inventory;
 	}
 	
+
 	public void doCollection(MinecartManiaInventory withdraw) {
 		Logger.debug("Processing Collection Sign. Text: "  + this.line);
 		List<AbstractItem> rawList =new ArrayList<AbstractItem>();

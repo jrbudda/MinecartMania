@@ -46,8 +46,8 @@ public class MinecartUtils {
 
 		if (!isTrack(b.getLocation())) return out;
 
-		if (isTrack(b.getLocation().add(1, 0, 0))) out.add(CompassDirection.WEST);
-		if (isTrack(b.getLocation().add(-1, 0, 0))) out.add(CompassDirection.EAST);
+		if (isTrack(b.getLocation().add(-1, 0, 0))) out.add(CompassDirection.WEST);
+		if (isTrack(b.getLocation().add(1, 0, 0))) out.add(CompassDirection.EAST);
 		if (isTrack(b.getLocation().add(0, 0, 1))) out.add(CompassDirection.SOUTH);
 		if (isTrack(b.getLocation().add(0, 0, -1))) out.add(CompassDirection.NORTH);
 		return out;
@@ -81,6 +81,7 @@ public class MinecartUtils {
 		MMMinecart closest = null;
 		double closestdist = 0;
 		for (MMMinecart cart : carts){
+			if(loc.getWorld() != cart.getLocation().getWorld()) continue;
 			double dist =	loc.distance(cart.getLocation());
 			if(dist <= range){
 				if (dist < closestdist || closest == null){
@@ -315,8 +316,8 @@ public class MinecartUtils {
 					}
 				}
 				else if (victim instanceof Player){
-					if(Settings.KillPlayersOnTrack && (minecart.getMotion().length() > Settings.KillPlayersOnTrackMinnimumSpeed / 100 * .4) ){
-						//die
+					if(Settings.KillPlayersOnTrack && (minecart.getMotion().length() > (Settings.KillPlayersOnTrackMinnimumSpeed / 100) * .4) ){
+				    	//die
 						victim.setHealth(0);
 					}
 					else{			

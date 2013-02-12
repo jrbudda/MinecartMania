@@ -45,7 +45,7 @@ public class SpawnAction extends SignAction {
 	}
 
 	private static Item getMinecartType(Location loc) {
-		ArrayList<MMSign> signList = SignUtils.getAdjacentMinecartManiaSignList(loc, 2);
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(loc, 2);
 		for (MMSign sign : signList) {
 			if (sign instanceof MinecartTypeSign) {
 				MinecartTypeSign type = (MinecartTypeSign)sign;

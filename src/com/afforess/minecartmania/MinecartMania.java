@@ -2,6 +2,7 @@ package com.afforess.minecartmania;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
@@ -36,11 +36,11 @@ import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.sensors.Sensor;
 import com.afforess.minecartmania.signs.sensors.SensorDataTable;
 import com.afforess.minecartmania.signs.sensors.SensorManager;
+import com.avaje.ebean.config.ServerConfig;
 
 public class MinecartMania extends JavaPlugin {
 
 	public static PermissionManager permissions;
-
 
 	public static Plugin instance;
 	public static File file;
@@ -63,7 +63,6 @@ public class MinecartMania extends JavaPlugin {
 		//MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new SignCommandsSettingParser());
 		//	MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new ChestControlSettingParser());
 
-
 		permissions = new PermissionManager(getServer());
 
 		getServer().getPluginManager().registerEvents( new CoreListener(), this);
@@ -77,7 +76,6 @@ public class MinecartMania extends JavaPlugin {
 		getServer().getPluginManager().registerEvents( new StationsActionListener(), this);
 		getServer().getPluginManager().registerEvents( new FarmingActionListener(), this);
 		getServer().getPluginManager().registerEvents( new ChestActionListener(), this);
-
 
 		reloadMyConfig();
 
@@ -99,50 +97,51 @@ public class MinecartMania extends JavaPlugin {
 		}
 
 		setupDatabase();
-		
-		loadSensors();
-		
-	//	if(SensorManager.getCount() == 0) tryLoadOldSensors();
+
+//tryLoadOldSensors();
+
+		SensorManager.loadsensors();	
+
+
 
 		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 	}
 
 
-	private void loadSensors(){
-		//load sensors
-		int maxId = 0;
-		List<SensorDataTable> data = null;
+	private void tryLoadOldSensors(){
 
-		try {
-			data = getDatabase().find(SensorDataTable.class).findList();
-		} catch (Exception e) {
-			Logger.severe("Could not load Sensors");
-		}
+		java.io.File f = null;
 
-		for (SensorDataTable temp : data) {
-			if (temp.hasValidLocation()) {
-				Block block = temp.getLocation().getBlock();
-				if (SensorManager.isSign(block)) {
-					SensorManager.getSensor(block, true); //force load of sensor
-					if (temp.getId() > maxId) {
-						maxId = temp.getId();
-					}
-				}
+		for (File fi : this.getDataFolder().listFiles()){
+			if (fi.getName().toLowerCase().contains("minecartmaniarebornsigncommands.db")){
+				f = fi;
+				break;
 			}
 		}
 
-		SensorDataTable.lastId = maxId;
+		if (f ==null){
+			return;
+		}
 
-	}
+		Logger.debug("Found old sensor DB. Attempting load...");
 
-	private void tryLoadOldSensors(){
-		
-	
-		MinecartManiaSignCommands sc = new MinecartManiaSignCommands();
-		sc.onEnable();
-		SensorManager.database = sc.getDatabase();
-		sc.loadsensors();
-		SensorManager.database = this.getDatabase();
+		com.avaje.ebean.config.DataSourceConfig dsc = new com.avaje.ebean.config.DataSourceConfig();
+		dsc.setUsername("temp");
+		dsc.setPassword("temp");
+		dsc.setDriver("org.sqlite.JDBC");
+		dsc.setIsolationLevel(8);
+
+		dsc.setUrl("jdbc:sqlite:plugins/minecartmania/minecartmaniarebornsigncommands.db");
+
+		ServerConfig config = new ServerConfig();
+		config.setDataSourceConfig(dsc);
+		config.setName("Old DB");
+	    config.addClass(com.afforess.minecartmaniasigncommands.sensor.SensorDataTable.class);
+		config.addJar("MinecartMania.jar");
+    	SensorManager.database = com.avaje.ebean.EbeanServerFactory.create(config);
+
+		SensorManager.loadsensors();
+
 		if (SensorManager.getCount() > 0) {
 			Logger.severe("Found sensors in old db, moving...");
 			// loaded old sensors
@@ -152,17 +151,16 @@ public class MinecartMania extends JavaPlugin {
 			Logger.severe("Complete. Removing old db.");
 		}
 
-		sc.removedb();
+		SensorManager.database = this.getDatabase();
+
+		f.delete();
 
 	}
-
 
 	public void onDisable(){
 		getServer().getScheduler().cancelTasks(this);
 		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is disabled!" );
 	}
-
-
 
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String commandLabel, String[] args) {
 		String commandPrefix;
@@ -353,18 +351,20 @@ public class MinecartMania extends JavaPlugin {
 		Settings.StationParingMode = getConfig().getInt("StationParsingMethod",0);
 		Settings.IntersectionPromptsMode = getConfig().getInt("IntersectionPromptsMethod",0);
 
+		Settings.defaultJumpHeight = getConfig().getInt("DefaultJumpHeight",4);
+
 		Settings.RemoveDeadCarts = getConfig().getBoolean("RemoveDeadMinecarts",false); 
 
 		Settings.DefaultMaxSpeedPercent = getConfig().getInt("MaxSpeedPercent",200);
 		Settings.MaxAllowedSpeedPercent = getConfig().getInt("MaxAllowedSpeedPercent",500);
-
 		Settings.MinecartCollisions =  getConfig().getBoolean("MinecartCollisions",false); 
 		Settings.SlopeSpeedPercent = getConfig().getInt("SlopeSpeedPercent",100);
 		Settings.DisappearonDisconnect = getConfig().getBoolean("PreserveMinecartOnLogout",true); 
 		Settings.DefaultMagneticRail =  getConfig().getBoolean("MagneticRail",false); 
 		Settings.EmptyMinecartKillTimer = getConfig().getInt("EmptyMinecartKillTimer",60);
-		Settings.EmptyPoweredMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
+		Settings.EmptyPoweredMinecartKillTimer = getConfig().getInt("EmptyPoweredMinecartKillTimer",60);
 		Settings.EmptyStorageMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
+		Settings.MaxPassengerPushPercent = getConfig().getInt("MaxPushSpeedPercent",25);
 
 		Settings.RememeberEjectionLocations = getConfig().getBoolean("RememberEjectionLocations",true); 
 
