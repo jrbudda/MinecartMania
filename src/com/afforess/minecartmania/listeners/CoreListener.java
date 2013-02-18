@@ -111,11 +111,7 @@ public class CoreListener implements Listener{
 				minecart.updateLocation();
 				minecart.createdLastTick = false;
 			}
-
-
-
-
-		}
+	}
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -169,7 +165,6 @@ public class CoreListener implements Listener{
 	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {	
 		// this is not effectinve at doing anything except canceling pickup
 
-
 		if (event.getVehicle() instanceof Minecart) {
 
 			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
@@ -184,7 +179,16 @@ public class CoreListener implements Listener{
 				return;
 			}
 
-			if(collisioner instanceof Minecart) {
+			event.setCancelled(!Settings.MinecartCollisions);
+			event.setCollisionCancelled(!Settings.MinecartCollisions);
+			
+			if (collisioner instanceof Player && !minecart.isApproaching(collisioner.getLocation())){
+				//allow player push
+				event.setCancelled(false);
+				event.setCollisionCancelled(false);
+				event.setPickupCancelled(true);			
+			}
+			else if(collisioner instanceof Minecart) {
 				MMMinecart otherminecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart) collisioner);
 				if (otherminecart.isFrozen()){
 					event.setCancelled(true);
@@ -226,6 +230,7 @@ public class CoreListener implements Listener{
 
 		Logger.debug(event.getEntered().toString() + " enters cart " + event.getVehicle().getEntityId());
 
+
 		if (event.getEntered() instanceof Player) {
 			if (MinecartUtils.isBlockedFromEntering((Player)event.getEntered())) {
 				event.setCancelled(true);
@@ -236,15 +241,12 @@ public class CoreListener implements Listener{
 
 		final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 
-		if (minecart !=null && minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
-
-			if (minecart.hasPlayerPassenger()) {
-				minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
-			}
-
-			event.setCancelled(true);
-			return;
-		}
+		//now handled in playerEntityInteract
+		//		if (minecart !=null && minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
+		//			if (event.getEntered() instanceof Player)	((Player) event.getEntered()).sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
+		//			event.setCancelled(true);
+		//			return;
+		//		}
 
 		//proc the cart on sucessful entity entrance. Delay one tick so the passenger shows up to the actions.
 		if (event.isCancelled() == false){
@@ -255,19 +257,21 @@ public class CoreListener implements Listener{
 					SignCommands.updateSensors(minecart);
 				}
 			});
-
 		}
-
 
 	}
 
-	@EventHandler
+	@EventHandler(priority = org.bukkit.event.EventPriority.MONITOR)
 	public void onVehicleExit(VehicleExitEvent event) {
+		if (event.getVehicle().isDead()) return;
+		
+		Logger.debug("Vehicle exit " + event.getExited().toString());
+		
 		if (event.getVehicle() instanceof Minecart) {
-			Logger.debug("Vehicle exit " + event.getExited().toString());
 			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
 			SignCommands.updateSensors(minecart);
 		}
+		
 	}
 
 	@EventHandler

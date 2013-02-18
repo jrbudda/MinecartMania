@@ -1,7 +1,6 @@
 package com.afforess.minecartmania.utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -96,7 +95,7 @@ public abstract class ChestStorageUtil {
 				ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 1);
 				for (MMSign sign : signList) {
 					for (int i = 0; i < sign.getNumLines(); i++) {
-						if (sign.getLine(i).toLowerCase().contains("parallel")) {
+						if (sign.getLine(i).toLowerCase().contains("[parallel")) {
 							sign.setLine(i, "[Parallel]");
 							if (!minecart.isMovingAway(block.getLocation())) {
 								if (chest.addItem(minecart.getType().getId())) {
@@ -113,46 +112,7 @@ public abstract class ChestStorageUtil {
 	}
 
 	public static void doItemCompression(MinecartManiaStorageCart minecart) {
-		HashSet<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
-		for (Block block : blockList) {
-			if (block.getTypeId() == Item.WORKBENCH.getId()) {
-				ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(block.getLocation(), 2);
-				for (MMSign sign : signList) {
-					for (int i = 0; i < sign.getNumLines(); i++) {
-						if (sign.getLine(i).toLowerCase().contains("compress items")) { 
-							sign.setLine(i, "[Compress Items]");
-							//TODO handling for custom recipies?
-							Item[][] compressable = { {Item.IRON_INGOT, Item.GOLD_INGOT, Item.LAPIS_LAZULI}, {Item.IRON_BLOCK , Item.GOLD_BLOCK, Item.LAPIS_BLOCK} };
-							int n = 0;
-							for (Item m : compressable[0]) {
-								int amt = 0;
-								int slot = 0;
-								for (ItemStack item : minecart.getContents()) {
-									if (item != null && m.equals(Item.getItem(item))) {
-										amt += item.getAmount();
-										minecart.setItem(slot, null);
-									}
-									slot++;
-								}
-								int compressedAmt = amt / 9;
-								int left = amt % 9;
-								while (compressedAmt > 0) {
-									minecart.addItem(compressable[1][n].getId(), Math.min(64, compressedAmt));
-									compressedAmt -= Math.min(64, compressedAmt);
-								}
-								if (left > 0) {
-									ItemStack item = compressable[0][n].toItemStack();
-									item.setAmount(left);
-									minecart.addItem(item);
-								}
-								
-								n++;
-							}
-						}
-					}
-				}
-			}
-		}
+
 	}
 
 //	public static boolean doEmptyChestInventory(MinecartManiaStorageCart minecart) {

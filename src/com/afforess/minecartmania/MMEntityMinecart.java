@@ -9,6 +9,7 @@ import net.minecraft.server.v1_4_R1.Entity;
 import net.minecraft.server.v1_4_R1.EntityMinecart;
 import net.minecraft.server.v1_4_R1.IUpdatePlayerListBox;
 import net.minecraft.server.v1_4_R1.MathHelper;
+import net.minecraft.server.v1_4_R1.NBTTagCompound;
 import net.minecraft.server.v1_4_R1.World;
 import net.minecraft.server.v1_4_R1.WorldServer;
 
@@ -264,16 +265,19 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			//constrain.
 
+			Logger.motion(" incomming speed x:" + motX + " z:" + motZ);
+
 			constrainSpeed();
 
 			// move in  increments.
 			double spd= Math.sqrt(motX*motX + motZ*motZ);
-			double speeddelta = 0;
+
 
 			if (this.passenger != null) {
 				// there is a passenger
 				double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
 				if (passengerSpeed > .0001D && spd < MaxPushSpeedPercent / 100 * .4) {
+					Logger.motion("Passenger push " +this.passenger.motX * 0.2D + " " +  this.passenger.motZ * 0.2D);
 					this.motX += this.passenger.motX * 0.2D;
 					this.motZ += this.passenger.motZ * 0.2D;
 					spd= Math.sqrt(motX*motX + motZ*motZ);
@@ -281,21 +285,24 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				//I think this bumps the cart along? or maybe when the passenger gets in?
 			}	
 
-			double incspd= spd;
 
+			this.motY -= defaultgravity * GravityPercent / 100;
 
+			double speeddelta = 0;
+			double incspd= Math.sqrt(motX*motX + motZ*motZ);
 
 			//move in  increments.
-			double ii=Math.floor(incspd/.4);
-			double itspd; 
-			do{
-				//this shouldnt loop.. cause math, i think.
+			double ii=Math.floor(incspd/.4) ;
+			if(ii == 0) ii = 1;
+			double itspd =  incspd/ii;
+
+			while (itspd >= .4){
 				++ii;
 				itspd = Math.abs(incspd)/ii;
-			} while (itspd >= .4);
+			} 
 
+			Logger.motion(" afterpush speed x:" + motX + " z:" + motZ + " itsped " + itspd + " spd " + spd);
 
-			Logger.motion(" incomming speed x:" + motX + " z:" + motZ + " itsped " + itspd + " spd " + spd);
 
 			for(int derp = 0; derp < ii;derp++) {		
 
@@ -314,7 +321,21 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 				nonstaticmove();
 
+				//this is a horrible idea, but needed to fire each block.
+				this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent((Vehicle) this.getBukkitEntity()));
+				//TODO: process what might have changed.
+
+
 				double ts = Math.sqrt(motX*motX + motZ*motZ);
+
+				if(ts == 0){
+					//someone stopped me.
+					speeddelta = incspd;
+					break; 
+				}
+
+
+
 				speeddelta += (itspd- ts); //4.8
 
 				//undo any multiplier just for this iteration.
@@ -339,8 +360,8 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 				motX = 0;
 			}
 			else{		
-				motZ = itspd/Math.sqrt(2) *  (motZ < 0 ? -1 :1);	
-				motX =itspd/Math.sqrt(2) * (motX < 0 ? -1 :1);		
+				motZ = spd/Math.sqrt(2) *  (motZ < 0 ? -1 :1);	
+				motX =spd/Math.sqrt(2) * (motX < 0 ? -1 :1);		
 			}
 
 			constrainSpeed();
@@ -504,7 +525,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		setPArams(); //populate the fields, cause im lazy.
 
-		this.motY -= defaultgravity * GravityPercent / 100;
 
 		if ((onRails && offset >=0) || (onSlope && offset ==-1)) { //only count as on rails when above when its a slope.
 			//on rails
@@ -763,11 +783,18 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			Logger.motion("offrails2 " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		}
-
-		//this is a horrible idea.
-		this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent((Vehicle) this.getBukkitEntity()));
-
-		//TODO: process what might have changed.
-
 	}
+
+	
+	@Override
+	public boolean c(NBTTagCompound nbttagcompound) {
+		if (!this.dead) {
+			nbttagcompound.setString("id", "Minecart");
+			this.d(nbttagcompound);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

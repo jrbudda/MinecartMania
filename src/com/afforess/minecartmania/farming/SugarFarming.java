@@ -5,7 +5,6 @@ import org.bukkit.Material;
 
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class SugarFarming
 {
@@ -92,11 +91,11 @@ public class SugarFarming
 	
 	private static boolean isAutoSugarActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoSugar") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoSugar") != null;
 	}
 	
 	private static boolean isAutoPlantActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoPlant") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoPlant") != null;
 	}
 }

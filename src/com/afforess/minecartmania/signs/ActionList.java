@@ -8,7 +8,10 @@ import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.signs.actions.AlterRangeAction;
 import com.afforess.minecartmania.signs.actions.AnnouncementAction;
 import com.afforess.minecartmania.signs.actions.CatchAction;
+import com.afforess.minecartmania.signs.actions.CollectItemsAction;
+import com.afforess.minecartmania.signs.actions.CompressItemsAction;
 import com.afforess.minecartmania.signs.actions.DataValuecAction;
+import com.afforess.minecartmania.signs.actions.DepositItemsAction;
 import com.afforess.minecartmania.signs.actions.EjectAction;
 import com.afforess.minecartmania.signs.actions.EjectAtAction;
 import com.afforess.minecartmania.signs.actions.ElevatorAction;
@@ -27,10 +30,13 @@ import com.afforess.minecartmania.signs.actions.PromptAction;
 import com.afforess.minecartmania.signs.actions.SetMaxSpeedAction;
 import com.afforess.minecartmania.signs.actions.SetSpeedAction;
 import com.afforess.minecartmania.signs.actions.SetStationAction;
+import com.afforess.minecartmania.signs.actions.SmeltItemsAction;
 import com.afforess.minecartmania.signs.actions.SpawnAction;
 import com.afforess.minecartmania.signs.actions.StationAction;
 import com.afforess.minecartmania.signs.actions.StopAtDestinationAction;
-import com.afforess.minecartmania.signs.actions.UnlockCartAction;
+import com.afforess.minecartmania.signs.actions.TrashItemsAction;
+import com.afforess.minecartmania.signs.actions.UnLockCartAction;
+
 
 public enum ActionList {
 	LaunchPlayerSign(LaunchPlayerAction.class),
@@ -38,7 +44,7 @@ public enum ActionList {
 	SetStationSign(SetStationAction.class),
 	StopAtDestinationSign(StopAtDestinationAction.class),
 	LockCartSign(LockCartAction.class),
-	UnlockCartSign(UnlockCartAction.class),
+	UnlockCartSign(UnLockCartAction.class),
 	AutoSeedSign(DataValuecAction.class, "AutoSeed"),
 	AutoTillign(DataValuecAction.class, "AutoTill"),
 	AutoHarvestSign(DataValuecAction.class, "AutoHarvest"),
@@ -75,7 +81,12 @@ public enum ActionList {
 	SetSpeedSign(SetSpeedAction.class),
 	MagnetSign(MagnetAction.class),
 	PromptSign(PromptAction.class),
-	CatchSign(CatchAction.class)
+	CatchSign(CatchAction.class),
+	CompressItemsSigns(CompressItemsAction.class),
+	CollectItemsSign(CollectItemsAction.class),
+	DepositItemsSign(DepositItemsAction.class),
+	TrashItemsSign(TrashItemsAction.class),
+	SmeltItemsSign(SmeltItemsAction.class)
 	;
 
 	ActionList(final Class<? extends SignAction> action) {

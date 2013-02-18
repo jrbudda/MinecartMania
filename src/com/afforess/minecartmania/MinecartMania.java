@@ -1,17 +1,21 @@
 package com.afforess.minecartmania;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
 
+import net.minecraft.server.v1_4_R1.EntityTypes;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -22,6 +26,8 @@ import com.afforess.minecartmania.commands.CommandType;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartManiaPlayer;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.entity.MinecartOwner;
 import com.afforess.minecartmania.listeners.BlockListener;
 import com.afforess.minecartmania.listeners.ChestActionListener;
@@ -32,6 +38,7 @@ import com.afforess.minecartmania.listeners.MinecartTimer;
 import com.afforess.minecartmania.listeners.PlayerListener;
 import com.afforess.minecartmania.listeners.SignsActionListener;
 import com.afforess.minecartmania.listeners.StationsActionListener;
+import com.afforess.minecartmania.signs.ActionList;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.sensors.Sensor;
 import com.afforess.minecartmania.signs.sensors.SensorDataTable;
@@ -79,8 +86,6 @@ public class MinecartMania extends JavaPlugin {
 
 		reloadMyConfig();
 
-		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
-
 		//database setup
 		File ebeans = new File(new File(this.getDataFolder().getParent()).getParent(), "ebean.properties");
 		if (!ebeans.exists()) {
@@ -98,15 +103,88 @@ public class MinecartMania extends JavaPlugin {
 
 		setupDatabase();
 
-//tryLoadOldSensors();
+		//tryLoadOldSensors();
 
 		SensorManager.loadsensors();	
 
+		if(Settings.PreserveMinecartsonRiderLogout)	LoadCartsForRiders();
 
+
+		//		StringBuilder sb = new StringBuilder();
+		//		Logger.debug("Sign Permissions:");
+		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
+		//			sb.append("           minecartmania.signs.create." + sa.getInstance().getPermissionName() + ": true\n");
+		//		}
+		//
+		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
+		//			sb.append("    minecartmania.signs.create." + sa.getInstance().getPermissionName() + ":\n");
+		//			sb.append("        description: " + sa.getInstance().getFriendlyName() + "\n");
+		//			sb.append("        default: true\n");
+		//		}
+		//		
+		//		sb.append("|=Sign Type|=Permission");
+		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
+		//			sb.append("|" + sa.getInstance().getFriendlyName() + "|minecartmania.signs.create." + sa.getInstance().getPermissionName() + "\n");
+		//
+		//		}
+		//		
+		//		File f = new File("plugins" + File.separator + "MinecartMania" + File.separator + "signperms.txt");
+		//		PrintWriter pw;
+		//		
+		//		try {
+		//			pw = new PrintWriter(f);
+		//			pw.append(sb.toString());
+		//			pw.close();
+		//		} catch (FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 	}
 
+
+	private void LoadCartsForRiders(){
+		//this will only be used on a /reload, since otherwise no players are online.
+
+		List<MinecartManiaMinecartDataTable> entries = MinecartManiaMinecartDataTable.getAlltCarts();		
+		if (entries !=null){
+			for (MinecartManiaMinecartDataTable entry : entries){
+				if(getServer().getPlayer(entry.owner) != null) {
+					Player p = getServer().getPlayer(entry.owner);
+					if(p.isOnline()){
+						MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(p);
+						PlayerListener.spawnCartForRider(player, entry);	
+						MinecartManiaMinecartDataTable.delete(entry);
+					}
+				}
+			}
+		}	
+	}
+
+	private void SaveCartsWithRiders(){
+		MinecartManiaWorld.pruneMinecarts();
+		for(MMMinecart minecart :	MinecartManiaWorld.getMinecartManiaMinecartList()){
+			MinecartManiaMinecartDataTable data = null;
+			if (minecart.hasPlayerPassenger()){
+				Logger.debug("Saving minecart for " + minecart.getPlayerPassenger().getName());
+				data = new MinecartManiaMinecartDataTable(minecart, minecart.getPlayerPassenger().getName());
+				try {
+					MinecartManiaMinecartDataTable.save(data);
+					minecart.killNoReturn();
+				}
+				catch (Exception e) {
+					Logger.severe("Failed to save minecart!");
+					e.printStackTrace();
+					Logger.logCore(e.getMessage(), false);
+				}
+
+			}
+			else{
+				//	data = new MinecartManiaMinecartDataTable(minecart, "MMRESTART");
+			}
+		}
+	}
 
 	private void tryLoadOldSensors(){
 
@@ -136,9 +214,9 @@ public class MinecartMania extends JavaPlugin {
 		ServerConfig config = new ServerConfig();
 		config.setDataSourceConfig(dsc);
 		config.setName("Old DB");
-	    config.addClass(com.afforess.minecartmaniasigncommands.sensor.SensorDataTable.class);
+		config.addClass(com.afforess.minecartmaniasigncommands.sensor.SensorDataTable.class);
 		config.addJar("MinecartMania.jar");
-    	SensorManager.database = com.avaje.ebean.EbeanServerFactory.create(config);
+		SensorManager.database = com.avaje.ebean.EbeanServerFactory.create(config);
 
 		SensorManager.loadsensors();
 
@@ -158,6 +236,7 @@ public class MinecartMania extends JavaPlugin {
 	}
 
 	public void onDisable(){
+		if(Settings.PreserveMinecartsonRiderLogout)	SaveCartsWithRiders();
 		getServer().getScheduler().cancelTasks(this);
 		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is disabled!" );
 	}
@@ -359,12 +438,17 @@ public class MinecartMania extends JavaPlugin {
 		Settings.MaxAllowedSpeedPercent = getConfig().getInt("MaxAllowedSpeedPercent",500);
 		Settings.MinecartCollisions =  getConfig().getBoolean("MinecartCollisions",false); 
 		Settings.SlopeSpeedPercent = getConfig().getInt("SlopeSpeedPercent",100);
-		Settings.DisappearonDisconnect = getConfig().getBoolean("PreserveMinecartOnLogout",true); 
+
+		Settings.PreserveMinecartsonRiderLogout = getConfig().getBoolean("PreserveMinecartOnLogout",true); 
+
 		Settings.DefaultMagneticRail =  getConfig().getBoolean("MagneticRail",false); 
 		Settings.EmptyMinecartKillTimer = getConfig().getInt("EmptyMinecartKillTimer",60);
 		Settings.EmptyPoweredMinecartKillTimer = getConfig().getInt("EmptyPoweredMinecartKillTimer",60);
 		Settings.EmptyStorageMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
 		Settings.MaxPassengerPushPercent = getConfig().getInt("MaxPushSpeedPercent",25);
+
+		Settings.ItemCollectionRange = getConfig().getInt("DefaultItemCollectionRange",4);
+		Settings.ItemCollectionRangeY = getConfig().getInt("DefaultItemCollectionRangeY",0);
 
 		Settings.RememeberEjectionLocations = getConfig().getBoolean("RememberEjectionLocations",true); 
 

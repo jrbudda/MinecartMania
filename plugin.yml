@@ -1,6 +1,6 @@
 name: MinecartMania
 main: com.afforess.minecartmania.MinecartMania
-version: 2.0 Beta
+version: 2.0 Beta3
 author: jrbudda, mze9412, Afforess
 database: true
 commands:
@@ -114,153 +114,195 @@ permissions:
         description: Gives access to all minecart mania create signs functionality
         default: true
         children:
-            minecartmania.signs.create.launchersign: true
-            minecartmania.signs.create.launchplayersign: true
-            minecartmania.signs.create.holdingsign: true
-            minecartmania.signs.create.alterrangesign: true
-            minecartmania.signs.create.announcementsign: true
-            minecartmania.signs.create.ejectionsign: true
-            minecartmania.signs.create.ejectatsign: true
-            minecartmania.signs.create.ejectionconditionsign: true
-            minecartmania.signs.create.elevatorsign: true
-            minecartmania.signs.create.lockcartsign: true
-            minecartmania.signs.create.unlockcartsign: true
-            minecartmania.signs.create.maxspeedsign: true
-            minecartmania.signs.create.setstationsign: true
-            minecartmania.signs.create.stopatdestinationsign: true
-            minecartmania.signs.create.minecarttypesign: true
-            minecartmania.signs.create.autotillsign: true
-            minecartmania.signs.create.tilloffsign: true
-            minecartmania.signs.create.autoseedsign: true
-            minecartmania.signs.create.seedoffsign: true
-            minecartmania.signs.create.autoharvestsign: true
-            minecartmania.signs.create.harvestoffsign: true
-            minecartmania.signs.create.autosugarsign: true
-            minecartmania.signs.create.sugaroffsign: true
-            minecartmania.signs.create.autoresugarsign: true
-            minecartmania.signs.create.resugaroffsign: true
-            minecartmania.signs.create.autotimbersign: true
-            minecartmania.signs.create.timberoffsign: true
-            minecartmania.signs.create.autoforestsign: true
-            minecartmania.signs.create.forestoffsign: true
-            minecartmania.signs.create.autocactussign: true
-            minecartmania.signs.create.cactusoffsign: true
-            minecartmania.signs.create.autorecactussign: true
-            minecartmania.signs.create.recactusoffsign: true
-            minecartmania.signs.create.farmsign: true
-            minecartmania.signs.create.jumpsign: true
-            minecartmania.signs.create.setspeedsign: true
-    minecartmania.signs.create.launchersign:
-        description: Create launch direction signs
-        default: true
+           minecartmania.signs.create.launchplayersign: true
+           minecartmania.signs.create.launchersign: true
+           minecartmania.signs.create.setstationsign: true
+           minecartmania.signs.create.stopatdestinationsign: true
+           minecartmania.signs.create.lockcart: true
+           minecartmania.signs.create.unlockcart: true
+           minecartmania.signs.create.autoseedsign: true
+           minecartmania.signs.create.autotillsign: true
+           minecartmania.signs.create.autoharvestsign: true
+           minecartmania.signs.create.autotimbersign: true
+           minecartmania.signs.create.autoforestsign: true
+           minecartmania.signs.create.autosugarsign: true
+           minecartmania.signs.create.autoplantsign: true
+           minecartmania.signs.create.autocactussign: true
+           minecartmania.signs.create.autorecactussign: true
+           minecartmania.signs.create.seedoffsign: true
+           minecartmania.signs.create.tilloffsign: true
+           minecartmania.signs.create.harvestoffsign: true
+           minecartmania.signs.create.timberoffsign: true
+           minecartmania.signs.create.forestoffsign: true
+           minecartmania.signs.create.sugaroffsign: true
+           minecartmania.signs.create.plantoffsign: true
+           minecartmania.signs.create.cactusoffsign: true
+           minecartmania.signs.create.recactusoffsign: true
+           minecartmania.signs.create.alterrangesign: true
+           minecartmania.signs.create.maxspeedsign: true
+           minecartmania.signs.create.ejectsign: true
+           minecartmania.signs.create.announcementsign: true
+           minecartmania.signs.create.holdingsign: true
+           minecartmania.signs.create.elevatorsign: true
+           minecartmania.signs.create.ejectatsign: true
+           minecartmania.signs.create.farmsign: true
+           minecartmania.signs.create.minimumitemsign: true
+           minecartmania.signs.create.maximumitemsign: true
+           minecartmania.signs.create.jumpsign: true
+           minecartmania.signs.create.stationsign: true
+           minecartmania.signs.create.killsign: true
+           minecartmania.signs.create.platformsign: true
+           minecartmania.signs.create.spawnsign: true
+           minecartmania.signs.create.setspeedsign: true
+           minecartmania.signs.create.magnetsign: true
+           minecartmania.signs.create.promptsign: true
+           minecartmania.signs.create.catchsign: true
+           minecartmania.signs.create.compressitemssign: true
+           minecartmania.signs.create.collectitemssign: true
+           minecartmania.signs.create.deposititemssign: true
+           minecartmania.signs.create.trashitemssign: true
+           minecartmania.signs.create.smeltitemssign: true
     minecartmania.signs.create.launchplayersign:
-        description: Create launch player signs
-        default: true
-    minecartmania.signs.create.holdingsign:
-        description: Create holding signs
-        default: true
-    minecartmania.signs.create.alterrangesign:
-        description: Create Launch signs
+        description: Launch Player
         default: true
     minecartmania.signs.create.launchersign:
-        description: Create alter range signs
-        default: true
-    minecartmania.signs.create.announcementsign:
-        description: Create announcement signs
-        default: true
-    minecartmania.signs.create.ejectionsign:
-        description: Create eject here signs
-        default: true
-    minecartmania.signs.create.ejectatsign:
-        description: Create eject at signs
-        default: true
-    minecartmania.signs.create.ejectionconditionsign:
-        description: Create ejection condition signs
-        default: true
-    minecartmania.signs.create.elevatorsign:
-        description: Create elevator signs
-        default: true
-    minecartmania.signs.create.lockcartsign:
-        description: Create lock cart signs
-        default: true
-    minecartmania.signs.create.launchersign:
-        description: Create Launch signs
-        default: true
-    minecartmania.signs.create.unlockcartsign:
-        description: Create unlock cart signs
-        default: true
-    minecartmania.signs.create.maxspeedsign:
-        description: Create max speed signs
+        description: Launcher 
         default: true
     minecartmania.signs.create.setstationsign:
-        description: Create set station signs
+        description: Set Station
         default: true
     minecartmania.signs.create.stopatdestinationsign:
-        description: Create stop at destination signs
+        description: Stop At Destination
         default: true
-    minecartmania.signs.create.minecarttypesign:
-        description: Create minecart type signs
+    minecartmania.signs.create.lockcart:
+        description: Lock Cart
         default: true
-    minecartmania.signs.create.autotillsign:
-        description: Create auto till signs
-        default: true
-    minecartmania.signs.create.tilloffsign:
-        description: Create till off signs
+    minecartmania.signs.create.unlockcart:
+        description: Unlock Cart
         default: true
     minecartmania.signs.create.autoseedsign:
-        description: Create auto seed signs
+        description: AutoSeed Sign
         default: true
-    minecartmania.signs.create.seedoffsign:
-        description: Create seed off signs
+    minecartmania.signs.create.autotillsign:
+        description: AutoTill Sign
         default: true
     minecartmania.signs.create.autoharvestsign:
-        description: Create auto harvest signs
-        default: true
-    minecartmania.signs.create.harvestoffsign:
-        description: Create harvest off signs
-        default: true
-    minecartmania.signs.create.autosugarsign:
-        description: Create auto sugar signs
-        default: true
-    minecartmania.signs.create.sugaroffsign :
-        description: Create sugar off signs
-        default: true
-    minecartmania.signs.create.autoresugarsign:
-        description: Create auto re sugar signs
-        default: true
-    minecartmania.signs.create.resugaroffsign:
-        description: Create re sugar off signs
+        description: AutoHarvest Sign
         default: true
     minecartmania.signs.create.autotimbersign:
-        description: Create auto timber signs
-        default: true
-    minecartmania.signs.create.timberoffsign:
-        description: Create timber off signs
+        description: AutoTimber Sign
         default: true
     minecartmania.signs.create.autoforestsign:
-        description: Create auto forest signs
+        description: AutoForest Sign
         default: true
-    minecartmania.signs.create.forestoffsign:
-        description: Create forest off signs
+    minecartmania.signs.create.autosugarsign:
+        description: AutoSugar Sign
+        default: true
+    minecartmania.signs.create.autoplantsign:
+        description: AutoPlant Sign
         default: true
     minecartmania.signs.create.autocactussign:
-        description: Create auto cactus signs
-        default: true
-    minecartmania.signs.create.cactusoffsign:
-        description: Create cactus off signs
+        description: AutoCactus Sign
         default: true
     minecartmania.signs.create.autorecactussign:
-        description: Create auto recactus signs
+        description: AutoReCactus Sign
+        default: true
+    minecartmania.signs.create.seedoffsign:
+        description: Seed Off Sign
+        default: true
+    minecartmania.signs.create.tilloffsign:
+        description: Till Off Sign
+        default: true
+    minecartmania.signs.create.harvestoffsign:
+        description: Harvest Off Sign
+        default: true
+    minecartmania.signs.create.timberoffsign:
+        description: Timber Off Sign
+        default: true
+    minecartmania.signs.create.forestoffsign:
+        description: Forest Off Sign
+        default: true
+    minecartmania.signs.create.sugaroffsign:
+        description: Sugar Off Sign
+        default: true
+    minecartmania.signs.create.plantoffsign:
+        description: Plant Off Sign
+        default: true
+    minecartmania.signs.create.cactusoffsign:
+        description: Cactus Off Sign
         default: true
     minecartmania.signs.create.recactusoffsign:
-        description: Create re cactus off signs
+        description: ReCactus Off Sign
+        default: true
+    minecartmania.signs.create.alterrangesign:
+        description: Alter Range
+        default: true
+    minecartmania.signs.create.maxspeedsign:
+        description: Max Speed
+        default: true
+    minecartmania.signs.create.ejectsign:
+        description: Eject Sign
+        default: true
+    minecartmania.signs.create.announcementsign:
+        description: Announcement
+        default: true
+    minecartmania.signs.create.holdingsign:
+        description: Holding
+        default: true
+    minecartmania.signs.create.elevatorsign:
+        description: Elevator
+        default: true
+    minecartmania.signs.create.ejectatsign:
+        description: Eject At Location
         default: true
     minecartmania.signs.create.farmsign:
-        description: Create farm signs
+        description: Farm
         default: true
-    minecartmania.signs.create.setspeedsign:
-        description: Create set speed signs
+    minecartmania.signs.create.minimumitemsign:
+        description: Minimum Item
+        default: true
+    minecartmania.signs.create.maximumitemsign:
+        description: Maximum Item
         default: true
     minecartmania.signs.create.jumpsign:
-        description: Create jump signs
+        description: Jump
+        default: true
+    minecartmania.signs.create.stationsign:
+        description: Station
+        default: true
+    minecartmania.signs.create.killsign:
+        description: Kill
+        default: true
+    minecartmania.signs.create.platformsign:
+        description: Platform
+        default: true
+    minecartmania.signs.create.spawnsign:
+        description: Spawn
+        default: true
+    minecartmania.signs.create.setspeedsign:
+        description: Set Speed 0.0
+        default: true
+    minecartmania.signs.create.magnetsign:
+        description: Magnet
+        default: true
+    minecartmania.signs.create.promptsign:
+        description: Prompt
+        default: true
+    minecartmania.signs.create.catchsign:
+        description: Catch
+        default: true
+    minecartmania.signs.create.compressitemssign:
+        description: Compress Items
+        default: true
+    minecartmania.signs.create.collectitemssign:
+        description: Collect Items
+        default: true
+    minecartmania.signs.create.deposititemssign:
+        description: Deposit Items
+        default: true
+    minecartmania.signs.create.trashitemssign:
+        description: Trash Items
+        default: true
+    minecartmania.signs.create.smeltitemssign:
+        description: Smelt Items
         default: true

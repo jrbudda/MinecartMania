@@ -18,7 +18,7 @@ public class SensorStation extends GenericSensor {
 		
 		if (minecart != null) {
 			if (minecart.hasPlayerPassenger()){
-				setState(sign.getLine(2).equals(MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getLastStation()));
+				setState(sign.getLine(2).equals(minecart.getDestination()));
 			}
 		}
 		else {

@@ -6,11 +6,8 @@ import java.util.List;
 
 import javax.persistence.PersistenceException;
 
-import org.bukkit.block.Block;
-
 import com.afforess.minecartmania.signs.actions.HoldSignData;
 import com.afforess.minecartmania.signs.sensors.SensorDataTable;
-import com.afforess.minecartmania.signs.sensors.SensorManager;
 
 
 

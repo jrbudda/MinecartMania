@@ -10,11 +10,10 @@ import org.bukkit.Material;
 
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class StorageMinecartSugar {
 	public static void doAutoSugarFarm(MinecartManiaStorageCart minecart) {
-		if((minecart.getDataValue("AutoSugar") == null) && (minecart.getDataValue("AutoPlant") == null) && StorageMinecartUtils.isFarmingActive(minecart, FarmType.Sugar)) {
+		if((minecart.getDataValue("AutoSugar") == null) && (minecart.getDataValue("AutoPlant") == null) && FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
 			return;
 		}
 
@@ -38,7 +37,7 @@ public class StorageMinecartSugar {
 					int belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y-1, z);
 					
 					//Harvest Sugar
-					if (minecart.getDataValue("AutoSugar") != null || StorageMinecartUtils.isFarmingActive(minecart, FarmType.Sugar)) {
+					if (minecart.getDataValue("AutoSugar") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
 					
 						// Check for sugar blocks and ensure they're the top one in the stack. 
 						// Breaking sugar below the top will result in cane on the track which can stop the cart
@@ -63,7 +62,7 @@ public class StorageMinecartSugar {
 					belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y-1, z);
 
 					//Replant cane
-					if (minecart.getDataValue("AutoPlant") != null || StorageMinecartUtils.isFarmingActive(minecart, FarmType.Sugar)) {
+					if (minecart.getDataValue("AutoPlant") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
 						if (id == Material.GRASS.getId() ||  id == Material.DIRT.getId()) {
 							if (aboveId == Material.AIR.getId()) {
 

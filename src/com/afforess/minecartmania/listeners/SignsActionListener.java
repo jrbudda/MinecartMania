@@ -87,9 +87,10 @@ public class SignsActionListener implements Listener{
 
 	@EventHandler
 	public void onMinecartMotionStopEvent(MinecartMotionStopEvent event) {
+		com.afforess.minecartmania.debug.Logger.debug("Motion Stop " + event.getMinecart().getEntityId());
 		MMMinecart minecart = event.getMinecart();
-		if (minecart.getDataValue("Lock Cart") != null) {
-			minecart.setDataValue("Lock Cart", null);
+		if (minecart.isLocked()) {
+			minecart.setLocked(false);
 			if (minecart.hasPlayerPassenger()) {
 				minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartUnlocked"));
 			}

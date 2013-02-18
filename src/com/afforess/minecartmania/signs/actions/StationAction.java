@@ -36,7 +36,7 @@ public class StationAction extends SignAction {
 		for (Sign sign : signList) {
 			convertCraftBookSorter(sign);
 			for (int k = 0; k < 4; k++) {
-			
+
 				//Trim line
 				String val[] = sign.getLine(k).split(":");
 				if (val.length != 2) {
@@ -99,8 +99,8 @@ public class StationAction extends SignAction {
 			break;
 		}
 		if (valid && MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getDataValue("Reset Station Data") == null) {
-			if (!StationUtil.isStationCommandNeverResets()) {
-				MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).setLastStation("");
+			if (!Settings.StationCommandSaveAfterUse) {
+				minecart.setDestination("");
 			}
 		}
 		return valid;
@@ -120,7 +120,7 @@ public class StationAction extends SignAction {
 			return old;
 		}
 	}
-	
+
 	public static CompassDirection convertToOldDirections(com.afforess.minecartmania.utils.DirectionUtils.CompassDirection newd){
 		switch(newd){
 		case EAST:
@@ -189,7 +189,7 @@ public class StationAction extends SignAction {
 	@Override
 	public boolean process(String[] lines) {
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[station") && !line.toLowerCase().contains("set")) {
+			if (line.toLowerCase().contains("[station") && !line.toLowerCase().contains("stop")) {
 				return true;
 			}
 		}

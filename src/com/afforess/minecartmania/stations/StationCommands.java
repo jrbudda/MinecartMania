@@ -56,10 +56,10 @@ public enum StationCommands implements Direction {
 	Left {	
 		public boolean execute(MMMinecart minecart, String str) {
 			if (str.equals("L") || str.toLowerCase().contains("left")){		
-				
+
 				return setMotion( DirectionUtils.getLeftDirection(minecart.getDirection()), minecart, false);
 			}
-		
+
 			else return false;
 		}
 	},
@@ -67,10 +67,10 @@ public enum StationCommands implements Direction {
 
 		public boolean execute(MMMinecart minecart, String str) {
 			if (str.equals("R") || str.toLowerCase().contains("right")){
-				
+
 				return setMotion( DirectionUtils.getRightDirection(minecart.getDirection()), minecart, false);	
 			}
-		else return false;
+			else return false;
 		}
 	},
 	Destroy {
@@ -78,6 +78,7 @@ public enum StationCommands implements Direction {
 		public boolean execute(MMMinecart minecart, String str) {
 			if (str.equals("D") || str.toLowerCase().contains("destroy")){
 				new com.afforess.minecartmania.signs.actions.EjectAction().executeAsBlock(minecart, minecart.getLocation());
+				minecart.setDestination("");
 				minecart.killOptionalReturn();
 				return true;
 			}
@@ -114,6 +115,7 @@ public enum StationCommands implements Direction {
 
 		public boolean execute(MMMinecart minecart, String str) {
 			if (str.equals("V") || str.toLowerCase().contains("vanish")){
+				minecart.setDestination("");
 				new com.afforess.minecartmania.signs.actions.EjectAction().executeAsBlock(minecart, minecart.getLocation());
 				minecart.killNoReturn();
 				return true;
@@ -129,7 +131,7 @@ public enum StationCommands implements Direction {
 		if(Settings.StationsUseOldDirections && convert) direction = StationAction.convertFromOldDirections(direction);
 
 		if (MinecartUtils.validMinecartTrack(minecart.getLocation(),  direction)){
-			
+
 			int data = DirectionUtils.getMinetrackRailDataForDirection(direction, minecart.getDirection());
 			if (data != -1) {
 				//Force the game to remember the old data of the rail we are on, and reset it once we are done
@@ -144,9 +146,10 @@ public enum StationCommands implements Direction {
 				//change the track dirtion
 				oldBlock.setData((byte) data);
 
-				
-			if (DirectionUtils.getOppositeDirection(direction).equals(minecart.getDirection()))	minecart.reverse();
-
+					return true;
+			}
+			else {
+				if (DirectionUtils.getOppositeDirection(direction).equals(minecart.getDirection()))	minecart.reverse();
 				return true;
 			}
 		}

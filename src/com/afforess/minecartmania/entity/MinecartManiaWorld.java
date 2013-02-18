@@ -57,15 +57,18 @@ public class MinecartManiaWorld {
 		final int id = minecart.getEntityId();
 		MMMinecart testMinecart = minecarts.get(id);
 		if (testMinecart == null) {
+			Logger.debug("No MM minecart found for id " + id);
 			synchronized(minecart) {
 				//may have been created while waiting for the lock
 				if (minecarts.get(id) != null) {
 					return minecarts.get(id);
 				}
 				//Special handling because bukkit fails at creating the right type of minecart entity
+
 				CraftMinecart cm = (CraftMinecart)minecart;	
 				EntityMinecart em = (EntityMinecart)cm.getHandle();
 				CraftServer server = (CraftServer)Bukkit.getServer();
+
 				if (em.type == 1) {
 					CraftStorageMinecart csm = new CraftStorageMinecart(server, em); 
 					minecart = (Minecart)csm;
@@ -94,12 +97,8 @@ public class MinecartManiaWorld {
 	 * @param the id of the minecart to delete
 	 */
 	@ThreadSafe
-	public static boolean delMinecartManiaMinecart(int entityID) {
-		if (minecarts.containsKey(new Integer(entityID))) {
-			minecarts.remove(new Integer(entityID));
-			return true;
-		}
-		return false;
+	public static void delMinecartManiaMinecart(int entityID) {
+		minecarts.remove(new Integer(entityID));
 	}
 
 	@ThreadSafe
@@ -552,7 +551,6 @@ public class MinecartManiaWorld {
 		Location loc = new Location(w, x + 0.5D, y, z + 0.5D);
 		Minecart m = null;
 
-
 		if (type == null || type.getId() == Item.MINECART.getId()) {
 			m = (Minecart)w.spawn(loc, Minecart.class);
 		}
@@ -566,7 +564,6 @@ public class MinecartManiaWorld {
 		if(m == null || !m.isValid()){
 			Logger.debug("Invalid entity spawning minecart at " + loc.toString());
 			return null;
-
 		}
 
 		MMMinecart minecart = null;
@@ -589,7 +586,9 @@ public class MinecartManiaWorld {
 		else {
 			minecart = new MMMinecart(m, ownerName);
 		}
-		minecarts.put(m.getEntityId(), minecart);
+
+		minecarts.put(minecart.getEntityId(), minecart);
+
 		return minecart;
 	}
 

@@ -4,22 +4,22 @@ import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.signs.SignAction;
 
-public class LockCartAction extends SignAction {
+public class UnLockCartAction extends SignAction {
 	@Override
 	public boolean execute(MMMinecart minecart) {
-	
-		if (!minecart.isLocked() && minecart.hasPlayerPassenger()) {
-			minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLocked"));
+		
+		if (minecart.isLocked() && minecart.hasPlayerPassenger()) {
+			minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartUnlocked"));
 		}
-		minecart.setLocked(true);
+		
+		minecart.setLocked(false);
 		return true;
-
 	}
 
 	@Override
 	public boolean process(String[] lines) {
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[lock cart")){
+			if (line.toLowerCase().contains("[unlock cart")){
 				return true;
 			}
 		}
@@ -33,12 +33,12 @@ public class LockCartAction extends SignAction {
 
 	@Override
 	public String getPermissionName() {
-		return "lockcart";
+		return "unlockcart";
 	}
 
 	@Override
 	public String getFriendlyName() {
-		return "Lock Cart";
+		return "Unlock Cart";
 	}
 
 }

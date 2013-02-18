@@ -72,29 +72,29 @@ public class MinecartManiaMinecartDataTable {
 	}
 
 	public MinecartManiaMinecartDataTable(MMMinecart minecart, String player) {
-				this.previousX = minecart.previousLocation.getX();
-				this.previousY = minecart.previousLocation.getY();
-				this.previousZ = minecart.previousLocation.getZ();
-				this.previousMotionX =  minecart.getMotionX();
-				this.previousMotionY = minecart.getMotionY();
-				this.previousMotionZ = minecart.getMotionZ();
-				this.previousFacingDir = minecart.previousFacingDir;
-				this.wasMovingLastTick = minecart.wasMovingLastTick;
-				this.owner = minecart.owner.getOwner();
-				this.myrange = minecart.range;
-				this.rangeY = minecart.rangeY;
-				this.dead = minecart.dead;
-				this.oldId = minecart.minecart.getEntityId();
-				this.data = minecart.data;
-				this.X = minecart.getLocation().getX();
-				this.Y = minecart.getLocation().getY();
-				this.Z = minecart.getLocation().getZ();
-				this.motionX = minecart.getMotionX();
-				this.motionY = minecart.getMotionY();
-				this.motionZ = minecart.getMotionZ();
-				this.player = player;
-				this.typeId = minecart.getType().getId();
-				this.world = minecart.getWorld().getName();
+		this.previousX = minecart.previousLocation.getX();
+		this.previousY = minecart.previousLocation.getY();
+		this.previousZ = minecart.previousLocation.getZ();
+		this.previousMotionX =  minecart.getMotionX();
+		this.previousMotionY = minecart.getMotionY();
+		this.previousMotionZ = minecart.getMotionZ();
+		this.previousFacingDir = minecart.previousFacingDir;
+		this.wasMovingLastTick = minecart.wasMovingLastTick;
+		this.owner = minecart.owner.getOwner();
+		this.myrange = minecart.range;
+		this.rangeY = minecart.rangeY;
+		this.dead = minecart.dead;
+		this.oldId = minecart.minecart.getEntityId();
+		this.data = minecart.data;
+		this.X = minecart.getLocation().getX();
+		this.Y = minecart.getLocation().getY();
+		this.Z = minecart.getLocation().getZ();
+		this.motionX = minecart.getMotionX();
+		this.motionY = minecart.getMotionY();
+		this.motionZ = minecart.getMotionZ();
+		this.player = player;
+		this.typeId = minecart.getType().getId();
+		this.world = minecart.getWorld().getName();
 	}
 
 	public static MinecartManiaMinecartDataTable getDataTable(String player) {
@@ -123,19 +123,31 @@ public class MinecartManiaMinecartDataTable {
 		}
 	}
 
+	public static List<MinecartManiaMinecartDataTable> getAlltCarts(){
+		try {
+			List<MinecartManiaMinecartDataTable> list = MinecartMania.getInstance().getDatabase().find(MinecartManiaMinecartDataTable.class).findList();
+			return list;
+		}
+		catch (Exception e) {
+			Logger.severe("Failed to load the minecarts from database!");
+			Logger.severe(e.getMessage(), false);
+			return null;
+		}
+	}
+
 	public static void delete(MinecartManiaMinecartDataTable data) {
-		MinecartMania.getInstance().getDatabase().delete(data);
 		cache.remove(data.getPlayer());
+		MinecartMania.getInstance().getDatabase().delete(data);
 	}
 
 	public static void save(MinecartManiaMinecartDataTable data) {
-		MinecartMania.getInstance().getDatabase().save(data);
 		cache.put(data.getPlayer(), data);
+		MinecartMania.getInstance().getDatabase().save(data);
 	}
 
 	public MMMinecart toMinecartManiaMinecart() {
 		MMMinecart minecart = MinecartManiaWorld.spawnMinecart(getLocation(), Item.getItem(typeId).get(0), owner);
-		
+
 		if (minecart == null) {
 			Logger.debug("Could not load saved minecart for " + this.player);
 			return null;

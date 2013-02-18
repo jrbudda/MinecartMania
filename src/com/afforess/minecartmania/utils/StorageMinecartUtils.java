@@ -11,11 +11,12 @@ import org.bukkit.block.Block;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.farming.FarmType;
+import com.afforess.minecartmania.farming.FarmingBase;
 
 public class StorageMinecartUtils {
 
 	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
-		if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !isFarmingActive(minecart, FarmType.Wheat)) {
+		if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 			return;
 		}
 		if (minecart.getRange() < 1) {
@@ -35,7 +36,7 @@ public class StorageMinecartUtils {
 					int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
 					boolean dirty = false; //set when the data gets changed
 					//Harvest fully grown crops first
-					if (minecart.getDataValue("AutoHarvest") != null || isFarmingActive(minecart, FarmType.Wheat)) {
+					if (minecart.getDataValue("AutoHarvest") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 						int data = MinecartManiaWorld.getBlockData(minecart.getWorld(), x, y, z);
 						if (id == Material.CROPS.getId()) {
 							//fully grown
@@ -57,7 +58,7 @@ public class StorageMinecartUtils {
 						dirty = false;
 					}
 					//till soil
-					if (minecart.getDataValue("AutoTill") != null || isFarmingActive(minecart, FarmType.Wheat)) {
+					if (minecart.getDataValue("AutoTill") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 						if (id == Material.GRASS.getId() ||  id == Material.DIRT.getId()) {
 							if (aboveId == Material.AIR.getId()) {
 								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.SOIL.getId(), x, y, z);
@@ -73,7 +74,7 @@ public class StorageMinecartUtils {
 						dirty = false;
 					}
 					//Seed tilled land 
-					if (minecart.getDataValue("AutoSeed") != null || isFarmingActive(minecart, FarmType.Wheat)) {
+					if (minecart.getDataValue("AutoSeed") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 						if (id == Material.SOIL.getId()) {
 							if (aboveId == Material.AIR.getId()) {
 								if (minecart.removeItem(Material.SEEDS.getId())) {
@@ -90,7 +91,7 @@ public class StorageMinecartUtils {
 	}
 
 	public static void doAutoCactusFarm(MinecartManiaStorageCart minecart) {
-		if((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !isFarmingActive(minecart, FarmType.Cactus)) {
+		if((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
 			return;
 		}
 		if (minecart.getRange() < 1) {
@@ -118,7 +119,7 @@ public class StorageMinecartUtils {
 
 						if (id == Material.CACTUS.getId() && aboveId != Material.CACTUS.getId()) {
 							if (belowId == Material.SAND.getId()) {
-								if(!isFarmingActive(minecart, FarmType.Cactus) &&  minecart.getDataValue("AutoReCactus") == null) {
+								if(!FarmingBase.isFarmingActive(minecart, FarmType.Cactus) &&  minecart.getDataValue("AutoReCactus") == null) {
 									// Only harvest the bottom if we're not replanting. 
 									minecart.addItem(Material.CACTUS.getId());
 									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
@@ -135,7 +136,7 @@ public class StorageMinecartUtils {
 					aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
 
 					//Replant Cactus
-					if (minecart.getDataValue("AutoReCactus") != null || isFarmingActive(minecart, FarmType.Cactus)) {
+					if (minecart.getDataValue("AutoReCactus") != null || FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
 						if (id == Material.SAND.getId()) {
 							if (aboveId == Material.AIR.getId()) {
 
@@ -238,22 +239,6 @@ public class StorageMinecartUtils {
 	*/
 	}
 
-	/**
-	 * Returns true of the farm type is set (via [Farm] sign)
-	 * @param minecart
-	 * @param farmType
-	 * @return
-	 */
-	public static boolean isFarmingActive(MinecartManiaStorageCart minecart, String farmType)
-	{
-		Object value = minecart.getDataValue("Farm");
-		if(value != null && value instanceof String) {
-			String strValue = ((String)value).toLowerCase();
-			return strValue.equals(farmType.toLowerCase());
-		}
-		return false;
-	}
-	
 	/**
 	 * Returns all blocks in farming range of the minecart
 	 * @param minecart

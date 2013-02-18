@@ -6,7 +6,6 @@ import org.bukkit.World;
 
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class CactusFarming
 {
@@ -91,11 +90,11 @@ public class CactusFarming
 	
 	private static boolean isAutoCactusActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoCactus") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoCactus") != null;
 	}
 	
 	private static boolean isAutoReCactusActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoReCactus") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoReCactus") != null;
 	}
 }

@@ -23,7 +23,7 @@ public class PlayerListener implements Listener{
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (Settings.DisappearonDisconnect) {
+		if (Settings.PreserveMinecartsonRiderLogout) {
 			MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(event.getPlayer());
 			if (event.getPlayer().getVehicle() instanceof Minecart) {
 				final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getPlayer().getVehicle());
@@ -47,66 +47,88 @@ public class PlayerListener implements Listener{
 	//	//	if(event.getPlayer().isInsideVehicle() && event.getPlayer().getVehicle() instanceof Minecart) event.setCancelled(true);
 	//	}
 
-	
-	
-	@EventHandler
-	public void onPlayerJoin(final PlayerJoinEvent event) {
-		if (Settings.DisappearonDisconnect) {
-			final MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(event.getPlayer());
-			final MinecartManiaMinecartDataTable data = MinecartManiaMinecartDataTable.getDataTable(player.getName());
-			if (data != null) {
-				//delaying this allows the chunks to load and player entity to be created.
-				MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
-					@Override
-					public void run() {
-						Logger.debug("Loading saved minecart for " + player.getName());
 
-						final MMMinecart minecart = data.toMinecartManiaMinecart();
+	public static void spawnCartForRider(final MinecartManiaPlayer player, final MinecartManiaMinecartDataTable data){
+		if (data != null && player !=null) {
 
-						if (minecart == null) Logger.debug("Could not create saved minecart for " + player.getName());
-						else {
-							//delay this because... i dont know, but you have to or it doesnt set the passenger right.
-							MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
-								@Override
-								public void run() {
-									minecart.setPassenger(player.getPlayer());
-								}},10);
-						}
+			//delaying this allows the chunks to load and player entity to be created.
+			MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
+				@Override
+				public void run() {
+					Logger.debug("Loading saved minecart for " + player.getName());
 
-						try {
-							MinecartManiaMinecartDataTable.delete(data);
-						}
-						//Make every effort to delete the entry
-						catch (OptimisticLockException ole) {
-							final String name = event.getPlayer().getName();
-							Thread deleteEntry = new Thread() {
-								public void run() {
-									try {
-										sleep(5000);
-										MinecartManiaMinecartDataTable.delete(data);
-									}
-									catch (Exception e) {
-										Logger.severe("Failed to remove the minecart data entry when " + name + " connected");
-										Logger.logCore(e.getMessage(), false);
-									}
-								}
-							};
-							deleteEntry.start();
-						}
+					final MMMinecart minecart = data.toMinecartManiaMinecart();
+
+					if (minecart == null) Logger.debug("Could not create saved minecart for " + player.getName());
+					else {
+						//delay this because... i dont know, but you have to or it doesnt set the passenger right.
+						MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
+							@Override
+							public void run() {
+								minecart.setPassenger(player.getPlayer());
+							}},2);
 					}
-				});
-			}	
+					
+					try {
+						MinecartManiaMinecartDataTable.delete(data);
+					}
+					catch (OptimisticLockException ole){
+						//Make every effort to delete the entry
+						Logger.severe("wat wat!!");
+						final String name = player.getName();
+						Thread deleteEntry = new Thread() {
+							public void run() {
+								try {
+									sleep(5000);
+									MinecartManiaMinecartDataTable.delete(data);
+								}
+								catch (Exception e) {
+									Logger.severe("Failed to remove the minecart data entry when " + name + " connected");
+									Logger.logCore(e.getMessage(), false);
+								}
+							}
+						};
+						deleteEntry.start();
+					}
+				}
+			});
 		}
 	}
 
 	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerJoin(final PlayerJoinEvent event) {
+		if (Settings.PreserveMinecartsonRiderLogout) {
+			MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(event.getPlayer());
+			MinecartManiaMinecartDataTable data = MinecartManiaMinecartDataTable.getDataTable(player.getName());
+			if(data==null) Logger.debug("No data found for " + player.getName());
+			spawnCartForRider(player, data);
+		}
+	}
+
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerEntityInteract(org.bukkit.event.player.PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Minecart)) return;
+
+		MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getRightClicked());
+
+		if (minecart !=null && minecart.isLocked()) {
+			event.getPlayer().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
+			event.setCancelled(true);
+			return;
+		}
+
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerInteract(PlayerInteractEvent event) {	
 		if (event.isCancelled()) {
 			return;
 		}
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
+
 		if (Settings.RailAdjusterTool== null) {
 			return;
 		}

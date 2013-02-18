@@ -144,7 +144,6 @@ public class MinecartUtils {
 				return false;
 			}
 
-
 			//			//dont need thing unless range > 2
 			//			if (isTrack(MinecartManiaWorld.getBlockIdAt(w, x - 1, y, z))) {
 			//				direction = CompassDirection.WEST;
@@ -159,86 +158,90 @@ public class MinecartUtils {
 			range--;
 		}
 
-
-
 		return true;
 	}
 
 	public static boolean isAtIntersection(World w, int x, int y, int z) {
 		int paths = 0;
 
-		if(MinecartManiaWorld.getBlockIdAt(w, x, y, z) != Item.RAILS.getId()) return false; //this is only valid for non-powered rails.
 
-		int data = MinecartManiaWorld.getBlockData(w, x, y, z);
-
-		switch (data) {
-		case 0: // north-south straight
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
-					paths++;
-				}
-			}
-			break;
-		case 1: // west-east straight
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
-					paths++;
-				}
-			}
-			break;
-		case 6: // east-south corner
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST) && hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-					paths++;
-				}
-			}
-			break;
-		case 7: // west-south corner
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
-					paths++;
-				}
-			}
-			break;
-		case 8: // west-north corner
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
-					paths++;
-				}
-			}
-			break;
-		case 9: // north-east corner
-			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
-				paths = 2;
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
-					paths++;
-				}
-				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
-					paths++;
-				}
-			}
-			break;
-		}
+		if(hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) paths +=1;
+		if(hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) paths +=1;
+		if(hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) paths +=1;
+		if(hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) paths +=1;
+		
+		//		if(MinecartManiaWorld.getBlockIdAt(w, x, y, z) != Item.RAILS.getId()) return false; //this is only valid for non-powered rails.
+		//
+		//		int data = MinecartManiaWorld.getBlockData(w, x, y, z);
+		//
+		//		switch (data) {
+		//		case 0: // north-south straight
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		case 1: // west-east straight
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		case 6: // east-south corner
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST) && hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		case 7: // west-south corner
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		case 8: // west-north corner
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		case 9: // north-east corner
+		//			if (hasTrackConnectedOn(w, x, y, z, BlockFace.NORTH) && hasTrackConnectedOn(w, x, y, z, BlockFace.EAST)) {
+		//				paths = 2;
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.SOUTH)) {
+		//					paths++;
+		//				}
+		//				if (hasTrackConnectedOn(w, x, y, z, BlockFace.WEST)) {
+		//					paths++;
+		//				}
+		//			}
+		//			break;
+		//		}
 
 		return paths > 2;
 	}
@@ -290,23 +293,31 @@ public class MinecartUtils {
 		return false;
 	}
 
-	//async
-	private static void doMinecartNearEntityCheck(final MMMinecart minecart, List<Entity> entities) {
-		//Have to handle all entites here, collisions are non-deterministic and not necessarily cancelable.
 
-		//Set a flag to stop this event from happening twice
-		minecart.setDataValue("MinecartNearEntityEvent", true);
+
+	private static void doMinecartItemCollection(final MMMinecart minecart, List<Entity> entities) {
 
 		for (Entity e : entities) {
 
 			if (e.isDead()) {
 				continue;
-			}
+			}		
 
 			if (minecart.isStorageMinecart() && e instanceof org.bukkit.entity.Item	&& ((MinecartManiaStorageCart)minecart).addItem(((org.bukkit.entity.Item)e).getItemStack())) {
 				e.remove();
 			}
-			else if (e instanceof LivingEntity && 	minecart.isApproaching(e.getLocation())){
+
+
+		}
+
+	}
+
+
+	private static void doMinecartEntitiesOnRail(final MMMinecart minecart, List<Entity> entities) {
+		//Have to handle all entites here, collisions are non-deterministic and not necessarily cancelable.
+
+		for (Entity e : entities) {
+			if (e instanceof LivingEntity && 	minecart.isApproaching(e.getLocation())){
 
 				LivingEntity victim = (LivingEntity)(e);
 
@@ -317,29 +328,65 @@ public class MinecartUtils {
 				}
 				else if (victim instanceof Player){
 					if(Settings.KillPlayersOnTrack && (minecart.getMotion().length() > (Settings.KillPlayersOnTrackMinnimumSpeed / 100) * .4) ){
-				    	//die
+						//die
 						victim.setHealth(0);
 					}
 					else{			
 						//get out the way
-						victim.teleport(victim.getLocation().add(0,1,0));
-						victim.setVelocity(new Vector(minecart.getMotionZ(), 0 ,minecart.getMotionX() ));
+						bump(victim, minecart);
 					}	
 				}
 				else{			
 					//get out the way
-					victim.teleport(victim.getLocation().add(0,1,0));
-					victim.setVelocity(new Vector(minecart.getMotionZ(), .2 ,minecart.getMotionX() ));
+					bump(victim, minecart);
 				}	
 			}
 
 			else clearedItemFromRails(e, minecart);
 		}
 
-		//Reset the flag
-		minecart.setDataValue("MinecartNearEntityEvent", null);
+
 	}
 
+
+	private static void bump(LivingEntity victim, MMMinecart minecart){
+
+		Vector victor;
+		double spd = Math.sqrt(minecart.getMotionX() * minecart.getMotionX() + minecart.getMotionZ()*minecart.getMotionZ());
+		int mod=1;
+		switch (minecart.getDirection()){
+		case NORTH: 
+			mod =-1;
+		case SOUTH:
+			if (victim.getLocation().getX() > minecart.getLocation().getX()){
+				//west
+				victor = new Vector(spd, .1 ,spd*mod);
+			}
+			else {
+				//east
+				victor = new Vector(-spd, .1 ,spd*mod);
+			}
+			break;
+		case WEST: 
+			mod =-1;
+		case EAST:
+			if (victim.getLocation().getZ() > minecart.getLocation().getZ()){
+				//south
+				victor = new Vector(spd*mod, .1 ,spd);
+			}
+			else {
+				//north
+				victor = new Vector(spd*mod, .1 ,-spd);
+			}
+			break;	
+		default:
+			victor = new Vector(spd, .1 ,spd);
+		}
+		//	victim.teleport(victim.getLocation().add(0,5,0));
+		victor = victor.multiply(2);
+		com.afforess.minecartmania.debug.Logger.debug("Set v on " + victim.toString() +" " + victor.toString() );
+		victim.setVelocity(victor);
+	}
 
 	private static boolean clearedItemFromRails(Entity e, MMMinecart minecart) {
 
@@ -395,24 +442,38 @@ public class MinecartUtils {
 	}
 
 	public static void updateNearbyItems(final MMMinecart minecart) {
-		if (minecart.getDataValue("MinecartNearEntityEvent") != null) {
-			return;
-		}
-		final List<Entity> list;
 
-		switch (minecart.getDirectionOfMotion()) {
-		case EAST: case WEST:
-			list	= minecart.getBukkitEntity().getNearbyEntities(1.5 ,0, .75);
-			break;
-		case NORTH: case SOUTH:
-			list	= minecart.getBukkitEntity().getNearbyEntities(.75 ,0, 1.5);
-			break;
-		default:
-			list	= minecart.getBukkitEntity().getNearbyEntities(.75 ,0, .75);
-			break;
+		List<Entity> list;	
+
+		if(minecart instanceof MinecartManiaStorageCart){
+			switch (minecart.getDirectionOfMotion()) {
+			case NORTH: case SOUTH:
+				list	= minecart.getBukkitEntity().getNearbyEntities(((MinecartManiaStorageCart)minecart).getItemRange() ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , .5);
+				break;
+			case EAST: case WEST:
+				list	= minecart.getBukkitEntity().getNearbyEntities(.5 ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , ((MinecartManiaStorageCart)minecart).getItemRange());
+				break;
+			default:
+				list	= minecart.getBukkitEntity().getNearbyEntities(((MinecartManiaStorageCart)minecart).getItemRange() ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , ((MinecartManiaStorageCart)minecart).getItemRange());
+				break;
+			}		
+			doMinecartItemCollection(minecart, list);
 		}
 
-		doMinecartNearEntityCheck(minecart, list);
+		//		switch (minecart.getDirectionOfMotion()) {
+		//		case EAST: case WEST:
+		//			list	= minecart.getBukkitEntity().getNearbyEntities(1.5 ,0, .75);
+		//			break;
+		//		case NORTH: case SOUTH:
+		//			list	= minecart.getBukkitEntity().getNearbyEntities(.75 ,0, 1.5);
+		//			break;
+		//		default:
+		//			list	= minecart.getBukkitEntity().getNearbyEntities(.75 ,0, .75);
+		//			break;
+		//		}
+
+		list	= minecart.getBukkitEntity().getNearbyEntities(.25 ,0, .25);
+		doMinecartEntitiesOnRail(minecart, list);
 
 		//yea this is a bad idea
 		//		Thread update = new Thread() {

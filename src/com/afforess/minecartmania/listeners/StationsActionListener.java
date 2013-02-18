@@ -137,10 +137,15 @@ public class StationsActionListener implements Listener {
 		//responding to chat direction prompt
 		if (minecart.isAtIntersection() && minecart.hasPlayerPassenger()) {
 			if (StationUtil.isValidDirection(facingDir, minecart)) {
-				Logger.info("intersection click: valid dir" );
+	
 				int data = DirectionUtils.getMinetrackRailDataForDirection(facingDir, minecart.getDirection());
+				Logger.debug("intersection click: valid dir: " + facingDir + " minecart dir: " + minecart.getDirection()  + " data: " + data);
 				if (data != -1) {
-					MinecartManiaWorld.setBlockData(minecart.getWorld(), minecart.getX(), minecart.getY(), minecart.getZ(), data);
+					MinecartManiaWorld.setBlockData(minecart.getWorld(), minecart.getX(), minecart.getY(), minecart.getZ(), data);		
+				}
+				else {
+					//trying to go back the other way.
+					minecart.reverse();
 				}
 				minecart.setFrozen(false);
 			}
@@ -148,12 +153,14 @@ public class StationsActionListener implements Listener {
 			event.setActionTaken(true);
 		}
 		else{
-			if (minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
+
+			if (minecart.isLocked()) {
 				if (minecart.hasPlayerPassenger()) {
 					minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
 				}
 				event.setActionTaken(true);
 			}
+
 			if (minecart.getPlayerPassenger()!=null){
 				new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, minecart.getLocation());
 				event.setActionTaken(true);

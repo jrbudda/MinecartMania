@@ -20,13 +20,15 @@ public class StationCommand extends MinecartManiaCommand {
 
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player player = (Player)sender;
-		
+		MinecartManiaPlayer mmp = MinecartManiaWorld.getMinecartManiaPlayer(player);
+		String str = "NONE";
 		if (args.length < 1) {
-			sender.sendMessage(Settings.getLocal("StationHelpString"));
+			if(mmp.getLastStation() !="") str = mmp.getLastStation();
+			sender.sendMessage(Settings.getLocal("StationHelpString", str));
 			return false;
 		}
 		
-		MinecartManiaPlayer mmp = MinecartManiaWorld.getMinecartManiaPlayer(player);
+
 		String station = args[0];
 		mmp.setLastStation(station);
 		if (args.length > 1) {

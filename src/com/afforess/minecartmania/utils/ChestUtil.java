@@ -9,7 +9,6 @@ import org.bukkit.block.BlockFace;
 import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
-import com.afforess.minecartmania.signs.MinecartTypeSign;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class ChestUtil {
@@ -18,7 +17,7 @@ public class ChestUtil {
 		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
 		for (MMSign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
-				if (sign.getLine(i).toLowerCase().contains("no collection")) {
+				if (sign.getLine(i).toLowerCase().contains("[no collection")) {
 					sign.setLine(i, "[No Collection]");
 					return true;
 				}
@@ -27,33 +26,7 @@ public class ChestUtil {
 		return false;
 	}
 
-	public static Item getMinecartType(MinecartManiaChest chest) {
-		ArrayList<com.afforess.minecartmania.MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
-		for (com.afforess.minecartmania.MMSign sign : signList) {
-			if (sign instanceof MinecartTypeSign) {
-				MinecartTypeSign type = (MinecartTypeSign)sign;
-				if (type.canDispenseMinecartType(Item.MINECART)) {
-					if (chest.contains(Item.MINECART)) {
-						return Item.MINECART;
-					}
-				}
-				if (type.canDispenseMinecartType(Item.POWERED_MINECART)) {
-					if (chest.contains(Item.POWERED_MINECART)) {
-						return Item.POWERED_MINECART;
-					}
-				}
-				if (type.canDispenseMinecartType(Item.STORAGE_MINECART)) {
-					if (chest.contains(Item.STORAGE_MINECART)) {
-						return Item.STORAGE_MINECART;
-					}
-				}
-			}
-		}
 
-
-		//Returns standard minecart by default
-		return Item.MINECART;
-	}
 
 	public static Location getSpawnLocationSignOverride(MinecartManiaChest chest) {
 		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
@@ -64,32 +37,32 @@ public class ChestUtil {
 		for (MMSign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
 
-				if (sign.getLine(i).toLowerCase().contains("spawn north")) {
-					sign.setLine(i, "[Spawn North]");
+				if (sign.getLine(i).toLowerCase().contains("east")) {
+					sign.setLine(i, "[Chest East]");
 					result = getAdjacentTrack(spawn.getBlock(), BlockFace.EAST);
 					if ((result == null) && (neighbor != null))
 						return getAdjacentTrack(neighbor, BlockFace.EAST);
 					else
 						return result;
 				}
-				if (sign.getLine(i).toLowerCase().contains("spawn east")) {
-					sign.setLine(i, "[Spawn East]");
+				if (sign.getLine(i).toLowerCase().contains("south")) {
+					sign.setLine(i, "[Chest South]");
 					result = getAdjacentTrack(spawn.getBlock(), BlockFace.SOUTH);
 					if ((result == null) && (neighbor != null))
 						return getAdjacentTrack(neighbor, BlockFace.SOUTH);
 					else
 						return result;
 				}
-				if (sign.getLine(i).toLowerCase().contains("spawn south")) {
-					sign.setLine(i, "[Spawn South]");
+				if (sign.getLine(i).toLowerCase().contains("west")) {
+					sign.setLine(i, "[Chest West]");
 					result = getAdjacentTrack(spawn.getBlock(), BlockFace.WEST);
 					if ((result == null) && (neighbor != null))
 						return getAdjacentTrack(neighbor, BlockFace.WEST);
 					else
 						return result;
 				}
-				if (sign.getLine(i).toLowerCase().contains("spawn west")) {
-					sign.setLine(i, "[Spawn West]");
+				if (sign.getLine(i).toLowerCase().contains("north")) {
+					sign.setLine(i, "[Chest North]");
 					result = getAdjacentTrack(spawn.getBlock(), BlockFace.NORTH);
 					if ((result == null) && (neighbor != null))
 						return getAdjacentTrack(neighbor, BlockFace.NORTH);
@@ -124,10 +97,10 @@ public class ChestUtil {
 			return CompassDirection.NORTH;
 		if ((loc1.getBlockZ() - loc2.getBlockZ()) < 0)
 			return CompassDirection.SOUTH;
-	
-
-	return CompassDirection.NO_DIRECTION;
 
 
-}
+		return CompassDirection.NO_DIRECTION;
+
+
+	}
 }

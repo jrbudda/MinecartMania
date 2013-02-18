@@ -18,27 +18,14 @@ import com.afforess.minecartmania.entity.MinecartManiaChest;
 import com.afforess.minecartmania.entity.MinecartManiaDoubleChest;
 import com.afforess.minecartmania.entity.MinecartManiaFurnace;
 import com.afforess.minecartmania.entity.MinecartManiaInventory;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.utils.BlockUtils;
-import com.afforess.minecartmania.utils.ComparableLocation;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.ItemUtils;
 import com.afforess.minecartmania.utils.StringUtils;
 
 public class CollectionUtils {
 
-	public static boolean isItemCollectionSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("[collect item");
-	}
-
-	public static boolean isItemDepositSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("[deposit item");
-	}
-
-	public static boolean isTrashItemSign(Sign sign) {
-		return sign.getLine(0).toLowerCase().contains("[trash item");
-	}
 
 	public static boolean isFurnaceFuelLine(String line) {
 		return line.toLowerCase().contains("[fuel:");
@@ -171,37 +158,32 @@ public class CollectionUtils {
 		return containers;
 	}
 
-	private static void bracketizeSign(Sign sign) {
-		for (int line = 0; line < 4; line++) {
-			if (!sign.getLine(line).trim().isEmpty())
-				sign.setLine(line, StringUtils.addBrackets(StringUtils.removeBrackets(sign.getLine(line))));
-		}
-	}
 
-	public static 	 ArrayList<ItemContainer>   getItemContainers(MinecartManiaStorageCart minecart, ArrayList<Sign> signs) {
-		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 
-		for (Sign sign : signs) {
-			if (isItemCollectionSign(sign)) {
-				Logger.debug("Found Collect Item Sign");
-				bracketizeSign(sign);
-				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), true));
-			}
-			else if (isItemDepositSign(sign)) {
-				Logger.debug("Found Deposit Item Sign");
-				bracketizeSign(sign);
-				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), false));
-			}
-			else if (isTrashItemSign(sign)) {
-				Logger.debug("Found Trash Item Sign");
-				bracketizeSign(sign);
-				containers.addAll(getTrashItemContainers(sign.getBlock().getLocation(), minecart.getDirection()));
-			}
-			containers.addAll(getFurnaceContainers(sign.getBlock().getLocation(), minecart.getDirection()));
-		}
-
-		return containers;
-		
-	}
+//	public static 	 ArrayList<ItemContainer>   getItemContainers(MinecartManiaStorageCart minecart, ArrayList<Sign> signs) {
+//		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
+//
+//		for (Sign sign : signs) {
+////			if (isItemCollectionSign(sign)) {
+////				Logger.debug("Found Collect Item Sign");
+////				bracketizeSign(sign);
+////				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), true));
+////			}
+////			else if (isItemDepositSign(sign)) {
+////				Logger.debug("Found Deposit Item Sign");
+////				bracketizeSign(sign);
+////				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), false));
+////			}
+////			else if (isTrashItemSign(sign)) {
+////				Logger.debug("Found Trash Item Sign");
+////				bracketizeSign(sign);
+////				containers.addAll(getTrashItemContainers(sign.getBlock().getLocation(), minecart.getDirection()));
+////			}
+//			containers.addAll(getFurnaceContainers(sign.getBlock().getLocation(), minecart.getDirection()));
+//		}
+//
+//		return containers;
+//		
+//	}
 
 }

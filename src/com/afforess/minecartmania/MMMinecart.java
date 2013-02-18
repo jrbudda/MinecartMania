@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.v1_4_R1.EntityMinecart;
+import net.minecraft.server.v1_4_R1.NBTTagCompound;
 import net.minecraft.server.v1_4_R1.World;
 
 import org.bukkit.Bukkit;
@@ -23,7 +24,6 @@ import org.bukkit.entity.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.chests.ItemContainer;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
@@ -61,7 +61,30 @@ public class MMMinecart {
 	protected volatile int range = 4;
 	protected volatile int rangeY = 4;
 
+	protected String destination = "";
+
+	public String getDestination() {
+
+		if(destination != "") return destination;
+
+		if (hasPlayerPassenger() && MinecartManiaWorld.getMinecartManiaPlayer(getPlayerPassenger()).getLastStation() !=""){
+			return MinecartManiaWorld.getMinecartManiaPlayer(getPlayerPassenger()).getLastStation();
+		}
+
+		return "";
+	}
+
+	public void setDestination(String destination) {
+		if (hasPlayerPassenger()){
+			MinecartManiaWorld.getMinecartManiaPlayer(getPlayerPassenger()).setLastStation(destination);
+		}
+		this.destination = destination;
+	}
+
 	protected volatile boolean wasMovingLastTick;
+
+
+	protected boolean locked = false;
 
 	public MMMinecart(Minecart cart) {
 		minecart = replaceCart(cart); 
@@ -144,6 +167,14 @@ public class MMMinecart {
 		}
 	}
 
+	public boolean isLocked(){
+		return locked;
+	}
+
+	public void setLocked(boolean locked){
+		this.locked = locked;  
+	}
+
 	public HashSet<Block> getAdjacentBlocks(int range) {
 		return BlockUtils.getAdjacentBlocks(getLocation(), range);
 	}
@@ -184,7 +215,7 @@ public class MMMinecart {
 	//		}
 	//		return false;
 	//	}
-	
+
 	//	public boolean doElevatorBlock() {
 	//		if (ControlBlockList.isValidElevatorBlock(this)) {
 	//			//Get where we are
@@ -613,18 +644,13 @@ public class MMMinecart {
 
 		}
 
-
 		if(isOnRails()){
-			ArrayList<com.afforess.minecartmania.MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), 2);
+			ArrayList<com.afforess.minecartmania.MMSign> list = SignUtils.getAdjacentMMSignListforDirection(minecart.getLocation(), 2, getDirection());
 			for (com.afforess.minecartmania.MMSign sign : list) {
 				com.afforess.minecartmania.debug.Logger.debug("Processing sign " + sign.getLine(0));
 				sign.executeActions(this);
 			}	
 		}
-
-
-
-
 	}
 
 	/**
@@ -676,7 +702,7 @@ public class MMMinecart {
 		getHandle().passengerFrictionPercent = Settings.DefaultPassengerFrictionPercent;
 		getHandle().magnetic = Settings.DefaultMagneticRail;
 		getHandle().collisions = Settings.MinecartCollisions;
-		getHandle().MaxPushSpeedPercent = Settings.MaxAllowedSpeedPercent;
+		getHandle().MaxPushSpeedPercent = Settings.MaxPassengerPushPercent;
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
 
@@ -855,28 +881,28 @@ public class MMMinecart {
 		return minecart instanceof StorageMinecart;
 	}
 
-	private void kill(boolean returnToOwner) {
+	private void kill(boolean returnToOwner, boolean drop) {
 		if (!isDead()) {
+
+			ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+			if (!Settings.RemoveDeadCarts)	items.add(new ItemStack(getType().toMaterial(), 1));
+
+			if (isStorageMinecart()) {
+				for (ItemStack i : ((MinecartManiaStorageCart)this).getContents()) {
+					if (i != null && i.getTypeId() != 0) {
+						items.add(i);
+					}
+				}
+			}
 
 			if (returnToOwner) {
 
 				//give the items back inside too
-				ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-				if (isStorageMinecart()) {
-					for (ItemStack i : ((MinecartManiaStorageCart)this).getContents()) {
-						if (i != null && i.getTypeId() != 0) {
-							items.add(i);
-						}
-					}
-				}
-				if (!Settings.RemoveDeadCarts) {
-					//include the cart
-					items.add(new ItemStack(getType().toMaterial(), 1));
-				}
 
 				Object owner = getOwner();
 				MinecartManiaInventory inventory = null;
 				Player invOwner = null;		
+
 				if (owner instanceof Player ) {
 					inventory = MinecartManiaWorld.getMinecartManiaPlayer((Player)owner);
 				}
@@ -890,18 +916,22 @@ public class MMMinecart {
 
 				if (inventory != null) {
 					Logger.debug("Returning cart to owner " + inventory.getBukkitInventory().getHolder().toString());
-					for (int i = 0; i < items.size(); i++) {
-						if (!inventory.addItem(items.get(i), invOwner)) {
-							minecart.getWorld().dropItemNaturally(minecart.getLocation(), items.get(i));
+					for (ItemStack i : items) {
+						if (!inventory.addItem(i, invOwner)) {
+							minecart.getWorld().dropItemNaturally(minecart.getLocation(), i);
 						}
 					}
+					items.clear();
 				}
 				else {
 					Logger.debug("Could not find owner to return cart");
-					for (ItemStack i : items) {
-						minecart.getWorld().dropItemNaturally(minecart.getLocation(), i);
-					}
 				}	
+			}
+
+			if(drop){
+				for (ItemStack i : items) {
+					minecart.getWorld().dropItemNaturally(minecart.getLocation(), i);
+				}
 			}
 
 			//Fire destroyed event
@@ -912,16 +942,17 @@ public class MMMinecart {
 
 			Logger.debug("Removing cart " + getEntityId());
 			minecart.remove();
+			MinecartManiaWorld.delMinecartManiaMinecart(this.getEntityId());
 			dead = true;
 		}
 	}
 
 	public void killNoReturn() {
-		kill(false);
+		kill(false, false);
 	}
 
 	public void killOptionalReturn() {
-		kill(Settings.ReturnCartsToOwner);
+		kill(Settings.ReturnCartsToOwner, true);
 	}
 
 	public void launchCart(boolean reverseSearch) {
@@ -1012,15 +1043,21 @@ public class MMMinecart {
 			nmscart.locZ = m.getLocation().getZ();
 			nmscart.yaw = mhandle.yaw;
 			nmscart.pitch = mhandle.pitch;
+			nmscart.motX = mhandle.motX;
+			nmscart.motY = mhandle.motY;
+			nmscart.motZ = mhandle.motZ;
+			nmscart.ah = mhandle.ah;
+			
 			if (nmsworld.addEntity(nmscart)){
-				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id);
+				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
 				m.remove();	
 			}
+
 			return	(Minecart) nmscart.getBukkitEntity();
 		}
 		return m;
-
 	}
+	
 
 	private MMMinecart replaceEntity(Minecart newMinecart) {
 		this.minecart = replaceCart(newMinecart);
@@ -1153,7 +1190,7 @@ public class MMMinecart {
 	 * Stops this minecart
 	 */
 	public void stopCart() {
-		if (isMoving()) setMotion(0D, 0D, 0D);
+		setMotion(0D, 0D, 0D);
 	}
 
 
@@ -1221,7 +1258,7 @@ public class MMMinecart {
 	}
 
 	public void updateChunks() {
-		if (Settings.isKeepMinecartsLoaded()) {
+		if (Settings.LoadChunksOnTrack) {
 			MinecartManiaWorld.LoadChunksAround(getLocation(),4);
 		}
 	}

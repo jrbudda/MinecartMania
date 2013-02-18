@@ -84,11 +84,11 @@ public  class Logger {
 	}
 
 	private static final void queue(String log) {
-		queuedLog.add(log);
-		if (queuedLog.size() > 100) {
-			LogWriter writer = new LogWriter(queuedLog);
-			queuedLog = new LinkedList<String>();
-			writer.start();
-		}
+//		queuedLog.add(log);
+//		if (queuedLog.size() > 100) {
+//			LogWriter writer = new LogWriter(queuedLog);
+//			queuedLog = new LinkedList<String>();
+//			writer.start();
+//		}
 	}
 }

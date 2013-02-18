@@ -3,13 +3,15 @@
 KeepChunksLoaded: false
 #If a player logs out while riding a minecart, the minecart is removed. When the player logs back in, the minecart is recreated and the player is placed into it.
 PreserveMinecartOnLogout: true
-#If true the player or chest that spawns a minecart will have it returned when it is destroyed, otherwise
+
+#If true the player or chest that spawns a minecart will have it, and any contained items, returned when it is destroyed. 
+#(If RemoveDeadMinecarts is also true only items will be returned.)
 ReturnCartsToOwner: false
 #When a player right-clicks a track with this item it will cycle through all available rail types. See items.txt for valid names.
 RailAdjusterTool: WOOD_PICKAXE
 #If true, station rule signs will use the 'old' directions which are rotated 90degrees counter-clockwise from actual compass directions. This is for legacy rail systems only.
 StationsUseOldDirections: false
-#When a minecart is destroyed it will not drop as an item if this is set to true.
+#If true, when a minecart is destroyed it will not drop as an item or be returned to its owner.
 RemoveDeadMinecarts: true
 
 #[Eject] actions look for [eject at] or [eject here] actions in an 8 block radius. If instructions are not found, this setting dictates
@@ -96,6 +98,11 @@ KillPlayersOnTrack: false
 KillPlayersOnTrackMinimumSpeed: 90
 
 
+#Item Handling
+DefaultItemCollectionRange: 4
+DefaultItemCollectionRangeY: 0
+
+
 #Control blocks
 #Control blocks are aliases for signs, when the minecart passes over one, it will execute the actions specified.
 #See the items.txt file for the proper name of each block.
@@ -172,6 +179,16 @@ ItemAliases:
     - 319
     - 320 
 
+  Fuels:
+     - WOOD
+     - CHARCOAL
+     - COAL
+     - LOG
+     - REDWOOD_LOG
+     - BIRCH_LOG
+     - JUNGLE_LOG
+     - LAVA_BUCKET
+     
 #Localization messages. 
 Messages: 
   LackPermissionForCommand: "[RED]You do not have permission to use that command"
@@ -182,7 +199,7 @@ Messages:
   SignCommandsAnnouncementPrefix: "[YELLOW] Announcement: [WHITE]"
   SignCommandsMinecartLocked: "[YELLOW]Your Minecart Has been Locked."
   SignCommandsMinecartUnlocked: "[GREEN]Your Minecart Has Been Unlocked"
-  SignCommandsMinecartLockedError: "[YELLOW]Your minecart is locked. \n[YELLOW]It will unlock at your destination."
+  SignCommandsMinecartLockedError: "[YELLOW]This minecart is locked."
   SignCommandsDestination: "[GREEN]You've arrived at your destination"
   SignCommandsSensorItemError: "[RED]Item Sensors Must Have a Valid Item Name or id, On Line 3"
   SignCommandsSensorPlayerNameError: "[RED]Player Name Sensors Must Have The Name Of The Player To Detect, On Line 3"
@@ -190,6 +207,7 @@ Messages:
   StationsTapInDirection: "[YELLOW]Tap your minecart in the desired direction"
   StationsInvalidDirection: "[RED]Not a valid direction."
   StationsValidDirections: "[YELLOW]You can go %s"
+  StationHelpString: "[GREEN]Your current destination is: %s"
   AdminReload: "[GREEN] config.yml reloaded."
   AdminControlsValidDebugModes: "[RED]Valid Debug Modes: %s"
   AdminControlsDebugMode: "[GREEN]Switched to debug mode: %s"
@@ -201,7 +219,7 @@ Messages:
   AdminControlsSetConfigKeyUsage: "[RED]Proper Usage: '/setconfigkey [key] [value]'. \nHint: The key and value should be surrounded by brackets."
   AdminControlsMomentum: "Speed X: %.2f \nSpeed Y: %.2f \nSpeed Z: %.2f"
   AdminControlsMomentumInvalid: "[RED]You must be in a minecart."
-  AdminControlsStation: "[GREEN]Station Type set to: %s"
+  AdminControlsStation: "[GREEN]Destination station set to: %s"
   AdminControlsConfigKey: "The value of '%s' is '%s'"
   AdminControlsHelp: "The following are valid MinecartMania commands: "
   AdminControlsConfigKeyUsage: "[RED]Proper Usage: '/getconfigkey [key]'. \nHint: The key should be surrounded by brackets."

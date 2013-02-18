@@ -31,6 +31,7 @@ public abstract class FarmingBase {
 		return blocks;
 	}
 	
+
 	protected static Block findRoot(Block block, int blockId)
 	{
 		if(block.getTypeId() == blockId) //block is a log, search downwards
@@ -44,5 +45,21 @@ public abstract class FarmingBase {
 		
 		//could not find root, unexpected block in the way
 		return null;
+	}
+
+	/**
+	 * Returns true of the farm type is set (via [Farm] sign)
+	 * @param minecart
+	 * @param farmType
+	 * @return
+	 */
+	public static boolean isFarmingActive(MinecartManiaStorageCart minecart, String farmType)
+	{
+		Object value = minecart.getDataValue("Farm");
+		if(value != null && value instanceof String) {
+			String strValue = ((String)value).toLowerCase();
+			return strValue.equals(farmType.toLowerCase());
+		}
+		return false;
 	}
 }

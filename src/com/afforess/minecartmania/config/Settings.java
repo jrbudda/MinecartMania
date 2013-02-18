@@ -16,7 +16,7 @@ public  class Settings {
 	public static boolean LoadChunksOnTrack;
 	public static boolean KillMobsOnTrack;
 	public static boolean ReturnCartsToOwner;
-	public static boolean DisappearonDisconnect;
+	public static boolean PreserveMinecartsonRiderLogout;
 
 	//physics
 	public static boolean MinecartCollisions;
@@ -56,14 +56,13 @@ public  class Settings {
 	//Chests
 	public static int	ChestDispenserSpawnDelay;
 	public static int ItemCollectionRange;
+	public static int ItemCollectionRangeY;
+	
 	public static boolean StackAllItems;
 
 	//
 
 
-	public static boolean isKeepMinecartsLoaded() {
-		return LoadChunksOnTrack;
-	}
 
 	public static boolean isMinecartsKillMobs() {
 		return KillMobsOnTrack;

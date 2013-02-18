@@ -20,14 +20,38 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	private ConcurrentHashMap<Item, Integer> maximumContents = new ConcurrentHashMap<Item, Integer>();
 	private ConcurrentHashMap<Item, Integer> minimumContents = new ConcurrentHashMap<Item, Integer>();
 
+	private int itemCollectionRange;
+	private int ItemCollectionRangeY;
+
+	public int getItemCollectionRangeY() {
+		return ItemCollectionRangeY;
+	}
+
+	public void setItemCollectionRangeY(int itemCollectionRangeY) {
+		ItemCollectionRangeY = itemCollectionRangeY;
+	}
+
 	/**
 	 * Creates a storage minecart from the given bukkit minecart
 	 * @param cart to create from
 	 */
 	public MinecartManiaStorageCart(Minecart cart) {
 		super(cart);
+		this.setItemRange(com.afforess.minecartmania.config.Settings.ItemCollectionRange);
+		this.setItemCollectionRangeY(com.afforess.minecartmania.config.Settings.ItemCollectionRangeY);
 	}
-	
+
+	/**
+	 * Creates a storage minecart from the given bukkit minecart, with the given owner
+	 * @param cart to create from
+	 * @param owner that created the minecart
+	 */
+	public MinecartManiaStorageCart(Minecart cart, String owner) {
+		super(cart, owner);
+		this.setItemRange(com.afforess.minecartmania.config.Settings.ItemCollectionRange);
+		this.setItemCollectionRangeY(com.afforess.minecartmania.config.Settings.ItemCollectionRangeY);
+	}
+
 	/**
 	 * The bukkit inventory that this container represents
 	 * 
@@ -36,25 +60,13 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public Inventory getBukkitInventory() {
 		return getInventory();
 	}
-	
-	/**
-	 * Creates a storage minecart from the given bukkit minecart, with the given owner
-	 * @param cart to create from
-	 * @param owner that created the minecart
-	 */
-	public MinecartManiaStorageCart(Minecart cart, String owner) {
-		super(cart, owner);
-	}
-	
+
 	public int getItemRange() {
-		if (getDataValue("ItemCollectionRange") != null) {
-			return (Integer)getDataValue("ItemCollectionRange");
-		}
-		return this.range;
+		return itemCollectionRange;
 	}
-	
+
 	public void setItemRange(int range) {
-		setDataValue("ItemCollectionRange", range);
+		itemCollectionRange = range;
 	}
 
 	/**
@@ -64,38 +76,38 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public Inventory getInventory() {
 		return ((StorageMinecart)minecart).getInventory();
 	}
-	
+
 	public int getMaximumItem(Item item) {
 		if (maximumContents != null && maximumContents.containsKey(item)) {
 			return maximumContents.get(item);
 		}
 		return -1;
 	}
-	
+
 	public void setMaximumItem(Item item, int amount) {
 		if (maximumContents != null) {
 			maximumContents.put(item, amount);
 		}
 	}
-	
+
 	public int getMinimumItem(Item item) {
 		if (minimumContents != null && minimumContents.containsKey(item)) {
 			return minimumContents.get(item);
 		}
 		return -1;
 	}
-	
+
 	public void setMinimumItem(Item item, int amount) {
 		if (minimumContents != null) {
 			minimumContents.put(item, amount);
 		}
 	}
-	
+
 	public boolean canAddItem(ItemStack item, Player player) {
 		if (item.getTypeId() == Item.AIR.getId()) {
 			return false;
 		}
-		
+
 		//Check if this new item will exceed the maximum allowed
 		ArrayList<Item> list = Item.getItem(item.getTypeId());
 		for (Item i : list) {
@@ -109,11 +121,11 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		}
 		return true;
 	}
-	
+
 	public boolean canAddItem(ItemStack item) {
 		return canAddItem(item, null);
 	}
-	
+
 	/**
 	 * attempts to add an itemstack to this storage minecart. It adds items in a 'smart' manner, merging with existing itemstacks, until they
 	 * reach the maximum size (64). If it fails, it will not alter the storage minecart's previous contents.
@@ -132,9 +144,9 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		//Backup contents
 		ItemStack[] backup = getContents().clone();
 		ItemStack backupItem = new ItemStack(item.getTypeId(), item.getAmount(), item.getDurability());
-		
+
 		int max = MinecartManiaWorld.getMaxStackSize(item);
-		
+
 		//First attempt to merge the itemstack with existing item stacks that aren't full (< 64)
 		for (int i = 0; i < size(); i++) {
 			if (getItem(i) != null) {
@@ -151,20 +163,20 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 				}
 			}
 		}
-		
+
 		//Attempt to add the item to an empty slot
 		int emptySlot = firstEmpty();
 		if (emptySlot > -1) {
 			setItem(emptySlot, item);
 			return true;
 		}
-			
+
 		//if we fail, reset the inventory and item back to previous values
 		setContents(backup);
 		item = backupItem;
 		return false;
 	}
-	
+
 	/**
 	 * attempts to add an itemstack to this storage minecart. It adds items in a 'smart' manner, merging with existing itemstacks, until they
 	 * reach the maximum size (64). If it fails, it will not alter the storage minecart's previous contents.
@@ -175,7 +187,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean addItem(ItemStack item) {
 		return addItem(item, null);
 	}
-	
+
 	/**
 	 ** attempts to add a single item of the given type to this storage minecart. If it fails, it will not alter the storage minecart's previous contents
 	 ** @param type to add
@@ -183,7 +195,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean addItem(int type) {
 		return addItem(new ItemStack(type, 1));
 	}
-	
+
 	/**
 	 ** attempts to add a given amount of a given type to this storage minecart. If it fails, it will not alter the storage minecart's previous contents
 	 ** @param type to add
@@ -192,7 +204,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean addItem(int type, int amount) {
 		return addItem(new ItemStack(type, amount));
 	}
-	
+
 	public boolean canRemoveItem(int type, int amount, short durability, Player player) {
 		//Check if this will fall below the minimum allowed
 		ArrayList<Item> list = Item.getItem(type);
@@ -207,11 +219,11 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		}
 		return true;
 	}
-	
+
 	public boolean canRemoveItem(int type, int amount, short durability) {
 		return canRemoveItem(type, amount, durability, null);
 	}
-	
+
 	/**
 	 * attempts to remove the specified amount of an item type from this storage minecart. If it fails, it will not alter the storage minecart's previous contents.
 	 * @param type to remove
@@ -227,7 +239,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 
 		//Backup contents
 		ItemStack[] backup = getContents().clone();
-		
+
 		for (int i = 0; i < size(); i++) {
 			if (getItem(i) != null) {
 				if (getItem(i).getTypeId() == type && (durability == -1 || (getItem(i).getDurability() == durability))) {
@@ -251,7 +263,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		setContents(backup);
 		return false;
 	}
-	
+
 	/**
 	 * attempts to remove the specified amount of an item type from this storage minecart. If it fails, it will not alter the storage minecart's previous contents.
 	 * @param type to remove
@@ -273,7 +285,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean removeItem(int type, int amount) {
 		return removeItem(type, amount, (short) -1);
 	}
-	
+
 	/**
 	 * attempts to remove a single item type from this storage minecart. If it fails, it will not alter the storage minecart previous contents.
 	 * @param type to remove
@@ -282,7 +294,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean removeItem(int type) {
 		return removeItem(type, 1);
 	}
-	
+
 	/**
 	 * Gets the size of the inventory of this storage minecart
 	 * @return the size of the inventory
@@ -298,7 +310,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public ItemStack[] getContents() {
 		return getInventory().getContents();
 	}
-	
+
 	/**
 	 * Set's the contents of this inventory with an array of items.
 	 * @param contents to set as the inventory
@@ -306,7 +318,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public void setContents(ItemStack[] contents) {
 		getInventory().setContents(contents);
 	}
-	
+
 	/**
 	 * Gets the itemstack at the given slot, or null if empty
 	 * @param slot to get
@@ -331,7 +343,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 			getInventory().setItem(slot, item);
 		}
 	}
-	
+
 	/**
 	 * Get's the first empty slot in this storage minecart
 	 * @return the first empty slot in this storage minecart
@@ -344,7 +356,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Get's the first slot containing the given material, or -1 if none contain it
 	 * @param material to search for
@@ -353,7 +365,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public int first(Material material) {
 		return first(material.getId(), (short) -1);
 	}
-	
+
 	/**
 	 * Get's the first slot containing the given item, or -1 if none contain it
 	 * @param item to search for
@@ -371,7 +383,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public int first(int type) {
 		return first(type, (short)-1);
 	}
-	
+
 	/**
 	 * Get's the first slot containing the given type id and matching durability, or -1 if none contain it.
 	 * If the durability is -1, it get's the first slot with the matching type id, and ignores durability
@@ -389,7 +401,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Searches the inventory for any items that match the given Material
 	 * @param material to search for
@@ -398,7 +410,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean contains(Material material) {
 		return first(material) != -1;
 	}
-	
+
 	/**
 	 * Searches the inventory for any items that match the given Item
 	 * @param item to search for
@@ -416,7 +428,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	public boolean contains(int type) {
 		return first(type) != -1;
 	}
-	
+
 	/**
 	 * Searches the inventory for any items that match the given type id and durability
 	 * @param type id to search for
@@ -440,7 +452,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 		}
 		return true;
 	}
-	
+
 	public int amount(Item item) {
 		int count = 0;
 		for (ItemStack i : getContents()) {

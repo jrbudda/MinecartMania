@@ -7,7 +7,6 @@ import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class WoodFarming extends FarmingBase {
 	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
@@ -88,11 +87,11 @@ public class WoodFarming extends FarmingBase {
 	
 	private static boolean isAutoTimberActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoTimber") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoTimber") != null;
 	}
 	
 	private static boolean isAutoForestActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoForest") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoForest") != null;
 	}
 }

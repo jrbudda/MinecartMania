@@ -30,7 +30,10 @@ public class LaunchMinecartAction extends SignAction {
 				minecart.setFrozen(false);
 			}
 			else if (minecart.getPreviousDirectionOfMotion() != null && minecart.getPreviousDirectionOfMotion() != CompassDirection.NO_DIRECTION) {
-				mc.setMotion(mc.getPreviousDirectionOfMotion(), 0.6D);
+				if (MinecartUtils.validMinecartTrack(minecart.getLocation(), minecart.getPreviousDirectionOfMotion() )) {
+					mc.setMotion(mc.getPreviousDirectionOfMotion(), 0.6D);
+				}
+				else minecart.launchCart(reverse);
 				return true;
 			}
 		}
@@ -57,6 +60,11 @@ public class LaunchMinecartAction extends SignAction {
 			launchSpeed = null;
 			for (String line : lines){
 				if (line.toLowerCase().contains("[previous dir")) {
+					previous = true;
+					break;
+				}
+				else if (line.toLowerCase().contains("[previous dir2")) {
+					reverse = true;
 					previous = true;
 					break;
 				}

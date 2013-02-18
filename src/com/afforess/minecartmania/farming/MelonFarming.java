@@ -8,7 +8,6 @@ import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class MelonFarming extends FarmingBase {
 
@@ -44,6 +43,6 @@ public class MelonFarming extends FarmingBase {
 
 	private static boolean isMelonFarmingActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Melon);
+		return FarmingBase.isFarmingActive(minecart, FarmType.Melon);
 	}
 }

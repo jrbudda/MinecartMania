@@ -7,7 +7,6 @@ import org.bukkit.Material;
 
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public class WheatFarming
 {
@@ -88,16 +87,16 @@ public class WheatFarming
 	
 	private static boolean isAutoTillActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoTill") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoTill") != null;
 	}
 	
 	private static boolean isAutoSeedActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoSeed") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoSeed") != null;
 	}
 	
 	private static boolean isAutoHarvestActive(MinecartManiaStorageCart minecart)
 	{
-		return StorageMinecartUtils.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoHarvest") != null;
+		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoHarvest") != null;
 	}
 }

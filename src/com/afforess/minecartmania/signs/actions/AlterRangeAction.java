@@ -10,6 +10,7 @@ import com.afforess.minecartmania.utils.StringUtils;
 public class AlterRangeAction extends SignAction{
 	protected int range = -1;
 	protected boolean itemRange = false;
+	protected boolean itemRangeY = false;
 	protected boolean rangeY = false;
 
 	
@@ -18,6 +19,12 @@ public class AlterRangeAction extends SignAction{
 		if (itemRange) {
 			if (minecart.isStorageMinecart()) {
 				((MinecartManiaStorageCart)minecart).setItemRange(this.range);
+				return true;
+			}
+		}
+		else if (itemRangeY) {
+			if (minecart.isStorageMinecart()) {
+				((MinecartManiaStorageCart)minecart).setItemCollectionRangeY(range);
 				return true;
 			}
 		}
@@ -39,7 +46,7 @@ public class AlterRangeAction extends SignAction{
 	
 	public boolean process(String[] lines) {	
 		for (String line : lines) {
-			if (line.toLowerCase().contains("[range")) {
+			if (line.toLowerCase().contains("range:")) {
 				String[] split = line.split(":");
 				if (split.length != 2) continue;
 				try {
@@ -49,8 +56,9 @@ public class AlterRangeAction extends SignAction{
 				catch (Exception e) {
 					this.range = -1;
 				}
-				this.itemRange = line.toLowerCase().contains("item range");
-				this.rangeY = line.toLowerCase().contains("rangey");
+				this.itemRangeY = line.toLowerCase().contains("[item rangey");
+				this.itemRange = line.toLowerCase().contains("[item range");
+				this.rangeY = line.toLowerCase().contains("[rangey");
 				break;
 			}
 		}

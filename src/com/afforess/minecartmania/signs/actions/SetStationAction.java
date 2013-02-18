@@ -1,7 +1,6 @@
 package com.afforess.minecartmania.signs.actions;
 
 import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.StringUtils;
 
@@ -10,11 +9,8 @@ public class SetStationAction extends SignAction{
 
 
 	public boolean execute(MMMinecart minecart) {
-		if (minecart.hasPlayerPassenger()) {
-			MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).setLastStation(station);
-			return true;
-		}
-		return false;
+		minecart.setDestination(station);
+		return true;
 	}
 
 
@@ -45,7 +41,7 @@ public class SetStationAction extends SignAction{
 
 
 	public String getFriendlyName() {
-		return "Set Station " + station == null ? "" : station;
+		return "Set Station " + (station == null ? "" : station);
 	}
 
 }

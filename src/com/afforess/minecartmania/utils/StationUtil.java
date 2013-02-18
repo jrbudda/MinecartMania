@@ -24,9 +24,6 @@ public class StationUtil {
 		return 	 Settings.IntersectionPromptsMode== 2;
 	}
 
-	public static boolean isStationCommandNeverResets() {
-		return 	 Settings.StationCommandSaveAfterUse;
-	}
 
 	public static boolean shouldPromptUser(MMMinecart minecart, final MinecartIntersectionEvent event) {
 		if (isNeverIntersectionPrompt() && minecart.getDataValue("Prompt Override") == null) {
@@ -133,25 +130,18 @@ public class StationUtil {
 		Set<CompassDirection> restricted = StationAction.getRestrictedDirections(minecart);
 		//Check if the direction is valid
 		if (!MinecartUtils.validMinecartTrack(minecart.getLocation(), CompassDirection.NORTH)) {
-			if (!restricted.contains(CompassDirection.NORTH)) {
 				restricted.add(CompassDirection.NORTH);
-			}
 		}
 		if (!MinecartUtils.validMinecartTrack(minecart.getLocation(), CompassDirection.SOUTH)) {
-			if (!restricted.contains(CompassDirection.SOUTH)) {
-				restricted.add(CompassDirection.SOUTH);
-			}
+					restricted.add(CompassDirection.SOUTH);	
 		}
 		if (!MinecartUtils.validMinecartTrack(minecart.getLocation(), CompassDirection.EAST)) {
-			if (!restricted.contains(CompassDirection.EAST)) {
-				restricted.add(CompassDirection.EAST);
-			}
+				restricted.add(CompassDirection.EAST);	
 		}
 		if (!MinecartUtils.validMinecartTrack(minecart.getLocation(), CompassDirection.WEST)) {
-			if (!restricted.contains(CompassDirection.WEST)) {
-				restricted.add(CompassDirection.WEST);
-			}
+				restricted.add(CompassDirection.WEST);	
 		}
+		
 		if (restricted.contains(facingDir)){
 			if (minecart.hasPlayerPassenger()) {
 				minecart.getPlayerPassenger().sendMessage(Settings.getLocal("StationsInvalidDirection"));

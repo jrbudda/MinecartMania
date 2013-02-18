@@ -7,4 +7,7 @@ public class FarmType {
 	public static String Wheat = "Wheat";
 	public static String Sugar = "Sugar";
 	public static String Pumpkin = "Pumpkin";
+	public static String Cocoa = "Cocoa";
+	public static String Carrot = "Carrot";
+	public static String Potato = "Potato";
 }
