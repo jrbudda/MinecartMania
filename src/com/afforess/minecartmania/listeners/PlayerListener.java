@@ -2,6 +2,7 @@ package com.afforess.minecartmania.listeners;
 
 import javax.persistence.OptimisticLockException;
 
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -129,6 +130,10 @@ public class PlayerListener implements Listener{
 			return;
 		}
 
+		if (event.getClickedBlock().getState() instanceof Sign) {
+			BlockListener.checkSensor(event.getClickedBlock().getLocation(), event.getPlayer());
+		}
+		
 		if (Settings.RailAdjusterTool== null) {
 			return;
 		}

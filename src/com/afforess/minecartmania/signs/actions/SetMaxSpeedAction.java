@@ -17,7 +17,7 @@ public class SetMaxSpeedAction extends SignAction {
 
 	
 	public boolean async() {
-		return true;
+		return false;
 	}
 
 	

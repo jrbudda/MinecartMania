@@ -938,7 +938,7 @@ public class MMMinecart {
 			MinecartManiaMinecartDestroyedEvent mmmee = new MinecartManiaMinecartDestroyedEvent(this);
 			MinecartMania.callEvent(mmmee);
 
-			MinecartManiaWorld.LoadChunksAround(getLocation(),4);
+			MinecartManiaWorld.LoadChunksAround(getLocation(),2);
 
 			Logger.debug("Removing cart " + getEntityId());
 			minecart.remove();
@@ -970,9 +970,6 @@ public class MMMinecart {
 		//		}
 
 		if (!isMoving()) {
-
-			setFrozen(false);
-
 			if(reverseSearch){
 				if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.WEST)) {
 					setMotion(DirectionUtils.CompassDirection.WEST, speed);
@@ -982,27 +979,37 @@ public class MMMinecart {
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.EAST)) {
 					setMotion(DirectionUtils.CompassDirection.EAST, speed);
+
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.NORTH)) {
 					setMotion(DirectionUtils.CompassDirection.NORTH, speed);
+
 				}			
 			}
 			else {
 				if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.NORTH)) {
 					setMotion(DirectionUtils.CompassDirection.NORTH, speed);
+
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.EAST)) {
 					setMotion(DirectionUtils.CompassDirection.EAST, speed);
+
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.SOUTH)) {
 					setMotion(DirectionUtils.CompassDirection.SOUTH, speed);
+
 				}
 				else if (MinecartUtils.validMinecartTrack(minecart.getLocation(), DirectionUtils.CompassDirection.WEST)) {
 					setMotion(DirectionUtils.CompassDirection.WEST, speed);
+
 				}
 
 			}	
+
 		}
+
+		setFrozen(false);
+
 
 		//		//Create event, then stop the cart and wait for the results
 		//		MinecartLaunchedEvent mle = new MinecartLaunchedEvent(this, minecart.getVelocity().clone());
@@ -1047,7 +1054,7 @@ public class MMMinecart {
 			nmscart.motY = mhandle.motY;
 			nmscart.motZ = mhandle.motZ;
 			nmscart.ah = mhandle.ah;
-			
+
 			if (nmsworld.addEntity(nmscart)){
 				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
 				m.remove();	
@@ -1057,7 +1064,7 @@ public class MMMinecart {
 		}
 		return m;
 	}
-	
+
 
 	private MMMinecart replaceEntity(Minecart newMinecart) {
 		this.minecart = replaceCart(newMinecart);
@@ -1259,7 +1266,8 @@ public class MMMinecart {
 
 	public void updateChunks() {
 		if (Settings.LoadChunksOnTrack) {
-			MinecartManiaWorld.LoadChunksAround(getLocation(),4);
+			//have to load 2 chunks in all directions or Minecraft will stop ticking the entity.
+			MinecartManiaWorld.LoadChunksAround(getLocation(),2);
 		}
 	}
 

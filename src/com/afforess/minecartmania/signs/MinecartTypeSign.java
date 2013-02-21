@@ -41,12 +41,7 @@ public class MinecartTypeSign extends MMSign{
 		return false;
 	}
 	
-	@Override
-	public void update(org.bukkit.block.Sign sign) {
-		calculated = false;
-		Logger.severe("Updating type sign. Text is: " + lines[0]);
-		super.update(sign);
-	}
+
 	
 	@Override
 	public void copy(MMSign sign) {

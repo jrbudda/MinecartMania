@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -74,7 +75,7 @@ public class BlockListener implements Listener{
 					}
 
 					Item type = Item.getItem(b.getTypeId(), b.getData());
-				
+
 					if (Item.getItem(b.getTypeId()).size() == 1) {
 						type = Item.getItem(b.getTypeId()).get(0);
 					}
@@ -84,9 +85,9 @@ public class BlockListener implements Listener{
 						NewControlBlock ncb = com.afforess.minecartmania.config.NewControlBlockList.getControlBlock(type);
 						b.setMetadata("LastPower", new org.bukkit.metadata.FixedMetadataValue(MinecartMania.getInstance(), event.getOldCurrent() > 0));
 						b.setMetadata("ThisPower", new org.bukkit.metadata.FixedMetadataValue(MinecartMania.getInstance(), event.getNewCurrent() > 0));
-						
-						ncb.execute(null, b.getLocation());	
-	
+
+						ncb.execute(null, b.getLocation());
+			
 					}
 
 					//					//spawn blocks
@@ -169,25 +170,31 @@ public class BlockListener implements Listener{
 
 	}
 
+	public static void checkSensor(Location loc, Player player){
+		Sensor previous = SensorManager.getSensor(loc);
+		if (previous == null) {
+			Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)loc.getBlock().getState(),player);
+			if (sensor != null) {
+				SensorManager.addSensor(loc, sensor);
+			}
+		}
+		else if (!SensorManager.verifySensor((org.bukkit.block.Sign)loc.getBlock().getState(), previous)) {
+			Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)loc.getBlock().getState(), player);
+			if (sensor != null) {
+				SensorManager.addSensor(loc, sensor);
+			}
+			else {
+				SensorManager.delSensor(loc);
+			}
+		}
+
+	}
+
+	
 	@EventHandler
 	public void onBlockDamage(BlockDamageEvent event) {
 		if (event.getBlock().getState() instanceof Sign) {
-			Sensor previous = SensorManager.getSensor(event.getBlock().getLocation());
-			if (previous == null) {
-				Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)event.getBlock().getState(), event.getPlayer());
-				if (sensor != null) {
-					SensorManager.addSensor(event.getBlock().getLocation(), sensor);
-				}
-			}
-			else if (!SensorManager.verifySensor((org.bukkit.block.Sign)event.getBlock().getState(), previous)) {
-				Sensor sensor = SensorConstructor.constructSensor((org.bukkit.block.Sign)event.getBlock().getState(), event.getPlayer());
-				if (sensor != null) {
-					SensorManager.addSensor(event.getBlock().getLocation(), sensor);
-				}
-				else {
-					SensorManager.delSensor(event.getBlock().getLocation());
-				}
-			}
+			checkSensor(event.getBlock().getLocation(), event.getPlayer());
 		}
 	}
 

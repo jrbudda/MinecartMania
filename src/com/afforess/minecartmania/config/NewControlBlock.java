@@ -64,8 +64,6 @@ public class NewControlBlock {
 			off = last && !power;
 			on = power && !last;
 
-			com.afforess.minecartmania.debug.Logger.debug(on + " " + off + " " +  last);
-
 			return (on && state ==RedstoneState.TriggerOn) || (off && state ==RedstoneState.TriggerOff);
 		}
 

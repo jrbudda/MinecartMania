@@ -608,11 +608,17 @@ public class MinecartManiaWorld {
 
 	public static void LoadChunksAround(Location location, int radius) {
 		World world = location.getWorld();
-		int x = location.getBlockX();
-		int z = location.getBlockZ();
+		
+		int x = location.getBlock().getChunk().getX();
+		int z = location.getBlock().getChunk().getZ();
+
+		Logger.debug("Checking for unloaded chunks around: " + x +"," + z);
 		for (int dx = -(radius); dx <= radius; dx++){
 			for (int dz = -(radius); dz <= radius; dz++){	
-				if (!world.isChunkLoaded((x+dx)>>4, (z+dz)>>4))	world.loadChunk((x+dx)>>4, (z+dz)>>4);
+				if (!world.isChunkLoaded(x+dx, z+dz))	{
+					Logger.debug("Minecart loading chunk");
+					world.loadChunk(x+dx, z+dz);
+				}
 			}
 		}
 	}

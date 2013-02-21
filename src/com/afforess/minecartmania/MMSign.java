@@ -1,8 +1,10 @@
 package com.afforess.minecartmania;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -15,7 +17,7 @@ import com.afforess.minecartmania.utils.StringUtils;
 import com.afforess.minecartmania.utils.WordUtils;
 
 public class MMSign{
-	protected HashSet<SignAction> actions = new HashSet<SignAction>();
+	protected List<SignAction> actions = new ArrayList<SignAction>();
 	protected final Block block;
 	protected ConcurrentHashMap<Object, Object> data = new ConcurrentHashMap<Object, Object>();
 	protected volatile String[] lines;
@@ -162,9 +164,8 @@ public class MMSign{
 		return ((org.bukkit.block.Sign)getBlock().getState());
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection<SignAction> getSignActions() {
-		return (Collection<SignAction>) actions.clone();
+	public List<SignAction> getSignActions() {
+		return (List<SignAction>) actions;
 	}
 
 	public int getX() {
@@ -243,9 +244,6 @@ public class MMSign{
 		}
 	}
 
-	public void update(org.bukkit.block.Sign sign) {
-		lines = sign.getLines();
-		actions = new HashSet<SignAction>();
-	}
+
 
 }

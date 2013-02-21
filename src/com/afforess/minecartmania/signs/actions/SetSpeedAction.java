@@ -20,7 +20,7 @@ public class SetSpeedAction extends SignAction {
 	}
 
 	public boolean async() {
-		return true;
+		return false;
 	}
 
 	public boolean process(String[] lines) {

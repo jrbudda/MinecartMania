@@ -26,16 +26,17 @@ public class LaunchMinecartAction extends SignAction {
 		final MMMinecart mc = minecart;
 
 		if (previous) {
-			if (minecart.isFrozen()){
-				minecart.setFrozen(false);
-			}
-			else if (minecart.getPreviousDirectionOfMotion() != null && minecart.getPreviousDirectionOfMotion() != CompassDirection.NO_DIRECTION) {
+			if (minecart.getPreviousDirectionOfMotion() != null && minecart.getPreviousDirectionOfMotion() != CompassDirection.NO_DIRECTION) {
 				if (MinecartUtils.validMinecartTrack(minecart.getLocation(), minecart.getPreviousDirectionOfMotion() )) {
 					mc.setMotion(mc.getPreviousDirectionOfMotion(), 0.6D);
 				}
 				else minecart.launchCart(reverse);
-				return true;
 			}
+			else  minecart.launchCart(reverse);
+
+			minecart.setFrozen(false);
+			return true;
+
 		}
 		else if (launchSpeed != null) {
 			mc.setMotion(launchSpeed);		
@@ -59,12 +60,12 @@ public class LaunchMinecartAction extends SignAction {
 			previous = false;
 			launchSpeed = null;
 			for (String line : lines){
-				if (line.toLowerCase().contains("[previous dir")) {
+				if (line.toLowerCase().contains("[previous dir2")) {
+					reverse = true;
 					previous = true;
 					break;
 				}
-				else if (line.toLowerCase().contains("[previous dir2")) {
-					reverse = true;
+				else if (line.toLowerCase().contains("[previous dir")) {
 					previous = true;
 					break;
 				}
@@ -105,7 +106,7 @@ public class LaunchMinecartAction extends SignAction {
 
 
 	public String getFriendlyName() {
-		return "Launcher " + (reverse ? "Reverse" : "");
+		return "Launcher " + (previous ? "Previous " : "") + (reverse ? "Reverse" : "");
 	}
 
 }

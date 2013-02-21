@@ -13,11 +13,10 @@ import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 public class ChunkListener implements Listener{
-	public static final int CHUNK_RANGE = 4;
+	public static final int CHUNK_RANGE = 2; //this is necessary to keep the minecarts ticking.
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onChunkUnload(ChunkUnloadEvent event) {
-		if (!event.isCancelled()) {
 
 //			for (Entity e : event.getChunk().getEntities()){
 //				if(e.toString().toLowerCase().contains("minecart"))
@@ -37,7 +36,7 @@ public class ChunkListener implements Listener{
 					event.setCancelled(true);
 					return;
 				}
-			}
+			
 		}
 	}
 
