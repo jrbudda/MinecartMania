@@ -11,39 +11,36 @@ public class AlterRangeAction extends SignAction{
 	protected int range = -1;
 	protected boolean itemRange = false;
 	protected boolean itemRangeY = false;
-	protected boolean rangeY = false;
+	protected boolean farmRange = false;
+	protected boolean farmrangeY = false;
 
-	
-	
 	public boolean execute(MMMinecart minecart) {
-		if (itemRange) {
-			if (minecart.isStorageMinecart()) {
+		if (minecart.isStorageMinecart()) {
+			if (itemRange) {
 				((MinecartManiaStorageCart)minecart).setItemRange(this.range);
 				return true;
 			}
-		}
-		else if (itemRangeY) {
-			if (minecart.isStorageMinecart()) {
+			else if (itemRangeY) {
 				((MinecartManiaStorageCart)minecart).setItemCollectionRangeY(range);
 				return true;
 			}
+			else if (farmrangeY) {
+				((MinecartManiaStorageCart)minecart).setFarmingRangeY(range);
+				return true;
+			}
+			else {
+				((MinecartManiaStorageCart)minecart).setFarmingRange(this.range);
+				return true;
+			}
 		}
-		else if (rangeY) {
-			minecart.setRangeY(this.range);
-		}
-		else {
-			minecart.setRange(this.range);
-			return true;
-		}
+
 		return false;
 	}
-	
-	
+
 	public boolean async() {
 		return true;
 	}
-	
-	
+
 	public boolean process(String[] lines) {	
 		for (String line : lines) {
 			if (line.toLowerCase().contains("range:")) {
@@ -58,21 +55,22 @@ public class AlterRangeAction extends SignAction{
 				}
 				this.itemRangeY = line.toLowerCase().contains("[item rangey");
 				this.itemRange = line.toLowerCase().contains("[item range");
-				this.rangeY = line.toLowerCase().contains("[rangey");
+				this.farmrangeY = line.toLowerCase().contains("[farm rangey");
+				this.farmRange = line.toLowerCase().contains("[farm range");
 				break;
 			}
 		}
 		return this.range != -1;
 	}
 
-	
+
 	public String getPermissionName() {
 		return "alterrangesign";
 	}
 
-	
+
 	public String getFriendlyName() {
-		return "Alter Range";
+		return "Alter Range " + (farmRange ? "Farming" : "") + (farmrangeY ? "FarmingY" : "")+ (itemRange ? "Item" : "")+ (itemRangeY ? "ItemY" : "") ;
 	}
 
 }

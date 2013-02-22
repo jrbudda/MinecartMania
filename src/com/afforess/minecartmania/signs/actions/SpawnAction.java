@@ -21,6 +21,9 @@ public class SpawnAction extends SignAction {
 		if (lastSpawn == null || (Math.abs(System.currentTimeMillis() - lastSpawn) > 1000)) {
 
 			Location spawn = loc.clone().add(0, 1, 0);
+			
+			if(!com.afforess.minecartmania.utils.MinecartUtils.isTrack(spawn.getBlock())) return false;
+				
 			final MMMinecart newminecart = MinecartManiaWorld.spawnMinecart(spawn, spawnType, null);
 
 			this.lastSpawn.put(loc, System.currentTimeMillis());

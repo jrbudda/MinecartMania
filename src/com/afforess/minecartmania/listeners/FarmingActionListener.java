@@ -25,13 +25,17 @@ public class FarmingActionListener implements Listener {
 					minecart.setDataValue("Farm Interval", interval - 1);
 				}
 				else {
-					minecart.setDataValue("Farm Interval", minecart.getRange()/2);
-					WheatFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
-					WoodFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
-					CactusFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
-					SugarFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
-					MelonFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
-					PumpkinFarming.doAutoFarm((MinecartManiaStorageCart)minecart);
+					MinecartManiaStorageCart cart = (MinecartManiaStorageCart) minecart;
+					minecart.setDataValue("Farm Interval", cart.getFarmingRange()/2);
+					WheatFarming.doAutoFarm(cart);
+					WoodFarming.doAutoFarm(cart);
+					CactusFarming.doAutoFarm(cart);
+					SugarFarming.doAutoFarm(cart);
+					MelonFarming.doAutoFarm(cart);
+					PumpkinFarming.doAutoFarm(cart);
+					com.afforess.minecartmania.farming.PotatoFarming.doAutoFarm(cart);
+					com.afforess.minecartmania.farming.CarrotFarming.doAutoFarm(cart);
+					com.afforess.minecartmania.farming.CocoaFarming.doAutoFarm(cart);
 				}
 			}
 		}

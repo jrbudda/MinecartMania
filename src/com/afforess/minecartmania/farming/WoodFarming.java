@@ -13,7 +13,7 @@ public class WoodFarming extends FarmingBase {
 		if (!isAutoTimberActive(minecart)) {
 			return;
 		}
-		if (minecart.getRange() < 1) {
+		if (minecart.getFarmingRange() < 1) {
 			return;
 		}
 

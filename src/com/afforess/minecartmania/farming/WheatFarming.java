@@ -14,12 +14,12 @@ public class WheatFarming
 		if (!isAutoHarvestActive(minecart) && !isAutoHarvestActive(minecart) && !isAutoSeedActive(minecart)) {
 			return;
 		}
-		if (minecart.getRange() < 1) {
+		if (minecart.getFarmingRange() < 1) {
 			return;
 		}
 		Location loc = minecart.getLocation().clone();
-		int range = minecart.getRange();
-		int rangeY = minecart.getRangeY();
+		int range = minecart.getFarmingRange();
+		int rangeY = minecart.getFarmingRangeY();
 		for (int dx = -(range); dx <= range; dx++){
 			for (int dy = -(rangeY); dy <= rangeY; dy++){
 				for (int dz = -(range); dz <= range; dz++){

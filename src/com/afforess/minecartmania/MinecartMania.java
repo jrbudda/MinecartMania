@@ -450,6 +450,9 @@ public class MinecartMania extends JavaPlugin {
 		Settings.ItemCollectionRange = getConfig().getInt("DefaultItemCollectionRange",4);
 		Settings.ItemCollectionRangeY = getConfig().getInt("DefaultItemCollectionRangeY",0);
 
+		Settings.FarmRange = getConfig().getInt("DefaultFarmingRange",4);
+		Settings.FarmRangeY = getConfig().getInt("DefaultFarmingRangeY",4);
+		
 		Settings.RememeberEjectionLocations = getConfig().getBoolean("RememberEjectionLocations",true); 
 
 		Settings.StationsUseOldDirections = getConfig().getBoolean("StationsUseOldDirections",false);

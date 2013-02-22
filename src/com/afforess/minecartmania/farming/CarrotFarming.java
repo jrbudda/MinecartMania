@@ -8,13 +8,13 @@ import org.bukkit.Material;
 import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
-public class PotatoFarming extends FarmingBase {
+public class CarrotFarming extends FarmingBase {
 
 	private static Random rand = new Random();
 
 	public static void doAutoFarm(MinecartManiaStorageCart minecart)
 	{
-		if(isPotatoFarmingActive(minecart))
+		if(isFarmingActive(minecart))
 		{
 			if (minecart.getFarmingRange() < 1) {
 				return;
@@ -35,23 +35,19 @@ public class PotatoFarming extends FarmingBase {
 						//Harvest fully grown crops first
 
 						int data = MinecartManiaWorld.getBlockData(minecart.getWorld(), x, y, z);
-						
-						if (id == Material.POTATO.getId()) {
+						if (id == Material.CARROT.getId()) {
 							//fully grown
 									
 							if (data == 0x7) {			
-								int c = rand.nextInt(4)+1; //1-4
-								for (int i = 0; i < c; i++) {
-									minecart.addItem(Material.POTATO_ITEM.getId());
+								for (int i = 0; i <= rand.nextInt(5); i++) {
+									minecart.addItem(Material.CARROT_ITEM.getId());
 								}
 								
-								if(rand.nextInt(100) < 2) minecart.addItem(Material.POISONOUS_POTATO.getId()); //2%
 								
 								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
 								dirty = true;
 							}
 						}
-						
 						//update data
 						if (dirty) {
 							id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
@@ -77,8 +73,8 @@ public class PotatoFarming extends FarmingBase {
 
 						if (id == Material.SOIL.getId()) {
 							if (aboveId == Material.AIR.getId()) {
-								if (minecart.removeItem(Material.POTATO_ITEM.getId())) {
-									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.POTATO.getId(), x, y+1, z);
+								if (minecart.removeItem(Material.CARROT_ITEM.getId())) {
+									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CARROT.getId(), x, y+1, z);
 									dirty = true;
 								}
 							}
@@ -92,8 +88,8 @@ public class PotatoFarming extends FarmingBase {
 	}
 
 
-	private static boolean isPotatoFarmingActive(MinecartManiaStorageCart minecart)
+	private static boolean isFarmingActive(MinecartManiaStorageCart minecart)
 	{
-		return FarmingBase.isFarmingActive(minecart, FarmType.Potato);
+		return FarmingBase.isFarmingActive(minecart, FarmType.Carrot);
 	}
 }

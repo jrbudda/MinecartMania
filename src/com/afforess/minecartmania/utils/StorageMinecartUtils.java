@@ -19,12 +19,12 @@ public class StorageMinecartUtils {
 		if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 			return;
 		}
-		if (minecart.getRange() < 1) {
+		if (minecart.getFarmingRange() < 1) {
 			return;
 		}
 		Location loc = minecart.getLocation().clone();
-		int range = minecart.getRange();
-		int rangeY = minecart.getRangeY();
+		int range = minecart.getFarmingRange();
+		int rangeY = minecart.getFarmingRangeY();
 		for (int dx = -(range); dx <= range; dx++){
 			for (int dy = -(rangeY); dy <= rangeY; dy++){
 				for (int dz = -(range); dz <= range; dz++){
@@ -94,12 +94,12 @@ public class StorageMinecartUtils {
 		if((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
 			return;
 		}
-		if (minecart.getRange() < 1) {
+		if (minecart.getFarmingRange() < 1) {
 			return;
 		}
 		Location loc = minecart.getLocation().clone();
-		int range = minecart.getRange();
-		int rangeY = minecart.getRangeY();
+		int range = minecart.getFarmingRange();
+		int rangeY = minecart.getFarmingRangeY();
 		for (int dx = -(range); dx <= range; dx++){
 			for (int dy = -(rangeY); dy <= rangeY; dy++){
 				for (int dz = -(range); dz <= range; dz++){
@@ -247,8 +247,8 @@ public class StorageMinecartUtils {
 	public static ArrayList<Block> getBlocksInRange(MinecartManiaStorageCart minecart)
 	{
 		Location loc = minecart.getLocation().clone();
-		int range = minecart.getRange();
-		int rangeY = minecart.getRangeY();
+		int range = minecart.getFarmingRange();
+		int rangeY = minecart.getFarmingRangeY();
 		World w = minecart.getWorld();
 		
 		ArrayList<Block> blocks = new ArrayList<Block>();

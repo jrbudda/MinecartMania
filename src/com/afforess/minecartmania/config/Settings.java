@@ -58,6 +58,9 @@ public  class Settings {
 	public static int ItemCollectionRange;
 	public static int ItemCollectionRangeY;
 	
+	public static int FarmRange;
+	public static int FarmRangeY;
+	
 	public static boolean StackAllItems;
 
 	//

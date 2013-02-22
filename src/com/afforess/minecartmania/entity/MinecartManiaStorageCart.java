@@ -23,9 +23,31 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	private int itemCollectionRange;
 	private int ItemCollectionRangeY;
 
+	protected volatile int Farmingrange;
+	protected volatile int FarmingrangeY;
+
+
 	public int getItemCollectionRangeY() {
 		return ItemCollectionRangeY;
 	}
+
+	public int getFarmingRange() {
+		return Farmingrange;
+	}
+
+	public int getFarmingRangeY() {
+		return FarmingrangeY;
+	}
+
+	public void setFarmingRange(int range) {
+		this.Farmingrange = range;
+	}
+
+
+	public void setFarmingRangeY(int range) {
+		this.FarmingrangeY = range;
+	}
+
 
 	public void setItemCollectionRangeY(int itemCollectionRangeY) {
 		ItemCollectionRangeY = itemCollectionRangeY;
@@ -37,8 +59,15 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	 */
 	public MinecartManiaStorageCart(Minecart cart) {
 		super(cart);
+		initialize();
+	}
+
+
+	private void initialize(){
 		this.setItemRange(com.afforess.minecartmania.config.Settings.ItemCollectionRange);
 		this.setItemCollectionRangeY(com.afforess.minecartmania.config.Settings.ItemCollectionRangeY);
+		this.Farmingrange = com.afforess.minecartmania.config.Settings.FarmRange;
+		this.FarmingrangeY = com.afforess.minecartmania.config.Settings.FarmRangeY;	
 	}
 
 	/**
@@ -48,8 +77,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	 */
 	public MinecartManiaStorageCart(Minecart cart, String owner) {
 		super(cart, owner);
-		this.setItemRange(com.afforess.minecartmania.config.Settings.ItemCollectionRange);
-		this.setItemCollectionRangeY(com.afforess.minecartmania.config.Settings.ItemCollectionRangeY);
+		initialize();
 	}
 
 	/**

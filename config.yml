@@ -102,6 +102,9 @@ KillPlayersOnTrackMinimumSpeed: 90
 DefaultItemCollectionRange: 4
 DefaultItemCollectionRangeY: 0
 
+#Farming
+DefaultFarmingRange: 4
+DefaultFarmingRangeY: 4
 
 #Control blocks
 #Control blocks are aliases for signs, when the minecart passes over one, it will execute the actions specified.
@@ -188,7 +191,43 @@ ItemAliases:
      - BIRCH_LOG
      - JUNGLE_LOG
      - LAVA_BUCKET
-     
+  
+  Logs:
+      - LOG
+      - BIRCH_LOG      
+      - JUNGLE_LOG
+      - REDWOOD_LOG
+      
+  Wools:
+      - 35;0
+      - 35;1
+      - 35;2
+      - 35;3
+      - 35;4
+      - 35;5
+      - 35;6
+      - 35;7
+      - 35;8
+      - 35;9
+      - 35;10
+      - 35;11
+      - 35;12
+      - 35;13
+      - 35;14
+      - 35;15
+      
+  Planks:
+      - 5;0
+      - 5;1
+      - 5;2
+      - 5;3
+      
+  Saplings:
+      - 6;0
+      - 6;1
+      - 6;2
+      - 6;3
+      
 #Localization messages. 
 Messages: 
   LackPermissionForCommand: "[RED]You do not have permission to use that command"

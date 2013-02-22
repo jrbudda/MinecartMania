@@ -58,8 +58,7 @@ public class MMMinecart {
 	protected MinecartOwner owner = null;
 	protected volatile CompassDirection previousFacingDir = DirectionUtils.CompassDirection.NO_DIRECTION;
 	protected volatile Vector previousLocation;
-	protected volatile int range = 4;
-	protected volatile int rangeY = 4;
+
 
 	protected String destination = "";
 
@@ -116,7 +115,7 @@ public class MMMinecart {
 	/**
 	 ** Attempts to find the player that spawned this minecart.
 	 */
-	private void findOwner() {
+	protected void findOwner() {
 		final EbeanServer db = MinecartMania.getInstance().getDatabase();
 		try {
 			MinecartOwner temp = db.find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findUnique();
@@ -574,13 +573,7 @@ public class MMMinecart {
 	}
 
 
-	public int getRange() {
-		return range;
-	}
 
-	public int getRangeY() {
-		return rangeY;
-	}
 
 	public Item getType() {
 		if (isPoweredMinecart()) {
@@ -885,7 +878,8 @@ public class MMMinecart {
 		if (!isDead()) {
 
 			ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-			if (!Settings.RemoveDeadCarts)	items.add(new ItemStack(getType().toMaterial(), 1));
+
+			if(returnToOwner || !Settings.RemoveDeadCarts)	items.add(new ItemStack(getType().toMaterial(), 1));
 
 			if (isStorageMinecart()) {
 				for (ItemStack i : ((MinecartManiaStorageCart)this).getContents()) {
@@ -925,6 +919,7 @@ public class MMMinecart {
 				}
 				else {
 					Logger.debug("Could not find owner to return cart");
+					if(com.afforess.minecartmania.config.Settings.RemoveDeadCarts) items.clear();
 				}	
 			}
 
@@ -1180,14 +1175,7 @@ public class MMMinecart {
 		previousFacingDir = direction;
 	}
 
-	public void setRange(int range) {
-		this.range = range;
-	}
 
-
-	public void setRangeY(int range) {
-		this.rangeY = range;
-	}
 
 	public void setWasMovingLastTick(boolean wasMovingLastTick) {
 		this.wasMovingLastTick = wasMovingLastTick;

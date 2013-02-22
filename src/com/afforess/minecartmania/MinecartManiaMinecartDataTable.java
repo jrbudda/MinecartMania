@@ -81,8 +81,6 @@ public class MinecartManiaMinecartDataTable {
 		this.previousFacingDir = minecart.previousFacingDir;
 		this.wasMovingLastTick = minecart.wasMovingLastTick;
 		this.owner = minecart.owner.getOwner();
-		this.myrange = minecart.range;
-		this.rangeY = minecart.rangeY;
 		this.dead = minecart.dead;
 		this.oldId = minecart.minecart.getEntityId();
 		this.data = minecart.data;
@@ -155,8 +153,6 @@ public class MinecartManiaMinecartDataTable {
 		minecart.previousFacingDir = this.previousFacingDir;
 		minecart.previousLocation = this.getPreviousLocation();
 		minecart.minecart.setVelocity(getMotion());
-		minecart.range = this.myrange;
-		minecart.rangeY = this.rangeY;
 		minecart.wasMovingLastTick = this.wasMovingLastTick;
 		minecart.dead = this.dead;
 
