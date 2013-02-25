@@ -55,7 +55,7 @@ public class CompressItemsAction extends SignAction {
 
 	@Override
 	public boolean async() {
-		return false;
+		return true;
 	}
 
 	@Override

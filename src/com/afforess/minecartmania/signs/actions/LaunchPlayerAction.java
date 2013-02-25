@@ -17,7 +17,7 @@ public class LaunchPlayerAction extends SignAction{
 
 
 	public boolean async() {
-		return true;
+		return false;
 	}
 
 

@@ -38,7 +38,7 @@ public class AlterRangeAction extends SignAction{
 	}
 
 	public boolean async() {
-		return true;
+		return false;
 	}
 
 	public boolean process(String[] lines) {	

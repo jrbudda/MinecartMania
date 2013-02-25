@@ -30,11 +30,11 @@ public class FarmAction extends SignAction
 
   public boolean async()
   {
-    return true;
+    return false;
   }
 
 	public boolean process(String[] lines)   {
-	    if (lines[0].toLowerCase().contains("[farm"))
+	    if (lines[0].toLowerCase().contains("[farm") && !lines[0].toLowerCase().contains("range"))
 	    {
 	      String line = lines[1].toLowerCase();
 	      if (line.contains("off"))

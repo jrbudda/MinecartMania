@@ -29,7 +29,7 @@ public class DataValuecAction extends SignAction{
 
 	
 	public boolean async() {
-		return true;
+		return false;
 	}
 
 	

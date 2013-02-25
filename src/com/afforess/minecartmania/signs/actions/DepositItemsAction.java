@@ -27,7 +27,7 @@ public class DepositItemsAction extends SignAction {
 
 	@Override
 	public boolean async() {
-		return false;
+		return true;
 	}
 
 	@Override

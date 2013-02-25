@@ -27,7 +27,7 @@ public class CollectItemsAction extends SignAction {
 
 	@Override
 	public boolean async() {
-		return false;
+		return true;
 	}
 
 	@Override
