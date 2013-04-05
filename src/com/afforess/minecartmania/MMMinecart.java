@@ -58,7 +58,7 @@ public class MMMinecart {
 	protected MinecartOwner owner = null;
 	protected volatile CompassDirection previousFacingDir = DirectionUtils.CompassDirection.NO_DIRECTION;
 	protected volatile Vector previousLocation;
-
+	protected int oldid = 0;
 
 	protected String destination = "";
 
@@ -85,8 +85,13 @@ public class MMMinecart {
 
 	protected boolean locked = false;
 
+	public int oldID(){
+		return oldid;
+	}
+
 	public MMMinecart(Minecart cart) {
 		minecart = replaceCart(cart); 
+		this.oldid = cart.getEntityId();
 		initialize();
 		findOwner();
 	}
@@ -95,7 +100,7 @@ public class MMMinecart {
 
 	public MMMinecart(Minecart cart, String owner) {
 		minecart = replaceCart(cart);
-
+		this.oldid = cart.getEntityId();
 		this.owner = new MinecartOwner(owner);
 		this.owner.setId(minecart.getEntityId());
 		this.owner.setWorld(minecart.getWorld().getName());
