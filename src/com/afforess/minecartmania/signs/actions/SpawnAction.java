@@ -2,10 +2,12 @@ package com.afforess.minecartmania.signs.actions;
 
 
 import java.util.HashMap;
+
 import org.bukkit.Location;
-import com.afforess.minecartmania.MMMinecart;
+
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 

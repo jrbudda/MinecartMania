@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.debug.Logger;
 
 public class SignManager {

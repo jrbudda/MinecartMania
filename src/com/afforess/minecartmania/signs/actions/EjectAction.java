@@ -6,9 +6,9 @@ import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
-import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.config.NewControlBlock;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.EntityUtils;
 import com.afforess.minecartmania.utils.SignUtils;
@@ -46,7 +46,7 @@ public class EjectAction extends SignAction{
 		ArrayList<MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), 8);
 		Double dist = null;
 		
-		for (com.afforess.minecartmania.MMSign sign : list) {
+		for (com.afforess.minecartmania.signs.MMSign sign : list) {
 			if (sign.executeAction(minecart, EjectAtAction.class)  && ( dist == null || sign.getLocation().distanceSquared(minecart.getLocation()) < dist )) {
 				location = (Location) minecart.getDataValue("Eject At");
 				dist = sign.getLocation().distanceSquared(minecart.getLocation());

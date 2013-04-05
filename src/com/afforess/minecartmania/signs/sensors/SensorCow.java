@@ -3,7 +3,7 @@ package com.afforess.minecartmania.signs.sensors;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Cow;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class SensorCow extends GenericSensor{
 	

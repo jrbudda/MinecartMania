@@ -1,6 +1,7 @@
 package com.afforess.minecartmania.utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -59,6 +60,10 @@ public class SignUtils {
 				}
 			}
 		}
+
+
+		java.util.Collections.sort(signList,new SignDistanceComparator(x, y, z));
+
 		return signList;
 	}
 
@@ -96,23 +101,72 @@ public class SignUtils {
 
 
 
-	public static ArrayList<com.afforess.minecartmania.MMSign> getAdjacentMMSignList(Location location, int range) {
+	public static ArrayList<com.afforess.minecartmania.signs.MMSign> getAdjacentMMSignList(Location location, int range) {
 		ArrayList<Sign> list = getAdjacentSignList(location, range);
-		ArrayList<com.afforess.minecartmania.MMSign> signList = new ArrayList<com.afforess.minecartmania.MMSign>(list.size());
+		ArrayList<com.afforess.minecartmania.signs.MMSign> signList = new ArrayList<com.afforess.minecartmania.signs.MMSign>(list.size());
 		for (Sign s : list) {
 			signList.add(SignManager.getOrCreateMMSign(s.getBlock()));
 		}
 		return signList;
 	}
 
-	public static ArrayList<com.afforess.minecartmania.MMSign> getAdjacentMMSignListforDirection(Location location, int range, CompassDirection dir) {
+	public static ArrayList<com.afforess.minecartmania.signs.MMSign> getAdjacentMMSignListforDirection(Location location, int range, CompassDirection dir) {
 		ArrayList<Sign> list = getAdjacentSignListforDirection(location.getWorld(), location.getBlockX(), location.getBlockY(),location.getBlockZ(), range, dir);
-		ArrayList<com.afforess.minecartmania.MMSign> signList = new ArrayList<com.afforess.minecartmania.MMSign>(list.size());
+		ArrayList<com.afforess.minecartmania.signs.MMSign> signList = new ArrayList<com.afforess.minecartmania.signs.MMSign>(list.size());
 		for (Sign s : list) {
 			signList.add(SignManager.getOrCreateMMSign(s.getBlock()));
 		}
 		return signList;
 	}
 
+	
+	
+	static class SignDistanceComparator implements Comparator<Sign>
+	{
+		private int x,y,z;
 
+		public SignDistanceComparator(int x, int y,int z)
+		{
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		protected double getSquaredDistanceFromLocation(Sign sign)
+		{
+			double x = sign.getX() - this.x;
+			double y = sign.getY() - this.y;
+			double z = sign.getZ() - this.z;
+			return x*x + y*y + z*z;
+		}
+
+		public int compare(Sign sign1, Sign sign2)
+		{
+			double i1 = getSquaredDistanceFromLocation(sign1);
+			double i2 = getSquaredDistanceFromLocation(sign1);
+
+			// If the distance differs, threshold it and return.
+			if (i1 != i2)
+				return (int)Math.min(Math.max(i1 - i2,-1), 1);
+			int d;
+
+			// If the distance of two blocks is the same, sort them by x, then y, then z.
+			// There's no particular reason for this, just that we don't want to claim
+			// that two different blocks are the same
+
+			d = (sign1.getX() - sign2.getX());
+			if (d != 0)
+				return Math.min(Math.max(d, -1), 1);
+
+			d = (sign1.getY() - sign2.getY());
+			if (d != 0)
+				return Math.min(Math.max(d, -1), 1);
+
+			d = (sign1.getZ() - sign2.getZ());
+
+			return Math.min(Math.max(d, -1), 1);
+		}
+
+
+	}
 }

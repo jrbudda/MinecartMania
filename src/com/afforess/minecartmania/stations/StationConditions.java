@@ -1,10 +1,10 @@
 package com.afforess.minecartmania.stations;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.entity.AbstractItem;
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.actions.StationAction;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.ItemUtils;
@@ -43,7 +43,7 @@ public enum StationConditions implements Condition{
 	},
 	StationCommand {
 		public boolean result(MMMinecart minecart, String str) {
-			return minecart.hasPlayerPassenger() && StationAction.MatchStationName(minecart, str);
+			return StationAction.MatchStationName(minecart, str);
 		}
 	},
 	PlayerName {
@@ -67,7 +67,7 @@ public enum StationConditions implements Condition{
 			else if (minecart.isStorageMinecart()) {
 				AbstractItem[] signData = ItemUtils.getItemStringToMaterial(str);
 				for (AbstractItem item : signData) {
-					if (item != null && (((MinecartManiaStorageCart)minecart).amount(item.type()) > (item.isInfinite() ? 0 : item.getAmount()))) {
+					if (item != null && (((MMStorageCart)minecart).amount(item.type()) > (item.isInfinite() ? 0 : item.getAmount()))) {
 						return true;
 					}
 				}	
@@ -78,7 +78,7 @@ public enum StationConditions implements Condition{
 	Cargo {
 
 		public boolean result(MMMinecart minecart, String str) {
-			return minecart.isStorageMinecart() && str.toLowerCase().contains("cargo") && ((MinecartManiaStorageCart)minecart).isEmpty();
+			return minecart.isStorageMinecart() && str.toLowerCase().contains("cargo") && ((MMStorageCart)minecart).isEmpty();
 		}
 	},
 	Storage {

@@ -2,8 +2,8 @@ package com.afforess.minecartmania.signs.actions;
 
 import org.bukkit.Bukkit;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.events.MinecartMeetsConditionEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class EjectionConditionAction extends SignAction {

@@ -1,8 +1,8 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.MathUtils;
 import com.afforess.minecartmania.utils.StringUtils;
@@ -17,19 +17,19 @@ public class AlterRangeAction extends SignAction{
 	public boolean execute(MMMinecart minecart) {
 		if (minecart.isStorageMinecart()) {
 			if (itemRange) {
-				((MinecartManiaStorageCart)minecart).setItemRange(this.range);
+				((MMStorageCart)minecart).setItemRange(this.range);
 				return true;
 			}
 			else if (itemRangeY) {
-				((MinecartManiaStorageCart)minecart).setItemCollectionRangeY(range);
+				((MMStorageCart)minecart).setItemCollectionRangeY(range);
 				return true;
 			}
 			else if (farmrangeY) {
-				((MinecartManiaStorageCart)minecart).setFarmingRangeY(range);
+				((MMStorageCart)minecart).setFarmingRangeY(range);
 				return true;
 			}
 			else {
-				((MinecartManiaStorageCart)minecart).setFarmingRange(this.range);
+				((MMStorageCart)minecart).setFarmingRange(this.range);
 				return true;
 			}
 		}

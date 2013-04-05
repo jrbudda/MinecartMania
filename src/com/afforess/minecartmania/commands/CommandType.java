@@ -20,8 +20,6 @@ public enum CommandType {
 	Throttle(false, ThrottleCommand.class),
 	Momentum(false, MomentumCommand.class),
 	Speed(false, MomentumCommand.class),
-	Redraw(true, RedrawMinecartCommand.class),
-	Hide(true, HideMinecartCommand.class),
 	Info(false, MinecartInfoCommand.class),
 	Reload(true, ReloadCommand.class),
 	Help(false, HelpCommand.class)

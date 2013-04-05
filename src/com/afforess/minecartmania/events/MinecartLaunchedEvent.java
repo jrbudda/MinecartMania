@@ -2,7 +2,7 @@ package com.afforess.minecartmania.events;
 
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class MinecartLaunchedEvent extends MinecartManiaEvent implements MinecartEvent {
 	private MMMinecart minecart;

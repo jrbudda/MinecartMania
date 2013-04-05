@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.DirectionUtils;
 

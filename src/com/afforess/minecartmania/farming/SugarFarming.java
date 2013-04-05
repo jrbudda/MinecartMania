@@ -3,12 +3,12 @@ package com.afforess.minecartmania.farming;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class SugarFarming
 {
-	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoFarm(MMStorageCart minecart) {
 		if(!isAutoPlantActive(minecart) || !isAutoSugarActive(minecart)) {
 			return;
 		}
@@ -89,12 +89,12 @@ public class SugarFarming
 		}
 	}
 	
-	private static boolean isAutoSugarActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoSugarActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoSugar") != null;
 	}
 	
-	private static boolean isAutoPlantActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoPlantActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Sugar) || minecart.getDataValue("AutoPlant") != null;
 	}

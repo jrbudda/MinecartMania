@@ -8,11 +8,11 @@ package com.afforess.minecartmania.farming;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class StorageMinecartSugar {
-	public static void doAutoSugarFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoSugarFarm(MMStorageCart minecart) {
 		if((minecart.getDataValue("AutoSugar") == null) && (minecart.getDataValue("AutoPlant") == null) && FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
 			return;
 		}

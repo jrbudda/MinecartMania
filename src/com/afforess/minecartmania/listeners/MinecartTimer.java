@@ -2,9 +2,9 @@ package com.afforess.minecartmania.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class MinecartTimer implements Listener{
 
@@ -24,7 +24,7 @@ public class MinecartTimer implements Listener{
 		}
 		
 		
-		boolean kill = minecart.getPassenger() == null && (!minecart.isStorageMinecart() || ((MinecartManiaStorageCart)minecart).isEmpty());
+		boolean kill = minecart.getPassenger() == null && (!minecart.isStorageMinecart() || ((MMStorageCart)minecart).isEmpty());
 		
 		if (timer > 0) {
 			if (kill) {

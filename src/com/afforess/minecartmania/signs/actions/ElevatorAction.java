@@ -4,12 +4,12 @@ import java.util.Set;
 
 import org.bukkit.Location;
 
-import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.config.NewControlBlock;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;

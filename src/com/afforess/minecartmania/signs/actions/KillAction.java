@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class KillAction extends SignAction {

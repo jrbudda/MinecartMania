@@ -1,4 +1,4 @@
-package com.afforess.minecartmania.entity;
+package com.afforess.minecartmania.minecarts;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,17 +6,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.entity.MinecartManiaInventory;
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
 
 /**
  * This class represents a Minecart Mania Storage Minecart, that wraps a bukkit minecart (which in turn, wraps a Minecraft EntityMinecart)
  * @author Afforess
  */
-public class MinecartManiaStorageCart extends MMMinecart implements MinecartManiaInventory{
+public class MMStorageCart extends MMMinecart implements MinecartManiaInventory{
 	private ConcurrentHashMap<Item, Integer> maximumContents = new ConcurrentHashMap<Item, Integer>();
 	private ConcurrentHashMap<Item, Integer> minimumContents = new ConcurrentHashMap<Item, Integer>();
 
@@ -57,7 +59,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	 * Creates a storage minecart from the given bukkit minecart
 	 * @param cart to create from
 	 */
-	public MinecartManiaStorageCart(Minecart cart) {
+	public MMStorageCart(Minecart cart) {
 		super(cart);
 		initialize();
 	}
@@ -75,7 +77,7 @@ public class MinecartManiaStorageCart extends MMMinecart implements MinecartMani
 	 * @param cart to create from
 	 * @param owner that created the minecart
 	 */
-	public MinecartManiaStorageCart(Minecart cart, String owner) {
+	public MMStorageCart(Minecart cart, String owner) {
 		super(cart, owner);
 		initialize();
 	}

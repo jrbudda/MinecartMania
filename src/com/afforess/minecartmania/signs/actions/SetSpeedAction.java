@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.StringUtils;
 

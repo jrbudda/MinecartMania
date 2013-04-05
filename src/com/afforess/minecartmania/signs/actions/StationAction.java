@@ -6,16 +6,15 @@ import java.util.Set;
 
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.stations.StationCommands;
 import com.afforess.minecartmania.stations.StationConditions;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.SignUtils;
-import com.afforess.minecartmania.utils.StationUtil;
 import com.afforess.minecartmania.utils.StringUtils;
 
 public class StationAction extends SignAction {
@@ -32,7 +31,7 @@ public class StationAction extends SignAction {
 
 	public boolean processStation(MMMinecart minecart) {
 		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), 2);
-
+		Logger.debug("Found " + signList.size() + " signs near Station");
 		for (Sign sign : signList) {
 			convertCraftBookSorter(sign);
 			for (int k = 0; k < 4; k++) {
@@ -80,7 +79,8 @@ public class StationAction extends SignAction {
 		//The ",2" is needed because regular expressions can have a "-" in them. example "st-[g-z].*"
 		//Without the limit, we would have the following array in keys: "st", "[g", "z].*" and then only work with the "[g" portion which is wrong.
 		String st = keys[1];                         //Get the station name/simple pattern/regular expression
-		String station = MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getLastStation().toLowerCase();
+		String station = 	minecart.getDestination();
+		
 		Logger.debug("Given Sign Line: " + str + " Given Station setting: " + station);
 
 		switch(com.afforess.minecartmania.config.Settings.StationParingMode){
@@ -98,7 +98,7 @@ public class StationAction extends SignAction {
 			valid = station.matches(st); 
 			break;
 		}
-		if (valid && MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getDataValue("Reset Station Data") == null) {
+		if (valid && minecart.hasPlayerPassenger() && MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getDataValue("Reset Station Data") == null) {
 			if (!Settings.StationCommandSaveAfterUse) {
 				minecart.setDestination("");
 			}

@@ -2,8 +2,8 @@ package com.afforess.minecartmania.signs;
 
 import org.bukkit.Location;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.RedstoneState;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 /**
  * An action specific to a sign

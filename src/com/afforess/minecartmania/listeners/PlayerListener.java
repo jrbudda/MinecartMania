@@ -11,14 +11,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.MinecartManiaMinecartDataTable;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaPlayer;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMDataTable;
 
 public class PlayerListener implements Listener{
 
@@ -29,9 +29,9 @@ public class PlayerListener implements Listener{
 			if (event.getPlayer().getVehicle() instanceof Minecart) {
 				final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getPlayer().getVehicle());
 				try {
-					MinecartManiaMinecartDataTable data = new MinecartManiaMinecartDataTable(minecart, player.getName());
+					MMDataTable data = new MMDataTable(minecart, player.getName());
 					Logger.debug("Saving and removing minecart for " + player.getName());
-					MinecartManiaMinecartDataTable.save(data);
+					MMDataTable.save(data);
 					minecart.killNoReturn();
 				}
 				catch (Exception e) {
@@ -49,7 +49,7 @@ public class PlayerListener implements Listener{
 	//	}
 
 
-	public static void spawnCartForRider(final MinecartManiaPlayer player, final MinecartManiaMinecartDataTable data){
+	public static void spawnCartForRider(final MinecartManiaPlayer player, final MMDataTable data){
 		if (data != null && player !=null) {
 
 			//delaying this allows the chunks to load and player entity to be created.
@@ -71,7 +71,7 @@ public class PlayerListener implements Listener{
 					}
 					
 					try {
-						MinecartManiaMinecartDataTable.delete(data);
+						MMDataTable.delete(data);
 					}
 					catch (OptimisticLockException ole){
 						//Make every effort to delete the entry
@@ -81,7 +81,7 @@ public class PlayerListener implements Listener{
 							public void run() {
 								try {
 									sleep(5000);
-									MinecartManiaMinecartDataTable.delete(data);
+									MMDataTable.delete(data);
 								}
 								catch (Exception e) {
 									Logger.severe("Failed to remove the minecart data entry when " + name + " connected");
@@ -100,7 +100,7 @@ public class PlayerListener implements Listener{
 	public void onPlayerJoin(final PlayerJoinEvent event) {
 		if (Settings.PreserveMinecartsonRiderLogout) {
 			MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(event.getPlayer());
-			MinecartManiaMinecartDataTable data = MinecartManiaMinecartDataTable.getDataTable(player.getName());
+			MMDataTable data = MMDataTable.getDataTable(player.getName());
 			if(data==null) Logger.debug("No data found for " + player.getName());
 			spawnCartForRider(player, data);
 		}

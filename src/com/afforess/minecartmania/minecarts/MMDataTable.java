@@ -1,4 +1,4 @@
-package com.afforess.minecartmania;
+package com.afforess.minecartmania.minecarts;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
@@ -19,8 +20,8 @@ import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.avaje.ebean.validation.NotNull;
 @Entity()
 @Table(name="MinecartManiaMinecartDataTable")
-public class MinecartManiaMinecartDataTable {
-	private transient static HashMap<String, MinecartManiaMinecartDataTable> cache = new HashMap<String, MinecartManiaMinecartDataTable>();
+public class MMDataTable {
+	private transient static HashMap<String, MMDataTable> cache = new HashMap<String, MMDataTable>();
 	@NotNull
 	protected double previousX;
 	@NotNull
@@ -38,7 +39,7 @@ public class MinecartManiaMinecartDataTable {
 	@NotNull
 	protected boolean wasMovingLastTick;
 	@NotNull
-	protected String owner;
+	public String owner;
 	@NotNull
 	protected int myrange;
 	@NotNull
@@ -67,11 +68,11 @@ public class MinecartManiaMinecartDataTable {
 	protected int oldId;
 	protected transient ConcurrentHashMap<String, Object> data = null;
 
-	public MinecartManiaMinecartDataTable() {
+	public MMDataTable() {
 
 	}
 
-	public MinecartManiaMinecartDataTable(MMMinecart minecart, String player) {
+	public MMDataTable(MMMinecart minecart, String player) {
 		this.previousX = minecart.previousLocation.getX();
 		this.previousY = minecart.previousLocation.getY();
 		this.previousZ = minecart.previousLocation.getZ();
@@ -95,13 +96,13 @@ public class MinecartManiaMinecartDataTable {
 		this.world = minecart.getWorld().getName();
 	}
 
-	public static MinecartManiaMinecartDataTable getDataTable(String player) {
+	public static MMDataTable getDataTable(String player) {
 		if (cache.containsKey(player)) {
 			return cache.get(player);
 		}
 		try {
-			MinecartManiaMinecartDataTable data = null;
-			List<MinecartManiaMinecartDataTable> list = MinecartMania.getInstance().getDatabase().find(MinecartManiaMinecartDataTable.class).where().ieq("player", player).findList();
+			MMDataTable data = null;
+			List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).where().ieq("player", player).findList();
 			if (list.size() > 0) {
 				data = list.get(0);
 				//handle issues with the db gracefully
@@ -121,9 +122,9 @@ public class MinecartManiaMinecartDataTable {
 		}
 	}
 
-	public static List<MinecartManiaMinecartDataTable> getAlltCarts(){
+	public static List<MMDataTable> getAlltCarts(){
 		try {
-			List<MinecartManiaMinecartDataTable> list = MinecartMania.getInstance().getDatabase().find(MinecartManiaMinecartDataTable.class).findList();
+			List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).findList();
 			return list;
 		}
 		catch (Exception e) {
@@ -133,12 +134,12 @@ public class MinecartManiaMinecartDataTable {
 		}
 	}
 
-	public static void delete(MinecartManiaMinecartDataTable data) {
+	public static void delete(MMDataTable data) {
 		cache.remove(data.getPlayer());
 		MinecartMania.getInstance().getDatabase().delete(data);
 	}
 
-	public static void save(MinecartManiaMinecartDataTable data) {
+	public static void save(MMDataTable data) {
 		cache.put(data.getPlayer(), data);
 		MinecartMania.getInstance().getDatabase().save(data);
 	}

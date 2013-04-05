@@ -5,18 +5,18 @@ import java.util.HashSet;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class CompressItemsAction extends SignAction {
 
 	@Override
 	public boolean execute(MMMinecart incminecart) {
-		if(!(incminecart instanceof MinecartManiaStorageCart)) return false;
+		if(!(incminecart instanceof MMStorageCart)) return false;
 
-		MinecartManiaStorageCart	 minecart = (MinecartManiaStorageCart) (incminecart);
+		MMStorageCart	 minecart = (MMStorageCart) (incminecart);
 
 		HashSet<Block> blockList = minecart.getAdjacentBlocks(2);
 		for (Block block : blockList) {

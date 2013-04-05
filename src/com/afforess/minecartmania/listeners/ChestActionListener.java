@@ -4,12 +4,12 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.events.ChestPoweredEvent;
 import com.afforess.minecartmania.events.MinecartActionEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.utils.ChestStorageUtil;
 import com.afforess.minecartmania.utils.ChestUtil;
 

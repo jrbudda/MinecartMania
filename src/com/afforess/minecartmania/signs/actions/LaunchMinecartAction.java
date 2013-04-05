@@ -2,7 +2,7 @@ package com.afforess.minecartmania.signs.actions;
 
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.MinecartUtils;

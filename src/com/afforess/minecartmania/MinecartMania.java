@@ -1,6 +1,5 @@
 package com.afforess.minecartmania;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -9,12 +8,9 @@ import java.util.List;
 
 import javax.persistence.PersistenceException;
 
-import net.minecraft.server.v1_4_R1.EntityTypes;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
@@ -38,7 +34,8 @@ import com.afforess.minecartmania.listeners.MinecartTimer;
 import com.afforess.minecartmania.listeners.PlayerListener;
 import com.afforess.minecartmania.listeners.SignsActionListener;
 import com.afforess.minecartmania.listeners.StationsActionListener;
-import com.afforess.minecartmania.signs.ActionList;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMDataTable;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.sensors.Sensor;
 import com.afforess.minecartmania.signs.sensors.SensorDataTable;
@@ -147,15 +144,15 @@ public class MinecartMania extends JavaPlugin {
 	private void LoadCartsForRiders(){
 		//this will only be used on a /reload, since otherwise no players are online.
 
-		List<MinecartManiaMinecartDataTable> entries = MinecartManiaMinecartDataTable.getAlltCarts();		
+		List<MMDataTable> entries = MMDataTable.getAlltCarts();		
 		if (entries !=null){
-			for (MinecartManiaMinecartDataTable entry : entries){
+			for (MMDataTable entry : entries){
 				if(getServer().getPlayer(entry.owner) != null) {
 					Player p = getServer().getPlayer(entry.owner);
 					if(p.isOnline()){
 						MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(p);
 						PlayerListener.spawnCartForRider(player, entry);	
-						MinecartManiaMinecartDataTable.delete(entry);
+						MMDataTable.delete(entry);
 					}
 				}
 			}
@@ -165,12 +162,12 @@ public class MinecartMania extends JavaPlugin {
 	private void SaveCartsWithRiders(){
 		MinecartManiaWorld.pruneMinecarts();
 		for(MMMinecart minecart :	MinecartManiaWorld.getMinecartManiaMinecartList()){
-			MinecartManiaMinecartDataTable data = null;
+			MMDataTable data = null;
 			if (minecart.hasPlayerPassenger()){
 				Logger.debug("Saving minecart for " + minecart.getPlayerPassenger().getName());
-				data = new MinecartManiaMinecartDataTable(minecart, minecart.getPlayerPassenger().getName());
+				data = new MMDataTable(minecart, minecart.getPlayerPassenger().getName());
 				try {
-					MinecartManiaMinecartDataTable.save(data);
+					MMDataTable.save(data);
 					minecart.killNoReturn();
 				}
 				catch (Exception e) {
@@ -329,12 +326,12 @@ public class MinecartMania extends JavaPlugin {
 			return 0;
 		}
 		try {
-			getDatabase().find(MinecartManiaMinecartDataTable.class).findRowCount();
+			getDatabase().find(MMDataTable.class).findRowCount();
 		} catch (PersistenceException ex) {
 			return 1;
 		}
 		try {
-			getDatabase().find(MinecartManiaMinecartDataTable.class).findList();
+			getDatabase().find(MMDataTable.class).findList();
 		} catch (PersistenceException ex) {
 			return 2;
 		}
@@ -349,7 +346,7 @@ public class MinecartMania extends JavaPlugin {
 	protected void setupInitialDatabase() {
 		try {
 			getDatabase().find(MinecartOwner.class).findRowCount();
-			getDatabase().find(MinecartManiaMinecartDataTable.class).findRowCount();
+			getDatabase().find(MMDataTable.class).findRowCount();
 			getDatabase().find(SensorDataTable.class).findRowCount();
 		}
 		catch (PersistenceException ex) {
@@ -385,7 +382,7 @@ public class MinecartMania extends JavaPlugin {
 	public List<Class<?>> getDatabaseClasses() {
 		List<Class<?>> list = new ArrayList<Class<?>>();
 		list.add(MinecartOwner.class);
-		list.add(MinecartManiaMinecartDataTable.class);
+		list.add(MMDataTable.class);
 		list.add(SensorDataTable.class);
 		return list;
 	}

@@ -4,12 +4,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class CactusFarming
 {
-	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoFarm(MMStorageCart minecart) {
 		if(!isAutoCactusActive(minecart) && !isAutoReCactusActive(minecart)) {
 			return;
 		}
@@ -88,12 +88,12 @@ public class CactusFarming
 		}
 	}
 	
-	private static boolean isAutoCactusActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoCactusActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoCactus") != null;
 	}
 	
-	private static boolean isAutoReCactusActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoReCactusActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Cactus) || minecart.getDataValue("AutoReCactus") != null;
 	}

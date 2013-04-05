@@ -5,12 +5,12 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class WheatFarming
 {
-	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoFarm(MMStorageCart minecart) {
 		if (!isAutoHarvestActive(minecart) && !isAutoHarvestActive(minecart) && !isAutoSeedActive(minecart)) {
 			return;
 		}
@@ -85,17 +85,17 @@ public class WheatFarming
 		}
 	}
 	
-	private static boolean isAutoTillActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoTillActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoTill") != null;
 	}
 	
-	private static boolean isAutoSeedActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoSeedActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoSeed") != null;
 	}
 	
-	private static boolean isAutoHarvestActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoHarvestActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Wheat) || minecart.getDataValue("AutoHarvest") != null;
 	}

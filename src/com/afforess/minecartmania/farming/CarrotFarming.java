@@ -5,14 +5,14 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class CarrotFarming extends FarmingBase {
 
 	private static Random rand = new Random();
 
-	public static void doAutoFarm(MinecartManiaStorageCart minecart)
+	public static void doAutoFarm(MMStorageCart minecart)
 	{
 		if(isFarmingActive(minecart))
 		{
@@ -88,7 +88,7 @@ public class CarrotFarming extends FarmingBase {
 	}
 
 
-	private static boolean isFarmingActive(MinecartManiaStorageCart minecart)
+	private static boolean isFarmingActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Carrot);
 	}

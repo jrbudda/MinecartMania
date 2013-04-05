@@ -16,11 +16,11 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.Wolf;
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class MinecartUtils {
@@ -303,7 +303,7 @@ public class MinecartUtils {
 				continue;
 			}		
 
-			if (minecart.isStorageMinecart() && e instanceof org.bukkit.entity.Item	&& ((MinecartManiaStorageCart)minecart).addItem(((org.bukkit.entity.Item)e).getItemStack())) {
+			if (minecart.isStorageMinecart() && e instanceof org.bukkit.entity.Item	&& ((MMStorageCart)minecart).addItem(((org.bukkit.entity.Item)e).getItemStack())) {
 				e.remove();
 			}
 
@@ -445,16 +445,16 @@ public class MinecartUtils {
 
 		List<Entity> list;	
 
-		if(minecart instanceof MinecartManiaStorageCart){
+		if(minecart instanceof MMStorageCart){
 			switch (minecart.getDirectionOfMotion()) {
 			case NORTH: case SOUTH:
-				list	= minecart.getBukkitEntity().getNearbyEntities(((MinecartManiaStorageCart)minecart).getItemRange() ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , .5);
+				list	= minecart.getBukkitEntity().getNearbyEntities(((MMStorageCart)minecart).getItemRange() ,((MMStorageCart)minecart).getItemCollectionRangeY() , .5);
 				break;
 			case EAST: case WEST:
-				list	= minecart.getBukkitEntity().getNearbyEntities(.5 ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , ((MinecartManiaStorageCart)minecart).getItemRange());
+				list	= minecart.getBukkitEntity().getNearbyEntities(.5 ,((MMStorageCart)minecart).getItemCollectionRangeY() , ((MMStorageCart)minecart).getItemRange());
 				break;
 			default:
-				list	= minecart.getBukkitEntity().getNearbyEntities(((MinecartManiaStorageCart)minecart).getItemRange() ,((MinecartManiaStorageCart)minecart).getItemCollectionRangeY() , ((MinecartManiaStorageCart)minecart).getItemRange());
+				list	= minecart.getBukkitEntity().getNearbyEntities(((MMStorageCart)minecart).getItemRange() ,((MMStorageCart)minecart).getItemCollectionRangeY() , ((MMStorageCart)minecart).getItemRange());
 				break;
 			}		
 			doMinecartItemCollection(minecart, list);

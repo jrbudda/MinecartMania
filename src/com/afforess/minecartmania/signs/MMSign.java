@@ -1,8 +1,6 @@
-package com.afforess.minecartmania;
+package com.afforess.minecartmania.signs;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import com.afforess.minecartmania.signs.SignAction;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.StringUtils;

@@ -6,7 +6,6 @@ public  class Logger {
 	protected static java.util.logging.Logger  log = com.afforess.minecartmania.MinecartMania.getInstance().getLogger();
 	protected static DebugMode mode = DebugMode.NORMAL;
 	protected static Logger instance = null;
-	private static LinkedList<String> queuedLog = new LinkedList<String>();
 
 	public static void time(String s, Object ...args) {
 		timeCore(s, true, args);

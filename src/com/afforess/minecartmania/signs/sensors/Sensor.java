@@ -3,7 +3,7 @@ package com.afforess.minecartmania.signs.sensors;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public interface Sensor{
 

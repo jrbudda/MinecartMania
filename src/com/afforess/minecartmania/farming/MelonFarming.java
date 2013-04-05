@@ -7,13 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class MelonFarming extends FarmingBase {
 
     private static Random rand = new Random();
     
-	public static void doAutoFarm(MinecartManiaStorageCart minecart)
+	public static void doAutoFarm(MMStorageCart minecart)
 	{
 		if(isMelonFarmingActive(minecart))
 		{
@@ -41,7 +41,7 @@ public class MelonFarming extends FarmingBase {
 	}
 
 
-	private static boolean isMelonFarmingActive(MinecartManiaStorageCart minecart)
+	private static boolean isMelonFarmingActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Melon);
 	}

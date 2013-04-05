@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmania.MMSign;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.actions.ForceUnlockChestAction;
 import com.afforess.minecartmania.utils.SignUtils;
 

@@ -17,7 +17,7 @@ public class NewControlBlock {
 		this.actions = actions;
 	}
 
-	public boolean execute(com.afforess.minecartmania.MMMinecart minecart, Location loc) {
+	public boolean execute(com.afforess.minecartmania.minecarts.MMMinecart minecart, Location loc) {
 		boolean success = false;
 
 		for (SignAction a:actions){	

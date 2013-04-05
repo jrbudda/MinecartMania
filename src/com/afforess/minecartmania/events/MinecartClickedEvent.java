@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class MinecartClickedEvent extends MinecartManiaEvent implements MinecartEvent{
 	boolean action = false;

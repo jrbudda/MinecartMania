@@ -2,8 +2,6 @@ package com.afforess.minecartmania.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.farming.CactusFarming;
 import com.afforess.minecartmania.farming.MelonFarming;
@@ -11,6 +9,8 @@ import com.afforess.minecartmania.farming.PumpkinFarming;
 import com.afforess.minecartmania.farming.SugarFarming;
 import com.afforess.minecartmania.farming.WheatFarming;
 import com.afforess.minecartmania.farming.WoodFarming;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class FarmingActionListener implements Listener {
 	
@@ -25,7 +25,7 @@ public class FarmingActionListener implements Listener {
 					minecart.setDataValue("Farm Interval", interval - 1);
 				}
 				else {
-					MinecartManiaStorageCart cart = (MinecartManiaStorageCart) minecart;
+					MMStorageCart cart = (MMStorageCart) minecart;
 					minecart.setDataValue("Farm Interval", cart.getFarmingRange()/2);
 					WheatFarming.doAutoFarm(cart);
 					WoodFarming.doAutoFarm(cart);

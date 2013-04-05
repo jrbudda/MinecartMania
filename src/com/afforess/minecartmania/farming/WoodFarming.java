@@ -6,10 +6,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class WoodFarming extends FarmingBase {
-	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoFarm(MMStorageCart minecart) {
 		if (!isAutoTimberActive(minecart)) {
 			return;
 		}
@@ -62,7 +62,7 @@ public class WoodFarming extends FarmingBase {
 		}
 	}
 	
-	private static void removeLogs(Block tree, MinecartManiaStorageCart minecart)
+	private static void removeLogs(Block tree, MMStorageCart minecart)
 	{
 		if(tree != null && tree.getTypeId() == Item.LOG.getId() && minecart != null)
 		{
@@ -85,12 +85,12 @@ public class WoodFarming extends FarmingBase {
 		}		
 	}
 	
-	private static boolean isAutoTimberActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoTimberActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoTimber") != null;
 	}
 	
-	private static boolean isAutoForestActive(MinecartManiaStorageCart minecart)
+	private static boolean isAutoForestActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Wood) || minecart.getDataValue("AutoForest") != null;
 	}

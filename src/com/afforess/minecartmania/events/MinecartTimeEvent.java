@@ -2,7 +2,7 @@ package com.afforess.minecartmania.events;
 
 import java.util.Calendar;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class MinecartTimeEvent extends MinecartManiaEvent {
 	private MMMinecart minecart;	

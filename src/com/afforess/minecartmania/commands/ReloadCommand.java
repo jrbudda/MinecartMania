@@ -3,8 +3,8 @@ package com.afforess.minecartmania.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class ReloadCommand extends MinecartManiaCommand  {
 

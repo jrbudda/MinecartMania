@@ -20,7 +20,6 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.config.NewControlBlock;
 import com.afforess.minecartmania.config.Settings;
@@ -28,6 +27,7 @@ import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.events.ChestPoweredEvent;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.signs.sensors.GenericSensor;

@@ -6,14 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class CocoaFarming extends FarmingBase {
 
 	private static Random rand = new Random();
 
-	public static void doAutoFarm(MinecartManiaStorageCart minecart)
+	public static void doAutoFarm(MMStorageCart minecart)
 	{
 		if(isFarmingActive(minecart))
 		{
@@ -79,7 +79,7 @@ public class CocoaFarming extends FarmingBase {
 
 
 
-	private static boolean isFarmingActive(MinecartManiaStorageCart minecart)
+	private static boolean isFarmingActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Cocoa);
 	}

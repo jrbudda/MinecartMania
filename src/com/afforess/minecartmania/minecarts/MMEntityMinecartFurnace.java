@@ -1,17 +1,18 @@
-package com.afforess.minecartmania;
+package com.afforess.minecartmania.minecarts;
 
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_4_R1.Block;
-import net.minecraft.server.v1_4_R1.BlockMinecartTrack;
-import net.minecraft.server.v1_4_R1.Entity;
-import net.minecraft.server.v1_4_R1.EntityMinecart;
-import net.minecraft.server.v1_4_R1.IUpdatePlayerListBox;
-import net.minecraft.server.v1_4_R1.MathHelper;
-import net.minecraft.server.v1_4_R1.NBTTagCompound;
-import net.minecraft.server.v1_4_R1.World;
-import net.minecraft.server.v1_4_R1.WorldServer;
+import net.minecraft.server.v1_5_R2.Block;
+import net.minecraft.server.v1_5_R2.BlockMinecartTrack;
+import net.minecraft.server.v1_5_R2.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_5_R2.Entity;
+import net.minecraft.server.v1_5_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_5_R2.IUpdatePlayerListBox;
+import net.minecraft.server.v1_5_R2.MathHelper;
+import net.minecraft.server.v1_5_R2.NBTTagCompound;
+import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -20,18 +21,22 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 
-public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecart {
-	private int e;
-	private boolean f;
-	private final IUpdatePlayerListBox g;
-	private static final int[][][] matrix = new int[][][] { { { 0, 0, -1}, { 0, 0, 1}}, { { -1, 0, 0}, { 1, 0, 0}}, { { -1, -1, 0}, { 1, 0, 0}}, { { -1, 0, 0}, { 1, -1, 0}}, { { 0, 0, -1}, { 0, -1, 1}}, { { 0, -1, -1}, { 0, 0, 1}}, { { 0, 0, 1}, { 1, 0, 0}}, { { 0, 0, 1}, { -1, 0, 0}}, { { 0, 0, -1}, { -1, 0, 0}}, { { 0, 0, -1}, { 1, 0, 0}}};
-	private int j;
-	private double at;
-	private double au;
-	private double av;
-	private double aw;
-	private double ax;
+public class MMEntityMinecartFurnace extends net.minecraft.server.v1_5_R2.EntityMinecartFurnace implements IMMEntity{
 
+	//NMS
+	private boolean a;
+	private final IUpdatePlayerListBox b;
+	private String c;
+	private static final int[][][] matrix = new int[][][] { { { 0, 0, -1}, { 0, 0, 1}}, { { -1, 0, 0}, { 1, 0, 0}}, { { -1, -1, 0}, { 1, 0, 0}}, { { -1, 0, 0}, { 1, -1, 0}}, { { 0, 0, -1}, { 0, -1, 1}}, { { 0, -1, -1}, { 0, 0, 1}}, { { 0, 0, 1}, { 1, 0, 0}}, { { 0, 0, 1}, { -1, 0, 0}}, { { 0, 0, -1}, { -1, 0, 0}}, { { 0, 0, -1}, { 1, 0, 0}}};
+	private int e;
+	private double f;
+	private double g;
+	private double h;
+	private double i;
+	private double j;
+
+
+	//Mine
 	private final double defaultpassengerFriction =  0.996999979019165D;
 	private final double defaultemptyFriction  = 0.9599999785423279D;
 	private final double defaultgravity = 0.03999999910593033D;
@@ -71,10 +76,13 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 	private boolean isNew = true;
 
-	public MMEntityMinecart(World world) {
+	public MMEntityMinecartFurnace(World world) {
 		super(world);
-		this.g = world != null ? world.a(this) : null;
+		this.a = false;
 		this.m = true;
+		this.a(0.98F, 0.7F);
+		this.height = this.length / 2.0F;
+		this.b = world != null ? world.a(this) : null;
 	}
 
 
@@ -85,7 +93,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		int zBlock = MathHelper.floor(this.locZ);
 
 		for(int i = -1; i <=2 ;i++){
-			if (BlockMinecartTrack.e(this.world.getTypeId(xBlock, yBlock + i, zBlock))) {
+			if (BlockMinecartTrack.d_(this.world.getTypeId(xBlock, yBlock + i, zBlock))) {
 				return i ;
 			}
 		}
@@ -112,7 +120,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		int zBlock = MathHelper.floor(this.locZ);
 		blockBeneathtype = this.world.getTypeId(xBlock, yBlock, zBlock);
 		blockBeneathData = this.world.getData(xBlock, yBlock, zBlock);
-		onRails = 	BlockMinecartTrack.e(this.world.getTypeId(xBlock, yBlock, zBlock)) && this.motY <=0;
+		onRails = 	BlockMinecartTrackAbstract.d_(this.world.getTypeId(xBlock, yBlock, zBlock)) && this.motY <=0;
 		onPoweredPoweredRail = false;
 		onUnpoweredPoweredRail = false;	
 
@@ -127,7 +135,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		if(onRails){
 
 			slopedata = blockBeneathData;
-			if (((BlockMinecartTrack) Block.byId[blockBeneathtype]).p()) {
+			if (((BlockMinecartTrackAbstract) Block.byId[blockBeneathtype]).e()) {
 				slopedata &= 7;
 			}
 
@@ -159,7 +167,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 	}
 
 	@Override
-	public void j_() {
+	public void l_() {
 
 		move();		
 
@@ -177,12 +185,12 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		float prevPitch = this.pitch;
 		// CraftBukkit end
 
-		if (this.g != null) {
-			this.g.a();
+		if (this.b != null) {
+			this.b.a();
 		}
 
 		if (this.j() > 0) {
-			this.h(this.j() - 1);
+			this.i(this.j() - 1);
 		}
 
 		if (this.getDamage() > 0) {
@@ -193,9 +201,9 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			this.C();
 		}
 
-		if (this.h() && this.random.nextInt(4) == 0) {
-			this.world.addParticle("largesmoke", this.locX, this.locY + 0.8D, this.locZ, 0.0D, 0.0D, 0.0D);
-		}
+		//		if (this.h() && this.random.nextInt(4) == 0) {
+		//			this.world.addParticle("largesmoke", this.locX, this.locY + 0.8D, this.locZ, 0.0D, 0.0D, 0.0D);
+		//		}
 
 		int i;
 
@@ -203,12 +211,12 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			this.world.methodProfiler.a("portal");
 			//	MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
 
-			i = this.z();
-			if (this.ao) {
+			i = this.y();
+			if (this.ap) {
 				if (true ){// ||minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
-					if (this.vehicle == null && this.ap++ >= i) {
-						this.ap = i;
-						this.portalCooldown = this.ab();
+					if (this.vehicle == null && this.aq++ >= i) {
+						this.aq = i;
+						this.portalCooldown = this.aa();
 						byte b0;
 
 						if (this.world.worldProvider.dimension == -1) {
@@ -217,18 +225,18 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 							b0 = -1;
 						}
 
-						this.b(b0);
+						this.c(b0);
 					}
 
-					this.ao = false;
+					this.ap = false;
 				}
 			} else {
-				if (this.ap > 0) {
-					this.ap -= 4;
+				if (this.aq > 0) {
+					this.aq -= 4;
 				}
 
-				if (this.ap < 0) {
-					this.ap = 0;
+				if (this.aq < 0) {
+					this.aq = 0;
 				}
 			}
 
@@ -243,23 +251,23 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		if (this.world.isStatic) {
 			//	com.afforess.minecartmaniacore.debug.MinecartManiaLogger.info(" j static " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
+			if (this.e > 0) {
+				double d0 = this.locX + (this.f - this.locX) / (double) this.e;
+				double d1 = this.locY + (this.g - this.locY) / (double) this.e;
+				double d2 = this.locZ + (this.h - this.locZ) / (double) this.e;
+				double d3 = MathHelper.g(this.i - (double) this.yaw);
 
-			if (this.j > 0) {
-				double d0 = this.locX + (this.at - this.locX) / (double) this.j;
-				double d1 = this.locY + (this.au - this.locY) / (double) this.j;
-				double d2 = this.locZ + (this.av - this.locZ) / (double) this.j;
-				double d3 = MathHelper.g(this.aw - (double) this.yaw);
-
-				this.yaw = (float) ((double) this.yaw + d3 / (double) this.j);
-				this.pitch = (float) ((double) this.pitch + (this.ax - (double) this.pitch) / (double) this.j);
-				--this.j;
+				this.yaw = (float) ((double) this.yaw + d3 / (double) this.e);
+				this.pitch = (float) ((double) this.pitch + (this.j - (double) this.pitch) / (double) this.e);
+				--this.e;
 				this.setPosition(d0, d1, d2);
 				this.b(this.yaw, this.pitch);
 			} else {
 				this.setPosition(this.locX, this.locY, this.locZ);
 				this.b(this.yaw, this.pitch);
 			}
-		} 
+		}
+
 		else {
 
 			//TODO: Clean this unholy mess up.
@@ -406,27 +414,27 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		}
 
 
-		//powered cart	
-		if (this.type == 2) {
-			double d18 = this.b * this.b + this.c * this.c;
-			if (d18 > 1.0E-4D) {
-				d18 = (double) MathHelper.sqrt(d18);
-				this.b /= d18;
-				this.c /= d18;
-				double d19 = 0.04D;
-
-				this.motX *= 0.800000011920929D;
-				//	this.motY *= 0.0D;
-				this.motZ *= 0.800000011920929D;
-				this.motX += this.b * d19;
-				this.motZ += this.c * d19;
-			} else {
-				//powered minecart friction with no fuel?		
-				this.motX *= 0.8999999761581421D;
-				//	this.motY *= 0.0D;
-				this.motZ *= 0.8999999761581421D;
-			}
-		}
+		//		//powered cart	
+		//		if (this.type == 2) {
+		//			double d18 = this.b * this.b + this.c * this.c;
+		//			if (d18 > 1.0E-4D) {
+		//				d18 = (double) MathHelper.sqrt(d18);
+		//				this.b /= d18;
+		//				this.c /= d18;
+		//				double d19 = 0.04D;
+		//
+		//				this.motX *= 0.800000011920929D;
+		//				//	this.motY *= 0.0D;
+		//				this.motZ *= 0.800000011920929D;
+		//				this.motX += this.b * d19;
+		//				this.motZ += this.c * d19;
+		//			} else {
+		//				//powered minecart friction with no fuel?		
+		//				this.motX *= 0.8999999761581421D;
+		//				//	this.motY *= 0.0D;
+		//				this.motZ *= 0.8999999761581421D;
+		//			}
+		//		}
 
 
 		//stop motion if very slow.
@@ -450,7 +458,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		double d24 = this.lastZ - this.locZ;
 		if (d23 * d23 + d24 * d24 > 0.001D) {
 			this.yaw = (float) (Math.atan2(d24, d23) * 180.0D / 3.141592653589793D);
-			if (this.f) {
+			if (this.a) {
 				this.yaw += 180.0F;
 			}
 		}
@@ -459,7 +467,7 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 		if (d25 < -170.0D || d25 >= 170.0D) {
 			this.yaw += 180.0F;
-			this.f = !this.f;
+			this.a = !this.a;
 		}
 
 		this.b(this.yaw, this.pitch);
@@ -490,9 +498,9 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		if (list != null && !list.isEmpty()) {
 			for (int l1 = 0; l1 < list.size(); ++l1) {
 				Entity entity = (Entity) list.get(l1);
-				if (entity != this.passenger && entity.M() && entity instanceof EntityMinecart) {
+				if (entity != this.passenger && entity.L() && entity instanceof EntityMinecartAbstract) {
 					//bump the other cart.
-					if (!(entity instanceof MMEntityMinecart) ||  !((MMEntityMinecart)entity).frozen){
+					if (!(entity instanceof MMEntityMinecartFurnace) ||  !((MMEntityMinecartFurnace)entity).frozen){
 						if(this.collisions)	entity.collide(this);
 					}
 				}
@@ -507,17 +515,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 
 			this.passenger = null;
 		}
-
-		if (this.e > 0) {
-			--this.e;
-		}
-
-		if (this.e <= 0) {
-			this.b = this.c = 0.0D;
-		}
-
-		this.e(this.e > 0);
-
 
 	}
 
@@ -709,24 +706,6 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 			Logger.motion(" j corrected " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 
-			double d21;
-
-			if (this.type == 2) {
-				//something do with fuel?
-				d21 = this.b * this.b + this.c * this.c;
-				if (d21 > 1.0E-4D && this.motX * this.motX + this.motZ * this.motZ > 0.001D) {
-					d21 = (double) MathHelper.sqrt(d21);
-					this.b /= d21;
-					this.c /= d21;
-					if (this.b * this.motX + this.c * this.motZ < 0.0D) {
-						this.b = 0.0D;
-						this.c = 0.0D;
-					} else {
-						this.b = this.motX;
-						this.c = this.motZ;
-					}
-				}
-			}
 
 			//				if (onPoweredRail) {
 			//					d21 = Math.sqrt(this.motX * this.motX + this.motZ * this.motZ);
@@ -785,4 +764,85 @@ public class MMEntityMinecart extends net.minecraft.server.v1_4_R1.EntityMinecar
 		}
 	}
 
+	public  int getType(){
+		return 2;
+	}
+	//interface
+
+	@Override
+	public boolean getUphill() {
+		return uphill;
+	}
+
+
+	@Override
+	public boolean getDownhill() {
+		return downhill;
+	}
+
+
+	@Override
+	public boolean getOnRails() {
+		return onRails;
+	}
+
+
+	@Override
+	public EntityMinecartAbstract getEntity() {
+		return this;
+	}
+
+
+	@Override
+	public void setCollisions(boolean value) {
+		this.collisions = value;
+	}
+
+
+	@Override
+	public void setDerailedFriction(double value) {
+		this.derailedFrictioPercent = value;
+	}
+
+
+	@Override
+	public void setEmptyFriction(double value) {
+		this.emptyFrictionPercent = value;
+	}
+
+
+	@Override
+	public void setMaxPushSpeed(double value) {
+		this.MaxPushSpeedPercent = value;
+	}
+
+
+	@Override
+	public void setPassengerFriction(double value) {
+		this.passengerFrictionPercent = value;
+	}
+
+
+	@Override
+	public void setSlopeSpeed(double value) {
+		this.slopeSpeedPercent = value;
+	}
+
+
+	@Override
+	public void setFrozen(boolean value) {
+		this.frozen = value;
+	}
+
+
+	@Override
+	public boolean getFrozen() {
+		return frozen;
+	}
+
+
+	@Override
+	public void setMagnetic(boolean value) {
+		this.magnetic = value;
+	}
 }

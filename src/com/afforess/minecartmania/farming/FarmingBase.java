@@ -6,12 +6,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.utils.StorageMinecartUtils;
 
 public abstract class FarmingBase {
 	
-	protected static ArrayList<Block> findRoots(MinecartManiaStorageCart minecart, int blockId)
+	protected static ArrayList<Block> findRoots(MMStorageCart minecart, int blockId)
 	{
 		ArrayList<Block> allBlocks = StorageMinecartUtils.getBlocksInRange(minecart);
 		
@@ -53,7 +53,7 @@ public abstract class FarmingBase {
 	 * @param farmType
 	 * @return
 	 */
-	public static boolean isFarmingActive(MinecartManiaStorageCart minecart, String farmType)
+	public static boolean isFarmingActive(MMStorageCart minecart, String farmType)
 	{
 		Object value = minecart.getDataValue("Farm");
 		if(value != null && value instanceof String) {

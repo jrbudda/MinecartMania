@@ -8,14 +8,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.farming.FarmType;
 import com.afforess.minecartmania.farming.FarmingBase;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class StorageMinecartUtils {
 
-	public static void doAutoFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoFarm(MMStorageCart minecart) {
 		if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class StorageMinecartUtils {
 		}
 	}
 
-	public static void doAutoCactusFarm(MinecartManiaStorageCart minecart) {
+	public static void doAutoCactusFarm(MMStorageCart minecart) {
 		if((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
 			return;
 		}
@@ -167,7 +167,7 @@ public class StorageMinecartUtils {
 		}
 	}
 
-	public static void doAutoFertilize(MinecartManiaStorageCart minecart) {
+	public static void doAutoFertilize(MMStorageCart minecart) {
 		return; // Todo: Make this work right without flashing trees/crops.
 		/* 
 		if (minecart.getDataValue("AutoFertilize") == null) {
@@ -244,7 +244,7 @@ public class StorageMinecartUtils {
 	 * @param minecart
 	 * @return
 	 */
-	public static ArrayList<Block> getBlocksInRange(MinecartManiaStorageCart minecart)
+	public static ArrayList<Block> getBlocksInRange(MMStorageCart minecart)
 	{
 		Location loc = minecart.getLocation().clone();
 		int range = minecart.getFarmingRange();

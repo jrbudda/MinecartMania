@@ -7,12 +7,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmania.MMMinecart;
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
+import com.afforess.minecartmania.signs.MMSign;
 
 public abstract class ChestStorageUtil {
 	
@@ -64,8 +64,8 @@ public abstract class ChestStorageUtil {
 					return false;
 				}
 				
-				if (minecart instanceof MinecartManiaStorageCart) {
-					MinecartManiaStorageCart storageCart = (MinecartManiaStorageCart)minecart;
+				if (minecart instanceof MMStorageCart) {
+					MMStorageCart storageCart = (MMStorageCart)minecart;
 					boolean failed = false;
 					for (ItemStack item : storageCart.getInventory().getContents()) {
 						if (!chest.addItem(item)) {
@@ -111,7 +111,7 @@ public abstract class ChestStorageUtil {
 		return false;
 	}
 
-	public static void doItemCompression(MinecartManiaStorageCart minecart) {
+	public static void doItemCompression(MMStorageCart minecart) {
 
 	}
 

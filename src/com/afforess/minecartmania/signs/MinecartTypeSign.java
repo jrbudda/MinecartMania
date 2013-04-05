@@ -1,6 +1,5 @@
 package com.afforess.minecartmania.signs;
 
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
 

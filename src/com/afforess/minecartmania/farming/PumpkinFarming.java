@@ -6,10 +6,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmania.entity.Item;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 
 public class PumpkinFarming extends FarmingBase {    
-	public static void doAutoFarm(MinecartManiaStorageCart minecart)
+	public static void doAutoFarm(MMStorageCart minecart)
 	{
 		if(isPumpkinFarmingActive(minecart))
 		{
@@ -34,7 +34,7 @@ public class PumpkinFarming extends FarmingBase {
 	}
 
 
-	private static boolean isPumpkinFarmingActive(MinecartManiaStorageCart minecart)
+	private static boolean isPumpkinFarmingActive(MMStorageCart minecart)
 	{
 		return FarmingBase.isFarmingActive(minecart, FarmType.Pumpkin);
 	}

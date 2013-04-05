@@ -6,9 +6,9 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import com.afforess.minecartmania.MMSign;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class ChestUtil {

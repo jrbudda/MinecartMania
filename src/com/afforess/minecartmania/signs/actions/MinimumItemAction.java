@@ -1,8 +1,8 @@
 package com.afforess.minecartmania.signs.actions;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.entity.AbstractItem;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.ItemUtils;
 
@@ -12,7 +12,7 @@ public class MinimumItemAction extends SignAction{
 	public boolean execute(MMMinecart minecart) {
 		if (minecart.isStorageMinecart()) {
 			for (AbstractItem item : items) {
-				((MinecartManiaStorageCart)minecart).setMinimumItem(item.type(), item.getAmount());
+				((MMStorageCart)minecart).setMinimumItem(item.type(), item.getAmount());
 			}
 			return true;
 		}

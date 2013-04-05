@@ -2,15 +2,13 @@ package com.afforess.minecartmania.listeners;
 
 import java.util.ArrayList;
 
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 
 public class ChunkListener implements Listener{
 	public static final int CHUNK_RANGE = 2; //this is necessary to keep the minecarts ticking.

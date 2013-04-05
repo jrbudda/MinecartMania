@@ -2,7 +2,7 @@ package com.afforess.minecartmania.signs.actions;
 
 import org.bukkit.Location;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 
 public class HoldingForAction extends SignAction{

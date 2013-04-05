@@ -3,7 +3,6 @@ package com.afforess.minecartmania.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.events.MinecartLaunchedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
@@ -11,6 +10,7 @@ import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartMotionStartEvent;
 import com.afforess.minecartmania.events.MinecartMotionStopEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.signs.actions.HoldSignData;
 import com.afforess.minecartmania.utils.SignCommands;
@@ -49,7 +49,7 @@ public class SignsActionListener implements Listener{
 		}*/
 		if (data != null) {
 			data.setTime(data.getTime() - 1);
-			com.afforess.minecartmania.MMSign sign = SignManager.getOrCreateMMSign(data.getSignLocation());
+			com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(data.getSignLocation());
 			if (sign == null) {
 				minecart.setMotion(data.getMotion());
 				minecart.setDataValue("hold sign data", null);

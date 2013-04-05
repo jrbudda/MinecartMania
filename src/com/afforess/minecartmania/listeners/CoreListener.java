@@ -14,7 +14,6 @@ import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
@@ -25,6 +24,7 @@ import com.afforess.minecartmania.events.MinecartClickedEvent;
 import com.afforess.minecartmania.events.MinecartDirectionChangeEvent;
 import com.afforess.minecartmania.events.MinecartMotionStartEvent;
 import com.afforess.minecartmania.events.MinecartMotionStopEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.actions.StationAction;
 import com.afforess.minecartmania.utils.MinecartUtils;
 import com.afforess.minecartmania.utils.SignCommands;

@@ -1,41 +1,42 @@
-package com.afforess.minecartmania;
+package com.afforess.minecartmania.minecarts;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.server.v1_4_R1.EntityMinecart;
-import net.minecraft.server.v1_4_R1.NBTTagCompound;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_5_R2.EntityMinecartRideable;
+import net.minecraft.server.v1_5_R2.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_5_R2.entity.CraftMinecart;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.PoweredMinecart;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaChest;
 import com.afforess.minecartmania.entity.MinecartManiaInventory;
-import com.afforess.minecartmania.entity.MinecartManiaStorageCart;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.entity.MinecartOwner;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.utils.BlockUtils;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
@@ -85,8 +86,15 @@ public class MMMinecart {
 
 	protected boolean locked = false;
 
+	protected int oldid = 0;
+
+	public int oldID(){
+		return oldid;
+	}
+
 	public MMMinecart(Minecart cart) {
 		minecart = replaceCart(cart); 
+		oldid = cart.getEntityId();
 		initialize();
 		findOwner();
 	}
@@ -95,7 +103,7 @@ public class MMMinecart {
 
 	public MMMinecart(Minecart cart, String owner) {
 		minecart = replaceCart(cart);
-
+		oldid = cart.getEntityId();
 		this.owner = new MinecartOwner(owner);
 		this.owner.setId(minecart.getEntityId());
 		this.owner.setWorld(minecart.getWorld().getName());
@@ -417,8 +425,8 @@ public class MMMinecart {
 		return minecart.getEntityId();
 	}
 
-	public MMEntityMinecart getHandle(){
-		return (MMEntityMinecart) ((CraftMinecart) minecart).getHandle();
+	public IMMEntity getHandle(){
+		return  (IMMEntity) ((CraftMinecart) minecart).getHandle();
 	}
 
 	public Item getItemBeneath() {
@@ -454,7 +462,7 @@ public class MMMinecart {
 	 * @return X motion
 	 */
 	public double getMotionX() {
-		return getHandle().motX;
+		return getHandle().getEntity().motX;
 	}
 
 	/**
@@ -462,7 +470,7 @@ public class MMMinecart {
 	 * @return Y motion
 	 */
 	public double getMotionY() {
-		return getHandle().motY;
+		return getHandle().getEntity().motY;
 	}
 
 	/**
@@ -470,7 +478,7 @@ public class MMMinecart {
 	 * @return Z motion
 	 */
 	public double getMotionZ() {
-		return getHandle().motZ;
+		return getHandle().getEntity().motZ;
 	}
 
 	/**
@@ -638,8 +646,8 @@ public class MMMinecart {
 		}
 
 		if(isOnRails()){
-			ArrayList<com.afforess.minecartmania.MMSign> list = SignUtils.getAdjacentMMSignListforDirection(minecart.getLocation(), 2, getDirection());
-			for (com.afforess.minecartmania.MMSign sign : list) {
+			ArrayList<com.afforess.minecartmania.signs.MMSign> list = SignUtils.getAdjacentMMSignListforDirection(minecart.getLocation(), 2, getDirection());
+			for (com.afforess.minecartmania.signs.MMSign sign : list) {
 				com.afforess.minecartmania.debug.Logger.debug("Processing sign " + sign.getLine(0));
 				sign.executeActions(this);
 			}	
@@ -689,13 +697,13 @@ public class MMMinecart {
 
 		minecart.setMaxSpeed(0.4D * Settings.DefaultMaxSpeedPercent /100 );
 
-		getHandle().derailedFrictioPercent = Settings.DefaultDerailedFrictionPercent;
-		getHandle().emptyFrictionPercent = Settings.DefaultEmptyFrictionPercent;
-		getHandle().slopeSpeedPercent = Settings.SlopeSpeedPercent;
-		getHandle().passengerFrictionPercent = Settings.DefaultPassengerFrictionPercent;
-		getHandle().magnetic = Settings.DefaultMagneticRail;
-		getHandle().collisions = Settings.MinecartCollisions;
-		getHandle().MaxPushSpeedPercent = Settings.MaxPassengerPushPercent;
+		getHandle().setDerailedFriction(Settings.DefaultDerailedFrictionPercent);
+		getHandle().setEmptyFriction(Settings.DefaultEmptyFrictionPercent) ;
+		getHandle().setSlopeSpeed(Settings.SlopeSpeedPercent);
+		getHandle().setPassengerFriction(Settings.DefaultPassengerFrictionPercent);
+		getHandle().setMagnetic(Settings.DefaultMagneticRail);
+		getHandle().setCollisions(Settings.MinecartCollisions);
+		getHandle().setMaxPushSpeed(Settings.MaxPassengerPushPercent);
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
 
@@ -754,16 +762,16 @@ public class MMMinecart {
 	}
 
 	public boolean isFrozen(){
-		return getHandle().frozen;
+		return getHandle().getFrozen();
 	}
 
 
 	public boolean isGoingDownhill(){
-		return getHandle().uphill;
+		return getHandle().getDownhill();
 	}
 
 	public boolean isGoingUphill(){
-		return getHandle().uphill;
+		return getHandle().getUphill();
 	}
 
 	/**
@@ -805,22 +813,17 @@ public class MMMinecart {
 		return NewControlBlockList.isControlBlock(getItemBeneath());
 	}
 
-	public boolean isOnPoweredRails() {
-		return getHandle().onPoweredPoweredRail;
-	}
+
 
 	public boolean isOnRails() {
-		return getHandle().onRails;
+		return getHandle().getOnRails();
 	}
 
 	public boolean isOnSlope(){
-		return getHandle().uphill || getHandle().downhill;
+		return isGoingUphill()|| isGoingDownhill();
 	}
 
 
-	public boolean isOnUnPoweredRails() {
-		return getHandle().onUnpoweredPoweredRail;
-	}
 
 	/**
 	 * Attempts to determine if the given object is the owner if this minecart.
@@ -882,7 +885,7 @@ public class MMMinecart {
 			if(returnToOwner || !Settings.RemoveDeadCarts)	items.add(new ItemStack(getType().toMaterial(), 1));
 
 			if (isStorageMinecart()) {
-				for (ItemStack i : ((MinecartManiaStorageCart)this).getContents()) {
+				for (ItemStack i : ((MMStorageCart)this).getContents()) {
 					if (i != null && i.getTypeId() != 0) {
 						items.add(i);
 					}
@@ -1034,37 +1037,71 @@ public class MMMinecart {
 		}
 	}
 
-	public Minecart replaceCart(Minecart m){
-		EntityMinecart mhandle = ((CraftMinecart) m).getHandle();
-		if(!(mhandle instanceof MMEntityMinecart) ) {	
-			World nmsworld = ((org.bukkit.craftbukkit.v1_4_R1.CraftWorld) m.getWorld()).getHandle();
-			MMEntityMinecart nmscart = new MMEntityMinecart(nmsworld);
-			nmscart.type = mhandle.type;	
-			nmscart.locX = m.getLocation().getX();
-			nmscart.locY =  m.getLocation().getY();
-			nmscart.locZ = m.getLocation().getZ();
-			nmscart.yaw = mhandle.yaw;
-			nmscart.pitch = mhandle.pitch;
-			nmscart.motX = mhandle.motX;
-			nmscart.motY = mhandle.motY;
-			nmscart.motZ = mhandle.motZ;
-			nmscart.ah = mhandle.ah;
+	protected Minecart replaceCart(Minecart m){
+		EntityMinecartAbstract mhandle = ((CraftMinecart) m).getHandle();
 
-			if (nmsworld.addEntity(nmscart)){
-				Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
-				m.remove();	
-			}
+		//check if already a mm entity.
+		if(mhandle instanceof MMEntityMinecartTNT || 
+				mhandle instanceof MMEntityMinecartHopper || 
+				mhandle instanceof MMEntityMinecartSpawner || 
+				mhandle instanceof MMEntityMinecartRideable ||
+				mhandle instanceof MMEntityMinecartChest ||
+				mhandle instanceof MMEntityMinecartFurnace)
+			return m;
 
-			return	(Minecart) nmscart.getBukkitEntity();
+
+		//create new MM entity
+		World nmsworld = ((org.bukkit.craftbukkit.v1_5_R2.CraftWorld) m.getWorld()).getHandle();
+
+		EntityMinecartAbstract nmscart = null;
+
+		if(mhandle instanceof EntityMinecartRideable){
+			nmscart = new MMEntityMinecartRideable(nmsworld);
 		}
-		return m;
+		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartChest){
+			nmscart = new MMEntityMinecartChest(nmsworld);
+		}
+		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartFurnace){
+			nmscart = new MMEntityMinecartFurnace(nmsworld);
+		}
+		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartHopper){
+			nmscart = new MMEntityMinecartHopper(nmsworld);
+		}
+		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartMobSpawner){
+			nmscart = new MMEntityMinecartSpawner(nmsworld);
+		}
+		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartTNT){
+			nmscart = new MMEntityMinecartTNT(nmsworld);
+		}
+
+		if (nmscart == null){
+			Logger.severe("Unsupported minecart type " + mhandle.getClass().toString());
+			return m;
+		}
+
+		nmscart.locX = m.getLocation().getX();
+		nmscart.locY =  m.getLocation().getY();
+		nmscart.locZ = m.getLocation().getZ();
+		nmscart.yaw = mhandle.yaw;
+		nmscart.pitch = mhandle.pitch;
+		nmscart.motX = mhandle.motX;
+		nmscart.motY = mhandle.motY;
+		nmscart.motZ = mhandle.motZ;
+
+		if (nmsworld.addEntity(nmscart)){
+			Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
+			m.remove();	
+		}
+
+		return	(Minecart) nmscart.getBukkitEntity();
+
 	}
 
 
-	private MMMinecart replaceEntity(Minecart newMinecart) {
-		this.minecart = replaceCart(newMinecart);
-		return this;
-	}
+	//	private MMMinecart replaceEntity(Minecart newMinecart) {
+	//		this.minecart = replaceCart(newMinecart);
+	//		return this;
+	//	}
 
 	public void reverse() {
 		setMotionX(getMotionX() * -1);
@@ -1095,11 +1132,11 @@ public class MMMinecart {
 	 * @param freeze
 	 */
 	public void setFrozen(boolean freeze){
-		getHandle().frozen = freeze;
+		getHandle().setFrozen(freeze);
 	}
 
 	public void setMagnetic(boolean val) {
-		getHandle().magnetic = val;
+		getHandle().setMagnetic(val);
 
 	}
 
@@ -1147,15 +1184,15 @@ public class MMMinecart {
 	}
 
 	public void setMotionX(double motionX){
-		getHandle().motX = (motionX <= minecart.getMaxSpeed()) ?  motionX : minecart.getMaxSpeed();
+		getHandle().getEntity().motX = (motionX <= minecart.getMaxSpeed()) ?  motionX : minecart.getMaxSpeed();
 	}
 
 	public void setMotionY(double motionY){
-		getHandle().motY = motionY;
+		getHandle().getEntity().motY  = motionY;
 	}
 
 	public void setMotionZ(double motionZ){
-		getHandle().motZ = (motionZ <= minecart.getMaxSpeed()) ?  motionZ : minecart.getMaxSpeed();
+		getHandle().getEntity().motZ  = (motionZ <= minecart.getMaxSpeed()) ?  motionZ : minecart.getMaxSpeed();
 	}
 
 	public void setPassenger(Entity entity) {
@@ -1233,7 +1270,7 @@ public class MMMinecart {
 		}
 		else{
 
-			getHandle().setLocation(location.getX(), location.getY(), location.getZ(), minecart.getLocation().getYaw(), minecart.getLocation().getPitch());
+			getHandle().getEntity().setLocation(location.getX(), location.getY(), location.getZ(), minecart.getLocation().getYaw(), minecart.getLocation().getPitch());
 			return this;
 		}
 

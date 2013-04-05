@@ -4,9 +4,9 @@ import java.util.Set;
 
 import org.bukkit.util.Vector;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.events.MinecartIntersectionEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.actions.StationAction;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 

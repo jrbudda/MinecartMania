@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.MMMinecart;
 import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.MinecartManiaPlayer;
@@ -16,6 +15,7 @@ import com.afforess.minecartmania.events.MinecartClickedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartMeetsConditionEvent;
 import com.afforess.minecartmania.events.MinecartMotionStartEvent;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.stations.StationConditions;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;

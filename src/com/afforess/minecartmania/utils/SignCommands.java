@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 import org.bukkit.block.Block;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.sensors.Sensor;
 import com.afforess.minecartmania.signs.sensors.SensorManager;
 

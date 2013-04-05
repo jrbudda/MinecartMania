@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.events;
 
-import com.afforess.minecartmania.MMMinecart;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public class MinecartDirectionChangeEvent extends MinecartManiaEvent{
