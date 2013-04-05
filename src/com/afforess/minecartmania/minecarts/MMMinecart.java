@@ -1089,7 +1089,7 @@ public class MMMinecart {
 		nmscart.motZ = mhandle.motZ;
 
 		if (nmsworld.addEntity(nmscart)){
-			Logger.debug("Replaceing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
+			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
 			m.remove();	
 		}
 

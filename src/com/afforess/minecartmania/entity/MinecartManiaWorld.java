@@ -64,6 +64,7 @@ public class MinecartManiaWorld {
 				}
 				
 				if(replacedIDs.contains(id)){
+					Logger.debug("Duplication requested for " + id);
 					//special case got call for minecart we already replaced, happens when multiple events are queued for the vanilla cart.
 					for (Entry<Integer, MMMinecart> ent : minecarts.entrySet()) {
 						if(ent.getValue().oldID() == id){
