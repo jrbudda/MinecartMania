@@ -117,6 +117,7 @@ public class MinecartManiaWorld {
 	 */
 	@ThreadSafe
 	public static void delMinecartManiaMinecart(int entityID) {
+		replacedIDs.remove(minecarts.get(entityID).oldID());
 		minecarts.remove(new Integer(entityID));
 	}
 
@@ -187,11 +188,13 @@ public class MinecartManiaWorld {
 			Entry<Integer, MMMinecart> e = i.next();
 			if (e.getValue().isDead() || e.getValue().isDead()) {
 				i.remove();
+				replacedIDs.remove(e.getValue().oldID());
 			}
 			else {
 				if (idList.contains(e.getValue().getEntityId())) {
 					Logger.severe("Warning! Duplicate minecart's detected! Deleting duplicate. Minecart ID: " + e.getValue().getEntityId());
 					i.remove();
+					replacedIDs.remove(e.getValue().oldID());
 				}
 				else {
 					idList.add(e.getValue().getEntityId());
