@@ -79,6 +79,7 @@ public class PotatoFarming extends FarmingBase {
 							if (aboveId == Material.AIR.getId()) {
 								if (minecart.removeItem(Material.POTATO_ITEM.getId())) {
 									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.POTATO.getId(), x, y+1, z);
+									MinecartManiaWorld.setBlockData(minecart.getWorld(), x, y+1, z, 0);
 									dirty = true;
 								}
 							}

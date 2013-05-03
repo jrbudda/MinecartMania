@@ -756,14 +756,20 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_5_R2.EntityMine
 	@Override
 	public boolean c(NBTTagCompound nbttagcompound) {
 		if (!this.dead) {
-			nbttagcompound.setString("id", "Minecart");
-			this.d(nbttagcompound);
+			nbttagcompound.setString("id", "MinecartTNT");
+			this.e(nbttagcompound);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
+	@Override
+	public boolean d(NBTTagCompound nbttagcompound) {
+		return this.c(nbttagcompound);
+	}
+	
+	
 	public  int getType(){
 		return 3;
 	}

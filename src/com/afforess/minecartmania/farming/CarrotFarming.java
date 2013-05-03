@@ -75,6 +75,7 @@ public class CarrotFarming extends FarmingBase {
 							if (aboveId == Material.AIR.getId()) {
 								if (minecart.removeItem(Material.CARROT_ITEM.getId())) {
 									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CARROT.getId(), x, y+1, z);
+									MinecartManiaWorld.setBlockData(minecart.getWorld(), x, y+1, z, 0);
 									dirty = true;
 								}
 							}

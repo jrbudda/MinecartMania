@@ -15,7 +15,7 @@ import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.MMSign;
 
 public abstract class ChestStorageUtil {
-	
+
 	public static Location getSpawnLocation(MinecartManiaChest chest) {
 		Block center = chest.getLocation().getBlock();
 		Location result = getAdjacentTrack(center);
@@ -24,7 +24,7 @@ public abstract class ChestStorageUtil {
 		}
 		return result;
 	}
-	
+
 	private static Location getAdjacentTrack(Block center) {
 		if (MinecartUtils.isTrack(center.getRelative(-1, 0, 0))) {
 			return center.getRelative(-1, 0, 0).getLocation();
@@ -52,33 +52,29 @@ public abstract class ChestStorageUtil {
 		}
 		return null;
 	}
-	
+
 	public static boolean doMinecartCollection(MMMinecart minecart) {
 		if (minecart.getBlockTypeAhead() != null) {
 			if (minecart.getBlockTypeAhead().getType().getId() == Item.CHEST.getId()) {
-				
-				
+
+
 				MinecartManiaChest chest = MinecartManiaWorld.getMinecartManiaChest((Chest)minecart.getBlockTypeAhead().getState());
-				
+
 				if (ChestUtil.isNoCollection(chest)) {
 					return false;
 				}
-				
+
 				if (minecart instanceof MMStorageCart) {
 					MMStorageCart storageCart = (MMStorageCart)minecart;
-					boolean failed = false;
-					for (ItemStack item : storageCart.getInventory().getContents()) {
+					for (ItemStack item : storageCart.getInventory().getContents().clone()) {
 						if (!chest.addItem(item)) {
-							failed = true;
 							break;
 						}
-					}
-					if (!failed) {
-						storageCart.getInventory().clear();
+						else storageCart.getInventory().remove(item);
 					}
 				}
+
 				if (chest.addItem(minecart.getType().getId())) {
-					
 					minecart.killNoReturn();
 					return true;
 				}
@@ -115,66 +111,66 @@ public abstract class ChestStorageUtil {
 
 	}
 
-//	public static boolean doEmptyChestInventory(MinecartManiaStorageCart minecart) {
-//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
-//		for (Sign sign : signList) {
-//			if (sign.getLine(0).toLowerCase().contains("trash items")) {
-//				//return InventoryUtils.doInventoryTransaction(minecart, null, sign, minecart.getDirectionOfMotion());
-//			}
-//		}
-//		return false;
-//	}
-//
-//	public static void setMaximumItems(MinecartManiaStorageCart minecart) {
-//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
-//		for (Sign sign : signList) {
-//			if (sign.getLine(0).toLowerCase().contains("max items")) {
-//				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
-//				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
-//				for (AbstractItem item : items) {
-//					if (!item.isInfinite()) {
-//						minecart.setMaximumItem(item.type(), item.getAmount());
-//					}
-//				}
-//				sign.setLine(0, "[Max Items]");
-//				if (!sign.getLine(1).isEmpty()) {
-//					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
-//				}
-//				if (!sign.getLine(2).isEmpty()) {
-//					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
-//				}
-//				if (!sign.getLine(3).isEmpty()) {
-//					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
-//				}
-//				sign.update();
-//			}
-//		}
-//	}
-//	
-//	public static void setMinimumItems(MinecartManiaStorageCart minecart) {
-//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
-//		for (Sign sign : signList) {
-//			if (sign.getLine(0).toLowerCase().contains("min items")) {
-//				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
-//				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
-//				for (AbstractItem item : items) {
-//					if (!item.isInfinite()) {
-//						minecart.setMinimumItem(item.type(), item.getAmount());
-//					}
-//				}
-//				sign.setLine(0, "[Min Items]");
-//				if (!sign.getLine(1).isEmpty()) {
-//					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
-//				}
-//				if (!sign.getLine(2).isEmpty()) {
-//					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
-//				}
-//				if (!sign.getLine(3).isEmpty()) {
-//					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
-//				}
-//				sign.update();
-//			}
-//		}
-//	}
+	//	public static boolean doEmptyChestInventory(MinecartManiaStorageCart minecart) {
+	//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+	//		for (Sign sign : signList) {
+	//			if (sign.getLine(0).toLowerCase().contains("trash items")) {
+	//				//return InventoryUtils.doInventoryTransaction(minecart, null, sign, minecart.getDirectionOfMotion());
+	//			}
+	//		}
+	//		return false;
+	//	}
+	//
+	//	public static void setMaximumItems(MinecartManiaStorageCart minecart) {
+	//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+	//		for (Sign sign : signList) {
+	//			if (sign.getLine(0).toLowerCase().contains("max items")) {
+	//				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
+	//				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
+	//				for (AbstractItem item : items) {
+	//					if (!item.isInfinite()) {
+	//						minecart.setMaximumItem(item.type(), item.getAmount());
+	//					}
+	//				}
+	//				sign.setLine(0, "[Max Items]");
+	//				if (!sign.getLine(1).isEmpty()) {
+	//					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
+	//				}
+	//				if (!sign.getLine(2).isEmpty()) {
+	//					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
+	//				}
+	//				if (!sign.getLine(3).isEmpty()) {
+	//					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
+	//				}
+	//				sign.update();
+	//			}
+	//		}
+	//	}
+	//	
+	//	public static void setMinimumItems(MinecartManiaStorageCart minecart) {
+	//		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+	//		for (Sign sign : signList) {
+	//			if (sign.getLine(0).toLowerCase().contains("min items")) {
+	//				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
+	//				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
+	//				for (AbstractItem item : items) {
+	//					if (!item.isInfinite()) {
+	//						minecart.setMinimumItem(item.type(), item.getAmount());
+	//					}
+	//				}
+	//				sign.setLine(0, "[Min Items]");
+	//				if (!sign.getLine(1).isEmpty()) {
+	//					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
+	//				}
+	//				if (!sign.getLine(2).isEmpty()) {
+	//					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
+	//				}
+	//				if (!sign.getLine(3).isEmpty()) {
+	//					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
+	//				}
+	//				sign.update();
+	//			}
+	//		}
+	//	}
 
 }

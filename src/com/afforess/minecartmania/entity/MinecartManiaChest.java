@@ -313,6 +313,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
 		
 			
 		//if we fail, reset the inventory back to previous values
+		com.afforess.minecartmania.debug.Logger.debug("Failed to remove item from MMChest!");
 		getChest().getInventory().setContents(backup);
 		return false;
 	}
