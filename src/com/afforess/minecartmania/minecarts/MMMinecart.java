@@ -5,16 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.server.v1_5_R2.EntityMinecartAbstract;
-import net.minecraft.server.v1_5_R2.EntityMinecartRideable;
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_5_R3.EntityMinecartAbstract;
+import net.minecraft.server.v1_5_R3.EntityMinecartRideable;
+import net.minecraft.server.v1_5_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftMinecart;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
@@ -1051,26 +1051,26 @@ public class MMMinecart {
 
 
 		//create new MM entity
-		World nmsworld = ((org.bukkit.craftbukkit.v1_5_R2.CraftWorld) m.getWorld()).getHandle();
+		World nmsworld = ((org.bukkit.craftbukkit.v1_5_R3.CraftWorld) m.getWorld()).getHandle();
 
 		EntityMinecartAbstract nmscart = null;
 
 		if(mhandle instanceof EntityMinecartRideable){
 			nmscart = new MMEntityMinecartRideable(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartChest){
+		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartChest){
 			nmscart = new MMEntityMinecartChest(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartFurnace){
+		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartFurnace){
 			nmscart = new MMEntityMinecartFurnace(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartHopper){
+		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartHopper){
 			nmscart = new MMEntityMinecartHopper(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartMobSpawner){
+		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartMobSpawner){
 			nmscart = new MMEntityMinecartSpawner(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R2.EntityMinecartTNT){
+		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartTNT){
 			nmscart = new MMEntityMinecartTNT(nmsworld);
 		}
 

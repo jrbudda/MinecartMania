@@ -3,16 +3,16 @@ package com.afforess.minecartmania.minecarts;
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_5_R2.Block;
-import net.minecraft.server.v1_5_R2.BlockMinecartTrack;
-import net.minecraft.server.v1_5_R2.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_5_R2.Entity;
-import net.minecraft.server.v1_5_R2.EntityMinecartAbstract;
-import net.minecraft.server.v1_5_R2.IUpdatePlayerListBox;
-import net.minecraft.server.v1_5_R2.MathHelper;
-import net.minecraft.server.v1_5_R2.NBTTagCompound;
-import net.minecraft.server.v1_5_R2.World;
-import net.minecraft.server.v1_5_R2.WorldServer;
+import net.minecraft.server.v1_5_R3.Block;
+import net.minecraft.server.v1_5_R3.BlockMinecartTrack;
+import net.minecraft.server.v1_5_R3.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_5_R3.Entity;
+import net.minecraft.server.v1_5_R3.EntityMinecartAbstract;
+import net.minecraft.server.v1_5_R3.IUpdatePlayerListBox;
+import net.minecraft.server.v1_5_R3.MathHelper;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_5_R3.World;
+import net.minecraft.server.v1_5_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 
-public class MMEntityMinecartChest extends net.minecraft.server.v1_5_R2.EntityMinecartChest implements IMMEntity{
+public class MMEntityMinecartChest extends net.minecraft.server.v1_5_R3.EntityMinecartChest implements IMMEntity{
 
 	//NMS
 	private boolean a;
@@ -73,7 +73,6 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_5_R2.EntityMi
 		return onRails && !onPoweredPoweredRail && !onUnpoweredPoweredRail;
 	}
 
-
 	private boolean isNew = true;
 
 	public MMEntityMinecartChest(World world) {
@@ -87,7 +86,6 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_5_R2.EntityMi
 
 
 	private int findRailsYOffset(){
-
 		int xBlock = MathHelper.floor(this.locX);
 		int yBlock = MathHelper.floor(this.locY);
 		int zBlock = MathHelper.floor(this.locZ);

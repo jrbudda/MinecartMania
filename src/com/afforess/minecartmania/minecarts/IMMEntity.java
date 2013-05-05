@@ -7,7 +7,7 @@ public interface IMMEntity {
 	public boolean getOnRails();
 	public boolean getFrozen();
 	
-	public net.minecraft.server.v1_5_R2.EntityMinecartAbstract getEntity();
+	public net.minecraft.server.v1_5_R3.EntityMinecartAbstract getEntity();
 	
 	public void setCollisions(boolean value);
 	public void setDerailedFriction(double value);
