@@ -56,7 +56,12 @@ public class SpawnAction extends SignAction {
 				else if(	line.toLowerCase().contains("[spawn:pow")){
 					spawnType = Item.POWERED_MINECART;
 				}
-
+				else if(	line.toLowerCase().contains("[spawn:hop")){
+					spawnType = Item.MINECART_HOPPER;
+				}
+				else if(	line.toLowerCase().contains("[spawn:tnt")){
+					spawnType = Item.MINECART_TNT;
+				}
 				return true;
 			}
 		}

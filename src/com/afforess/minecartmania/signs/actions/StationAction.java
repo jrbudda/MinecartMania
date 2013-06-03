@@ -63,10 +63,7 @@ public class StationAction extends SignAction {
 
 			}
 		}
-
-
 		return false;
-
 	}
 
 	public static boolean MatchStationName(MMMinecart minecart, String str) {
@@ -94,8 +91,8 @@ public class StationAction extends SignAction {
 			.replace("?", ".") //converts ?
 			.replace("#", "\\d") //converts #
 			.replace("@", "[a-zA-Z]"); //converts @  NOTE:[A-Z] is probably not needed here since everything is lower case anyway, but left for completeness.
-		case 2: //full regex //note the lack of break before this, case 1 comes down here after converting
-			valid = station.matches(st); 
+		case 2: //full regex //note the lack of break before this, case 1 comes down here after converting	
+			valid = station.toLowerCase().matches(st); 
 			break;
 		}
 		if (valid && minecart.hasPlayerPassenger() && MinecartManiaWorld.getMinecartManiaPlayer(minecart.getPlayerPassenger()).getDataValue("Reset Station Data") == null) {

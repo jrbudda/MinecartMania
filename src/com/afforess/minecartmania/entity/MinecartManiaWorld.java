@@ -17,6 +17,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
@@ -564,6 +565,9 @@ public class MinecartManiaWorld {
 		}
 		else if (type.getId() == Item.STORAGE_MINECART.getId()) {
 			m = (Minecart)w.spawn(loc, StorageMinecart.class);
+		}
+		else if (type.getId() == Item.MINECART_HOPPER.getId()) {
+			m = (Minecart)w.spawn(loc, HopperMinecart.class);
 		}
 
 		if(m == null || !m.isValid()){
