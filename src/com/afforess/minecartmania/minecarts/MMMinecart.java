@@ -5,16 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.server.v1_5_R3.EntityMinecartAbstract;
-import net.minecraft.server.v1_5_R3.EntityMinecartRideable;
-import net.minecraft.server.v1_5_R3.World;
+import net.minecraft.server.v1_6_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_6_R1.EntityMinecartRideable;
+import net.minecraft.server.v1_6_R1.World;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftMinecart;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftMinecart;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
@@ -381,10 +381,6 @@ public class MMMinecart {
 	 */
 	public final Chunk getChunkAt() {
 		return getLocation().getBlock().getChunk();
-	}
-
-	public int getDamage() {
-		return minecart.getDamage();
 	}
 
 	/**
@@ -1051,26 +1047,26 @@ public class MMMinecart {
 			return m;
 
 		//create new MM entity
-		World nmsworld = ((org.bukkit.craftbukkit.v1_5_R3.CraftWorld) m.getWorld()).getHandle();
+		World nmsworld = ((org.bukkit.craftbukkit.v1_6_R1.CraftWorld) m.getWorld()).getHandle();
 
 		EntityMinecartAbstract nmscart = null;
 
 		if(mhandle instanceof EntityMinecartRideable){
 			nmscart = new MMEntityMinecartRideable(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartChest){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R1.EntityMinecartChest){
 			nmscart = new MMEntityMinecartChest(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartFurnace){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R1.EntityMinecartFurnace){
 			nmscart = new MMEntityMinecartFurnace(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartHopper){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R1.EntityMinecartHopper){
 			nmscart = new MMEntityMinecartHopper(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartMobSpawner){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R1.EntityMinecartMobSpawner){
 			nmscart = new MMEntityMinecartSpawner(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_5_R3.EntityMinecartTNT){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R1.EntityMinecartTNT){
 			nmscart = new MMEntityMinecartTNT(nmsworld);
 		}
 

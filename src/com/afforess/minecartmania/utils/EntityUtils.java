@@ -49,8 +49,8 @@ public class EntityUtils {
 
 	static boolean canStand(org.bukkit.block.Block base){
 		org.bukkit.block.Block below = base.getRelative(0, -1, 0);
-		if(!below.isEmpty() && net.minecraft.server.v1_5_R3.Block.byId[below.getTypeId()].material.isSolid()){
-			if(base.isEmpty() || net.minecraft.server.v1_5_R3.Block.byId[base.getTypeId()].material.isSolid()==false){
+		if(!below.isEmpty() && net.minecraft.server.v1_6_R1.Block.byId[below.getTypeId()].material.isSolid()){
+			if(base.isEmpty() || net.minecraft.server.v1_6_R1.Block.byId[base.getTypeId()].material.isSolid()==false){
 				return true;
 			}
 		}

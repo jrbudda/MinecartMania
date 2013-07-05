@@ -143,7 +143,6 @@ public class CoreListener implements Listener{
 			minecart.setDataValue("Last Damage", System.currentTimeMillis());
 			//End Workaround
 
-			Logger.debug("Damage: " + event.getDamage() + " Existing: " + minecart.getDamage());
 
 			if (minecart.getPassenger() != null) {
 				if (minecart.isOnRails()) {

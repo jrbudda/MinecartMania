@@ -3,16 +3,16 @@ package com.afforess.minecartmania.minecarts;
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_5_R3.Block;
-import net.minecraft.server.v1_5_R3.BlockMinecartTrack;
-import net.minecraft.server.v1_5_R3.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityMinecartAbstract;
-import net.minecraft.server.v1_5_R3.IUpdatePlayerListBox;
-import net.minecraft.server.v1_5_R3.MathHelper;
-import net.minecraft.server.v1_5_R3.NBTTagCompound;
-import net.minecraft.server.v1_5_R3.World;
-import net.minecraft.server.v1_5_R3.WorldServer;
+import net.minecraft.server.v1_6_R1.Block;
+import net.minecraft.server.v1_6_R1.BlockMinecartTrack;
+import net.minecraft.server.v1_6_R1.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_6_R1.Entity;
+import net.minecraft.server.v1_6_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_6_R1.IUpdatePlayerListBox;
+import net.minecraft.server.v1_6_R1.MathHelper;
+import net.minecraft.server.v1_6_R1.NBTTagCompound;
+import net.minecraft.server.v1_6_R1.World;
+import net.minecraft.server.v1_6_R1.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 
-public class MMEntityMinecartRideable extends net.minecraft.server.v1_5_R3.EntityMinecartRideable implements IMMEntity {
+public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R1.EntityMinecartRideable implements IMMEntity {
 
 	//NMS
 	private boolean a;
@@ -93,7 +93,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_5_R3.Entit
 		int zBlock = MathHelper.floor(this.locZ);
 
 		for(int i = -1; i <=2 ;i++){
-			if (BlockMinecartTrack.d_(this.world.getTypeId(xBlock, yBlock + i, zBlock))) {
+			if (BlockMinecartTrack.e_(this.world.getTypeId(xBlock, yBlock + i, zBlock))) {
 				return i ;
 			}
 		}
@@ -120,7 +120,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_5_R3.Entit
 		int zBlock = MathHelper.floor(this.locZ);
 		blockBeneathtype = this.world.getTypeId(xBlock, yBlock, zBlock);
 		blockBeneathData = this.world.getData(xBlock, yBlock, zBlock);
-		onRails = 	BlockMinecartTrackAbstract.d_(this.world.getTypeId(xBlock, yBlock, zBlock)) && this.motY <=0;
+		onRails = 	BlockMinecartTrackAbstract.e_(this.world.getTypeId(xBlock, yBlock, zBlock)) && this.motY <=0;
 		onPoweredPoweredRail = false;
 		onUnpoweredPoweredRail = false;	
 
