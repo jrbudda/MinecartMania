@@ -37,10 +37,8 @@ import com.afforess.minecartmania.listeners.StationsActionListener;
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.minecarts.MMDataTable;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmania.signs.sensors.Sensor;
 import com.afforess.minecartmania.signs.sensors.SensorDataTable;
 import com.afforess.minecartmania.signs.sensors.SensorManager;
-import com.avaje.ebean.config.ServerConfig;
 
 public class MinecartMania extends JavaPlugin {
 
@@ -60,12 +58,6 @@ public class MinecartMania extends JavaPlugin {
 		file = this.getFile();
 
 		writeItemsFile();
-
-		//	MinecartManiaConfigurationParser.read("MinecartManiaConfiguration.xml", dataDirectory, new CoreSettingParser());
-		//	MinecartManiaConfigurationParser.read("MinecartManiaLocale.xml", getDataFolder(), new LocaleParser());
-		//MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new AdminControlsSettingParser());
-		//MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new SignCommandsSettingParser());
-		//	MinecartManiaConfigurationParser.read(this.getDescription().getName().replace("Reborn", "") + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new ChestControlSettingParser());
 
 		permissions = new PermissionManager(getServer());
 
@@ -100,46 +92,12 @@ public class MinecartMania extends JavaPlugin {
 
 		setupDatabase();
 
-		//tryLoadOldSensors();
-
 		SensorManager.loadsensors();	
 
 		if(Settings.PreserveMinecartsonRiderLogout)	LoadCartsForRiders();
 
-
-		//		StringBuilder sb = new StringBuilder();
-		//		Logger.debug("Sign Permissions:");
-		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
-		//			sb.append("           minecartmania.signs.create." + sa.getInstance().getPermissionName() + ": true\n");
-		//		}
-		//
-		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
-		//			sb.append("    minecartmania.signs.create." + sa.getInstance().getPermissionName() + ":\n");
-		//			sb.append("        description: " + sa.getInstance().getFriendlyName() + "\n");
-		//			sb.append("        default: true\n");
-		//		}
-		//		
-		//		sb.append("|=Sign Type|=Permission");
-		//		for(ActionList sa : com.afforess.minecartmania.signs.ActionList.values()){
-		//			sb.append("|" + sa.getInstance().getFriendlyName() + "|minecartmania.signs.create." + sa.getInstance().getPermissionName() + "\n");
-		//
-		//		}
-		//		
-		//		File f = new File("plugins" + File.separator + "MinecartMania" + File.separator + "signperms.txt");
-		//		PrintWriter pw;
-		//		
-		//		try {
-		//			pw = new PrintWriter(f);
-		//			pw.append(sb.toString());
-		//			pw.close();
-		//		} catch (FileNotFoundException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
 		Logger.info( this.getDescription().getName() + " version " + this.getDescription().getVersion() + " is enabled!" );
 	}
-
 
 	private void LoadCartsForRiders(){
 		//this will only be used on a /reload, since otherwise no players are online.
@@ -175,61 +133,10 @@ public class MinecartMania extends JavaPlugin {
 					e.printStackTrace();
 					Logger.logCore(e.getMessage(), false);
 				}
-
 			}
 			else{
-				//	data = new MinecartManiaMinecartDataTable(minecart, "MMRESTART");
 			}
 		}
-	}
-
-	private void tryLoadOldSensors(){
-
-		java.io.File f = null;
-
-		for (File fi : this.getDataFolder().listFiles()){
-			if (fi.getName().toLowerCase().contains("minecartmaniarebornsigncommands.db")){
-				f = fi;
-				break;
-			}
-		}
-
-		if (f ==null){
-			return;
-		}
-
-		Logger.debug("Found old sensor DB. Attempting load...");
-
-		com.avaje.ebean.config.DataSourceConfig dsc = new com.avaje.ebean.config.DataSourceConfig();
-		dsc.setUsername("temp");
-		dsc.setPassword("temp");
-		dsc.setDriver("org.sqlite.JDBC");
-		dsc.setIsolationLevel(8);
-
-		dsc.setUrl("jdbc:sqlite:plugins/minecartmania/minecartmaniarebornsigncommands.db");
-
-		ServerConfig config = new ServerConfig();
-		config.setDataSourceConfig(dsc);
-		config.setName("Old DB");
-		config.addClass(com.afforess.minecartmaniasigncommands.sensor.SensorDataTable.class);
-		config.addJar("MinecartMania.jar");
-		SensorManager.database = com.avaje.ebean.EbeanServerFactory.create(config);
-
-		SensorManager.loadsensors();
-
-		if (SensorManager.getCount() > 0) {
-			Logger.severe("Found sensors in old db, moving...");
-			// loaded old sensors
-			for	  (Sensor s :SensorManager.getSensorList().values() ){
-				SensorManager.saveSensor(s);
-			}
-			Logger.severe("Complete. Removing old db.");
-		}
-
-		SensorManager.database = this.getDatabase();
-
-		f.delete();
-
 	}
 
 	public void onDisable(){
@@ -285,7 +192,6 @@ public class MinecartMania extends JavaPlugin {
 		}
 		return null;
 	}
-
 
 	private void writeItemsFile() {
 		try {
@@ -351,18 +257,28 @@ public class MinecartMania extends JavaPlugin {
 		}
 		catch (PersistenceException ex) {
 			Logger.debug("Installing database");
-			installDDL();
+			try {
+				installDDL();	
+			} catch (Exception e) {
+			}		
 		}
 	}
 
 	protected void setupDatabase() {
-		int version = getDatabaseVersion();
-		switch(version) {
-		case 0: setupInitialDatabase(); break;
-		case 1: upgradeDatabase(1); break;
-		case 2: upgradeDatabase(2); break;
-		case 3: upgradeDatabase(3); break;
-		case 4: /*up to date database*/break;
+		try {
+
+			int version = getDatabaseVersion();
+			switch(version) {
+			case 0: setupInitialDatabase(); break;
+			case 1: upgradeDatabase(1); break;
+			case 2: upgradeDatabase(2); break;
+			case 3: upgradeDatabase(3); break;
+			case 4: /*up to date database*/break;
+
+			} 
+		}
+		catch (Exception e) {
+
 		}
 	}
 
@@ -444,18 +360,26 @@ public class MinecartMania extends JavaPlugin {
 		Settings.EmptyStorageMinecartKillTimer = getConfig().getInt("EmptyStorageMinecartKillTimer",60);
 		Settings.MaxPassengerPushPercent = getConfig().getInt("MaxPushSpeedPercent",25);
 
+		Settings.StationSignRange = getConfig().getInt("StationSignRange",2);
+		Settings.SpawnSignRange = getConfig().getInt("SpawnSignRange",2);
+		Settings.EjectSignRange = getConfig().getInt("EjectSignRange",8);
+		Settings.ActionSignRange = getConfig().getInt("ActionSignRange",2);
+		
 		Settings.ItemCollectionRange = getConfig().getInt("DefaultItemCollectionRange",4);
 		Settings.ItemCollectionRangeY = getConfig().getInt("DefaultItemCollectionRangeY",0);
 
 		Settings.FarmRange = getConfig().getInt("DefaultFarmingRange",4);
 		Settings.FarmRangeY = getConfig().getInt("DefaultFarmingRangeY",4);
-		
+
 		Settings.RememeberEjectionLocations = getConfig().getBoolean("RememberEjectionLocations",true); 
 
 		Settings.StationsUseOldDirections = getConfig().getBoolean("StationsUseOldDirections",false);
 
 		Settings.RailAdjusterTool =  Item.getNearestMatchingItem(getConfig().getString("RailAdjusterTool","270"));
 
+
+		
+		
 		com.afforess.minecartmania.config.Settings.StationCommandSaveAfterUse = true;
 
 		ConfigurationSection blocks = getConfig().getConfigurationSection("ControlBlocks");

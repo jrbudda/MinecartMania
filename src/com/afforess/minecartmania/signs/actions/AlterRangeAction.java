@@ -4,7 +4,6 @@ import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
-import com.afforess.minecartmania.utils.MathUtils;
 import com.afforess.minecartmania.utils.StringUtils;
 
 public class AlterRangeAction extends SignAction{
@@ -48,7 +47,8 @@ public class AlterRangeAction extends SignAction{
 				if (split.length != 2) continue;
 				try {
 					this.range = Integer.parseInt(StringUtils.getNumber(split[1]));
-					this.range = MathUtils.range(this.range, Settings.MaxAllowedRange, 0);
+					if (this.range > Settings.MaxAllowedRange) this.range = Settings.MaxAllowedRange;
+					if (this.range < 0) this.range = 0;
 				}
 				catch (Exception e) {
 					this.range = -1;

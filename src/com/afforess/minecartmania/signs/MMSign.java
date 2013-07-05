@@ -12,7 +12,6 @@ import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.StringUtils;
-import com.afforess.minecartmania.utils.WordUtils;
 
 public class MMSign{
 	protected List<SignAction> actions = new ArrayList<SignAction>();
@@ -44,7 +43,7 @@ public class MMSign{
 		
 		for (int i = 0; i < max; i++) {
 			if (!getLine(i).isEmpty() && getLine(i).length() <= 14) {
-				setLine(i, WordUtils.capitalize(StringUtils.addBrackets((getLine(i)))));
+				setLine(i, StringUtils.capitalize(StringUtils.addBrackets((getLine(i)))));
 			}
 		}
 

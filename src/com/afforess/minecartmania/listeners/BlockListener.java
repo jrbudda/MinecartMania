@@ -145,7 +145,7 @@ public class BlockListener implements Listener{
 		MinecartMania.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(MinecartMania.getInstance(),new Runnable(){
 			@Override
 			public void run() {
-				MMSign sign = SignManager.getOrCreateMMSign(event.getBlock().getLocation(), event.getPlayer());
+			 SignManager.getOrCreateMMSign(event.getBlock().getLocation(), event.getPlayer());
 			}
 		});
 

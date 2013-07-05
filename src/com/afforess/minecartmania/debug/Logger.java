@@ -1,7 +1,5 @@
 package com.afforess.minecartmania.debug;
 
-import java.util.LinkedList;
-
 public  class Logger {
 	protected static java.util.logging.Logger  log = com.afforess.minecartmania.MinecartMania.getInstance().getLogger();
 	protected static DebugMode mode = DebugMode.NORMAL;

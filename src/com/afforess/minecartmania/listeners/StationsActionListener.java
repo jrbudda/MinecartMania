@@ -82,14 +82,6 @@ public class StationsActionListener implements Listener {
 	}
 
 
-	//TODO this still necessary?
-	//	@EventHandler
-	//	public void onMinecartLaunchedEvent(MinecartLaunchedEvent event) {
-	//		if (event.isActionTaken()) {
-	//			return;
-	//		}
-	//		StationsCommands.processStation(event);
-	//	}
 
 	@EventHandler
 	public void onMinecartMotionStartEvent(MinecartMotionStartEvent event) {

@@ -30,7 +30,7 @@ public class StationAction extends SignAction {
 	}
 
 	public boolean processStation(MMMinecart minecart) {
-		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), 2);
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), Settings.StationSignRange);
 		Logger.debug("Found " + signList.size() + " signs near Station");
 		for (Sign sign : signList) {
 			convertCraftBookSorter(sign);
@@ -148,7 +148,7 @@ public class StationAction extends SignAction {
 
 	public static Set<CompassDirection> getRestrictedDirections(MMMinecart minecart) {
 		Set<CompassDirection> restricted = new HashSet<CompassDirection>();
-		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), 2);
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.getLocation(), Settings.StationSignRange);
 		for (Sign sign : signList) {
 			for (int i = 0; i < 4; i++) {
 				if (sign.getLine(i).toLowerCase().contains("restrict")) {

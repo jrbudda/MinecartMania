@@ -322,7 +322,7 @@ public class MinecartUtils {
 				LivingEntity victim = (LivingEntity)(e);
 
 				if (!(victim instanceof Player) && !(victim instanceof Wolf) && !victim.hasMetadata("NPC")) {					
-					if (Settings.isMinecartsKillMobs()) {
+					if (Settings.KillMobsOnTrack) {
 						victim.remove();
 					}
 				}

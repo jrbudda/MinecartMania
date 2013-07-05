@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.material.Sign;
 
-
 public class EntityUtils {
 
 	public static Location getValidLocation(Block base, int Yrange){

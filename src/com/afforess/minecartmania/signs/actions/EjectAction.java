@@ -43,7 +43,7 @@ public class EjectAction extends SignAction{
 
 		com.afforess.minecartmania.debug.Logger.debug("Looking for [eject at] signs");
 		//look around for unprocessed ejectat signs
-		ArrayList<MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), 8);
+		ArrayList<MMSign> list = SignUtils.getAdjacentMMSignList(minecart.getLocation(), com.afforess.minecartmania.config.Settings.EjectSignRange);
 		Double dist = null;
 		
 		for (com.afforess.minecartmania.signs.MMSign sign : list) {
@@ -58,7 +58,7 @@ public class EjectAction extends SignAction{
 		if (location== null) {	
 			com.afforess.minecartmania.debug.Logger.debug("Looking for [eject here] blocks");
 			//look around for unprocessed ejecthere blocks
-			Map<Location, NewControlBlock> blocklist = com.afforess.minecartmania.config.NewControlBlockList.getControlBlocksNearby(this.loc, 8);
+			Map<Location, NewControlBlock> blocklist = com.afforess.minecartmania.config.NewControlBlockList.getControlBlocksNearby(this.loc, com.afforess.minecartmania.config.Settings.EjectSignRange);
 			 dist = null;
 			for (Location l : blocklist.keySet()) {
 				NewControlBlock b = blocklist.get(l);

@@ -97,6 +97,15 @@ KillPlayersOnTrack: false
 #The minimum speed required to kill a player on collision, as a percentage of normal minecart max speed.
 KillPlayersOnTrackMinimumSpeed: 90
 
+#Sign Ranges - Change at your own risk, large values will impact server performance.
+#Number of blocks around the minecart that will be searched for action signs.
+ActionSignRange: 2
+#Number of blocks around the [Station] block that will be searched for station commands.
+StationSignRange: 2
+#Number of blocks around a [spawn] block or Chest that will be searched for spawn-type and spawn-direction commands
+SpawnSignRange: 2
+#number of blocks around a [Eject] that will be searched for Eject Here or Eject At instructions.
+EjectSignRange: 8
 
 #Item Handling
 DefaultItemCollectionRange: 4

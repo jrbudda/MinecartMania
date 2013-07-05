@@ -248,30 +248,7 @@ public class MinecartManiaWorld {
 		}
 	}
 
-	/**
-	 * Returns true if the chest with the given location was deleted, false if not.
-	 * @param the  location of the chest to delete
-	 */
-	public static boolean delMinecartManiaChest(Location v) {
-		if (chests.containsKey(v)) {
-			chests.remove(v);
-			return true;
-		}
-		return false;
-	}
 
-	/**
-	 * Returns an arraylist of all the MinecartManiaChests stored by this class
-	 * @return arraylist of all MinecartManiaChest
-	 */
-	public static ArrayList<MinecartManiaChest> getMinecartManiaChestList() {
-		Iterator<Entry<Location, MinecartManiaChest>> i = chests.entrySet().iterator();
-		ArrayList<MinecartManiaChest> chestList = new ArrayList<MinecartManiaChest>(chests.size());
-		while (i.hasNext()) {
-			chestList.add(i.next().getValue());
-		}
-		return chestList;
-	}
 
 	/**
 	 ** Returns a new MinecartManiaDispenser from storage if it already exists, or creates and stores a new MinecartManiaDispenser object, and returns it
@@ -297,30 +274,7 @@ public class MinecartManiaWorld {
 		}
 	}
 
-	/**
-	 ** Returns true if the dispenser with the given location was deleted, false if not.
-	 ** @param the location of the dispenser to delete
-	 **/
-	public static boolean delMinecartManiaDispenser(Location v) {
-		if (dispensers.containsKey(v)) {
-			dispensers.remove(v);
-			return true;
-		}
-		return false;
-	}
 
-	/**
-	 * Returns an arraylist of all the MinecartManiaDispensers stored by this class
-	 * @return arraylist of all MinecartManiaDispensers
-	 */
-	public static ArrayList<MinecartManiaDispenser> getMinecartManiaDispenserList() {
-		Iterator<Entry<Location, MinecartManiaDispenser>> i = dispensers.entrySet().iterator();
-		ArrayList<MinecartManiaDispenser> dispenserList = new ArrayList<MinecartManiaDispenser>(dispensers.size());
-		while (i.hasNext()) {
-			dispenserList.add(i.next().getValue());
-		}
-		return dispenserList;
-	}
 
 	/**
 	 ** Returns a new MinecartManiaFurnace from storage if it already exists, or creates and stores a new MinecartManiaFurnace object, and returns it
@@ -347,72 +301,23 @@ public class MinecartManiaWorld {
 		}
 	}
 
-	/**
-	 ** Returns true if the furnaces with the given location was deleted, false if not.
-	 ** @param the location of the furnaces to delete
-	 **/
-	public static boolean delMinecartManiaFurnace(Location v) {
-		if (furnaces.containsKey(v)) {
-			furnaces.remove(v);
-			return true;
-		}
-		return false;
-	}
 
-	/**
-	 * Returns an arraylist of all the MinecartManiaFurnaces stored by this class
-	 * @return arraylist of all MinecartManiaFurnaces
-	 */
-	public static ArrayList<MinecartManiaFurnace> getMinecartManiaFurnaceList() {
-		Iterator<Entry<Location, MinecartManiaFurnace>> i = furnaces.entrySet().iterator();
-		ArrayList<MinecartManiaFurnace> furnaceList = new ArrayList<MinecartManiaFurnace>(furnaces.size());
-		while (i.hasNext()) {
-			furnaceList.add(i.next().getValue());
-		}
-		return furnaceList;
-	}
 
 	/**
 	 ** Returns a new MinecartManiaPlayer from storage if it already exists, or creates and stores a new MinecartManiaPlayer object, and returns it
 	 ** @param the player to wrap
 	 **/
 	public static MinecartManiaPlayer getMinecartManiaPlayer(Player player) {
-		return getMinecartManiaPlayer(player.getName());
-	}
-
-	/**
-	 ** Returns a new MinecartManiaPlayer from storage if it already exists, or creates and stores a new MinecartManiaPlayer object, and returns it
-	 ** @param the name of the player to wrap
-	 **/	 
-	public static MinecartManiaPlayer getMinecartManiaPlayer(String player) {
-		MinecartManiaPlayer testPlayer = players.get(player);
+		MinecartManiaPlayer testPlayer = players.get(player.getName());
 		if (testPlayer == null) {
-			testPlayer = new MinecartManiaPlayer(player);
-			players.put(player, testPlayer);
+			testPlayer = new MinecartManiaPlayer(player.getName());
+			players.put(player.getName(), testPlayer);
 		}
 		if (testPlayer.isOnline()) {
 			testPlayer.updateInventory(testPlayer.getPlayer().getInventory());
 		}
 		return testPlayer;
 	}
-
-	public static void setMinecartManiaPlayer(MinecartManiaPlayer player, String name) {
-		players.put(name, player);
-	}
-
-	/**
-	 * Returns an arraylist of all the MinecartManiaPlayers stored by this class. These players may not be online.
-	 * @return arraylist of all MinecartManiaPlayers
-	 */
-	public static ArrayList<MinecartManiaPlayer> getMinecartManiaPlayerList() {
-		Iterator<Entry<String, MinecartManiaPlayer>> i = players.entrySet().iterator();
-		ArrayList<MinecartManiaPlayer> playerList = new ArrayList<MinecartManiaPlayer>(players.size());
-		while (i.hasNext()) {
-			playerList.add(i.next().getValue());
-		}
-		return playerList;
-	}
-
 
 
 	/**

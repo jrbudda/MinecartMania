@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 
+import com.afforess.minecartmania.entity.Item;
+import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
@@ -119,6 +121,28 @@ public class SignUtils {
 		return signList;
 	}
 
+	public static Item getNearbyMinecartTypeSpecifier(Location location, Item defaultItem){
+		com.afforess.minecartmania.debug.Logger.debug("Looking for [type:] signs");
+		ArrayList<MMSign> list = SignUtils.getAdjacentMMSignList(location, com.afforess.minecartmania.config.Settings.SpawnSignRange);
+
+		for (com.afforess.minecartmania.signs.MMSign sign : list) {
+			for (String l : sign.getLines()) {
+				if(	l.toLowerCase().contains("[type:stor")){
+					return Item.STORAGE_MINECART;
+				}
+				else if(	l.toLowerCase().contains("[type:pow")){
+					return Item.POWERED_MINECART;
+				}
+				else if(	l.toLowerCase().contains("[type:hop")){
+					return Item.MINECART_HOPPER;
+				}
+				else if(	l.toLowerCase().contains("[type:tnt")){
+					return Item.MINECART_TNT;
+				}
+			}
+		}
+		return defaultItem;	
+	}
 	
 	
 	static class SignDistanceComparator implements Comparator<Sign>

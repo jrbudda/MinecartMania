@@ -63,13 +63,14 @@ public  class Settings {
 	
 	public static boolean StackAllItems;
 
+	//Sign Ranges
+	public static int StationSignRange = 2;
+	public static int SpawnSignRange = 2;
+	public static int EjectSignRange = 8;
+	public static int ActionSignRange = 2;
 	//
 
 
-
-	public static boolean isMinecartsKillMobs() {
-		return KillMobsOnTrack;
-	}
 
 
 

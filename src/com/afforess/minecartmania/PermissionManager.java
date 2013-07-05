@@ -17,7 +17,6 @@ public class PermissionManager {
 		if (player == null || player.isOp()) {
 			return true;
 		}
-		//TODO do this properly in the plugin.yml
 		return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*") ;
 
 	}

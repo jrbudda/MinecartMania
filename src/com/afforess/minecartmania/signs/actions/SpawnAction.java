@@ -9,12 +9,13 @@ import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
+import com.afforess.minecartmania.utils.SignUtils;
 
 
 public class SpawnAction extends SignAction {
 	private HashMap<Location, Long> lastSpawn = new HashMap<Location, Long>();
 
-	Item spawnType = Item.MINECART;
+	Item spawnType = null;
 
 	@Override
 	public boolean execute(MMMinecart minecart) {
@@ -23,10 +24,20 @@ public class SpawnAction extends SignAction {
 		if (lastSpawn == null || (Math.abs(System.currentTimeMillis() - lastSpawn) > 1000)) {
 
 			Location spawn = loc.clone().add(0, 1, 0);
-			
+
 			if(!com.afforess.minecartmania.utils.MinecartUtils.isTrack(spawn.getBlock())) return false;
-				
-			final MMMinecart newminecart = MinecartManiaWorld.spawnMinecart(spawn, spawnType, null);
+
+			com.afforess.minecartmania.debug.Logger.debug(spawnType + "");
+			
+			//so it looks for signs every time...
+			Item spawntype = spawnType;
+			
+			if(spawntype==null){
+				//type not specified.. maybe control block?
+				spawntype = SignUtils.getNearbyMinecartTypeSpecifier(this.loc, Item.MINECART);
+			}
+		
+			MinecartManiaWorld.spawnMinecart(spawn, spawntype, null);
 
 			this.lastSpawn.put(loc, System.currentTimeMillis());
 
@@ -42,12 +53,15 @@ public class SpawnAction extends SignAction {
 		return false;
 	}
 
+
+
+
 	@Override
 	public boolean process(String[] lines) {
 		for (String line : lines) {
 			if (line.toLowerCase().contains("[spawn")) {
 				if(line.toLowerCase().contains("east") ||line.toLowerCase().contains("west") ||line.toLowerCase().contains("north") ||line.toLowerCase().contains("south") ) return false;
-				
+
 				this.executeAcceptsNull = true;
 
 				if(	line.toLowerCase().contains("[spawn:stor")){
@@ -62,6 +76,7 @@ public class SpawnAction extends SignAction {
 				else if(	line.toLowerCase().contains("[spawn:tnt")){
 					spawnType = Item.MINECART_TNT;
 				}
+
 				return true;
 			}
 		}

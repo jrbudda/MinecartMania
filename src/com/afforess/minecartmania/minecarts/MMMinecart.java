@@ -21,6 +21,7 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -646,7 +647,7 @@ public class MMMinecart {
 		}
 
 		if(isOnRails()){
-			ArrayList<com.afforess.minecartmania.signs.MMSign> list = SignUtils.getAdjacentMMSignListforDirection(minecart.getLocation(), 2, getDirection());
+			ArrayList<com.afforess.minecartmania.signs.MMSign> list = SignUtils.getAdjacentMMSignListforDirection(minecart.getLocation(), Settings.ActionSignRange, getDirection());
 			for (com.afforess.minecartmania.signs.MMSign sign : list) {
 				com.afforess.minecartmania.debug.Logger.debug("Processing sign " + sign.getLine(0));
 				sign.executeActions(this);
@@ -1049,7 +1050,6 @@ public class MMMinecart {
 				mhandle instanceof MMEntityMinecartFurnace)
 			return m;
 
-
 		//create new MM entity
 		World nmsworld = ((org.bukkit.craftbukkit.v1_5_R3.CraftWorld) m.getWorld()).getHandle();
 
@@ -1089,11 +1089,27 @@ public class MMMinecart {
 		nmscart.motZ = mhandle.motZ;
 
 		if (nmsworld.addEntity(nmscart)){
+			
 			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
+		
+			Minecart out = (Minecart) nmscart.getBukkitEntity();
+			
+			if (m instanceof StorageMinecart) {
+				//copy over any inventory
+				Inventory old = ((StorageMinecart)m).getInventory();
+				Inventory newi = ((StorageMinecart)out).getInventory();
+				for (ItemStack itemStack : old.getContents()) {
+				 if(itemStack!=null)  newi.addItem(itemStack);				
+				}		
+			}
+			
 			m.remove();	
+			return out;
+			
 		}
+	
+		return m;
 
-		return	(Minecart) nmscart.getBukkitEntity();
 
 	}
 

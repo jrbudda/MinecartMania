@@ -29,7 +29,7 @@ public class ChestUtil {
 
 
 	public static Location getSpawnLocationSignOverride(MinecartManiaChest chest) {
-		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
+		ArrayList<MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), com.afforess.minecartmania.config.Settings.SpawnSignRange);
 		Location spawn = chest.getLocation();
 		Location result = null;
 		Block neighbor = chest.getNeighborChest() != null ? chest.getNeighborChest().getLocation().getBlock() : null;

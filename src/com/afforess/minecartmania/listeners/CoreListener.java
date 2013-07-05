@@ -204,24 +204,6 @@ public class CoreListener implements Listener{
 	}
 
 
-	//	@EventHandler
-	//	public void onVehicleEnter(VehicleEnterEvent event) {
-
-	//TODO: ensure launch player on enter still works
-
-	//		//		if (ControlBlockList.getLaunchSpeed(minecart.getItemBeneath()) != 0.0D) {
-	//		//			if (!minecart.isMoving()) {
-	//		//				ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, 2);
-	//		//				for (Sign s : signs) {
-	//		//					com.afforess.minecartmania.signs.MMSign sign = SignManager.getOrCreateMMSign(s.getBlock());
-	//		//					if (sign.executeAction(minecart, LaunchPlayerAction.class)) {
-	//		//						break;
-	//		//					}
-	//		//				}
-	//		//			}
-	//		//		}
-
-	//	}
 
 	@EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
 	public void onVehicleEnter(VehicleEnterEvent event) {

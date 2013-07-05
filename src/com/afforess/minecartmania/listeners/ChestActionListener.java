@@ -1,5 +1,6 @@
 package com.afforess.minecartmania.listeners;
 
+
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +13,7 @@ import com.afforess.minecartmania.events.MinecartActionEvent;
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.utils.ChestStorageUtil;
 import com.afforess.minecartmania.utils.ChestUtil;
+import com.afforess.minecartmania.utils.SignUtils;
 
 
 public class ChestActionListener implements Listener{
@@ -38,7 +40,12 @@ public class ChestActionListener implements Listener{
 	}
 
 	private Item getMinecartType(MinecartManiaChest chest) {
-
+		//first look for sign control
+		Item out = SignUtils.getNearbyMinecartTypeSpecifier(chest.getLocation(), null);
+		
+		if(out !=null ) return out;
+		
+		//if no sign, use whats in the box. 
 		if (chest.contains(Item.MINECART)) {
 			return Item.MINECART;
 		}
@@ -48,31 +55,13 @@ public class ChestActionListener implements Listener{
 		else if (chest.contains(Item.POWERED_MINECART)) {
 			return Item.POWERED_MINECART;
 		}
+		else if (chest.contains(Item.MINECART_HOPPER)) {
+			return Item.MINECART_HOPPER;
+		}
+		else if (chest.contains(Item.MINECART_TNT)) {
+			return Item.MINECART_TNT;
+		}
 
-		//		ArrayList<com.afforess.minecartmania.MMSign> signList = SignUtils.getAdjacentMMSignList(chest.getLocation(), 2);
-		//		for (com.afforess.minecartmania.MMSign sign : signList) {
-		//			if (sign instanceof MinecartTypeSign) {
-		//				MinecartTypeSign type = (MinecartTypeSign)sign;
-		//				if (type.canDispenseMinecartType(Item.MINECART)) {
-		//					if (chest.contains(Item.MINECART)) {
-		//						return Item.MINECART;
-		//					}
-		//				}
-		//				if (type.canDispenseMinecartType(Item.POWERED_MINECART)) {
-		//					if (chest.contains(Item.POWERED_MINECART)) {
-		//						return Item.POWERED_MINECART;
-		//					}
-		//				}
-		//				if (type.canDispenseMinecartType(Item.STORAGE_MINECART)) {
-		//					if (chest.contains(Item.STORAGE_MINECART)) {
-		//						return Item.STORAGE_MINECART;
-		//					}
-		//				}
-		//			}
-		//		}
-		//
-		//
-		//		//Returns standard minecart by default
 
 		return Item.MINECART;
 
