@@ -111,13 +111,6 @@ public class PlayerListener implements Listener{
 	public void onPlayerEntityInteract(org.bukkit.event.player.PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof Minecart)) return;
 
-		MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getRightClicked());
-
-		if (minecart !=null && minecart.isLocked()) {
-			event.getPlayer().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
-			event.setCancelled(true);
-			return;
-		}
 
 	}
 

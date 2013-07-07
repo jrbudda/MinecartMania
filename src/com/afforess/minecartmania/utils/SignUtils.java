@@ -139,6 +139,9 @@ public class SignUtils {
 				else if(	l.toLowerCase().contains("[type:tnt")){
 					return Item.MINECART_TNT;
 				}
+				else if(	l.toLowerCase().contains("[type:nor")){
+					return Item.MINECART;
+				}
 			}
 		}
 		return defaultItem;	

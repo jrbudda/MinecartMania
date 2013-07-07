@@ -1,6 +1,7 @@
 package com.afforess.minecartmania.listeners;
 
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
@@ -249,8 +250,14 @@ public class CoreListener implements Listener{
 		Logger.debug("Vehicle exit " + event.getExited().toString());
 		
 		if (event.getVehicle() instanceof Minecart) {
+		
 			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
-			SignCommands.updateSensors(minecart);
+
+			if (minecart !=null && event.getExited() instanceof Player && minecart.isLocked()) {
+				((Player)event.getExited()).sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
+				event.setCancelled(true);
+			}
+			else SignCommands.updateSensors(minecart);	
 		}
 		
 	}

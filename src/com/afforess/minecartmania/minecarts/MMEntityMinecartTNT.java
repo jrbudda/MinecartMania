@@ -190,7 +190,7 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMine
 		}
 
 		if (this.j() > 0) {
-			this.i(this.j() - 1);
+			this.c(this.j() - 1);
 		}
 
 		if (this.getDamage() > 0) {
@@ -198,7 +198,7 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMine
 		}
 
 		if (this.locY < -64.0D) {
-			this.C();
+			this.B();
 		}
 
 		//		if (this.h() && this.random.nextInt(4) == 0) {
@@ -225,7 +225,7 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMine
 							b0 = -1;
 						}
 
-						this.c(b0);
+						this.b(b0);
 					}
 
 					this.ap = false;
@@ -362,16 +362,6 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMine
 
 		//modify these speeds only once per tick, cause physics.
 
-		if (this.passenger != null) {
-			// there is a passenger
-			double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
-			if (passengerSpeed > .0001D && Math.sqrt(motX*motX + motZ*motZ) < MaxPushSpeedPercent / 100 * .4) {
-				Logger.motion("Passenger push " +this.passenger.motX * 0.2D + " " +  this.passenger.motZ * 0.2D);
-				this.motX += this.passenger.motX * 0.2D;
-				this.motZ += this.passenger.motZ * 0.2D;
-			}
-			//I think this bumps the cart along? or maybe when the passenger gets in?
-		}	
 
 
 		this.motY -= defaultgravity * GravityPercent / 100;

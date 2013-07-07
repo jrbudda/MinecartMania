@@ -7,6 +7,7 @@ import net.minecraft.server.v1_6_R1.Block;
 import net.minecraft.server.v1_6_R1.BlockMinecartTrack;
 import net.minecraft.server.v1_6_R1.BlockMinecartTrackAbstract;
 import net.minecraft.server.v1_6_R1.Entity;
+import net.minecraft.server.v1_6_R1.EntityLiving;
 import net.minecraft.server.v1_6_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_6_R1.IUpdatePlayerListBox;
 import net.minecraft.server.v1_6_R1.MathHelper;
@@ -190,7 +191,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R1.Entit
 		}
 
 		if (this.j() > 0) {
-			this.i(this.j() - 1);
+			this.c(this.j() - 1);
 		}
 
 		if (this.getDamage() > 0) {
@@ -198,7 +199,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R1.Entit
 		}
 
 		if (this.locY < -64.0D) {
-			this.C();
+			this.B();
 		}
 
 		//		if (this.h() && this.random.nextInt(4) == 0) {
@@ -225,7 +226,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R1.Entit
 							b0 = -1;
 						}
 
-						this.c(b0);
+						this.b(b0);
 					}
 
 					this.ap = false;
@@ -362,15 +363,16 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R1.Entit
 
 		//modify these speeds only once per tick, cause physics.
 
-		if (this.passenger != null) {
-			// there is a passenger
-			double	passengerSpeed = this.passenger.motX * this.passenger.motX + this.passenger.motZ * this.passenger.motZ;
-			if (passengerSpeed > .0001D && Math.sqrt(motX*motX + motZ*motZ) < MaxPushSpeedPercent / 100 * .4) {
+		if (this.passenger != null && this.passenger instanceof EntityLiving) {
+			// there is a passenger	
+			double	passengerSpeed = ((EntityLiving)this.passenger).bf;
+			if (passengerSpeed > 0 && Math.sqrt(motX*motX + motZ*motZ) < MaxPushSpeedPercent / 100 * .4) {
 				Logger.motion("Passenger push " +this.passenger.motX * 0.2D + " " +  this.passenger.motZ * 0.2D);
-				this.motX += this.passenger.motX * 0.2D;
-				this.motZ += this.passenger.motZ * 0.2D;
+				double d8 = -Math.sin((double) (this.passenger.yaw * 3.1415927F / 180.0F));
+				double d9 = Math.cos((double) (this.passenger.yaw * 3.1415927F / 180.0F));
+				this.motX += d8 * 0.1D;
+				this.motZ += d9 * 0.1D;
 			}
-			//I think this bumps the cart along? or maybe when the passenger gets in?
 		}	
 
 

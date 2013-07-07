@@ -146,13 +146,6 @@ public class StationsActionListener implements Listener {
 		}
 		else{
 
-			if (minecart.isLocked()) {
-				if (minecart.hasPlayerPassenger()) {
-					minecart.getPlayerPassenger().sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
-				}
-				event.setActionTaken(true);
-			}
-
 			if (minecart.getPlayerPassenger()!=null){
 				new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, minecart.getLocation());
 				event.setActionTaken(true);

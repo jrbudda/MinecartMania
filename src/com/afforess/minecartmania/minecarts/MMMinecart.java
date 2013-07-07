@@ -8,7 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.v1_6_R1.EntityMinecartAbstract;
 import net.minecraft.server.v1_6_R1.EntityMinecartRideable;
 import net.minecraft.server.v1_6_R1.World;
+
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -1209,11 +1212,11 @@ public class MMMinecart {
 
 	public void setPassenger(Entity entity) {
 		hasPassenger = true; //prevent looping from block procs on vehicleenter
-
-		//setpassenger calls an event which might get canceled.
-		minecart.setPassenger(entity);
-
-		hasPassenger = minecart.getPassenger() !=null;
+	
+        CraftEntity e = (CraftEntity) entity;
+		e.getHandle().mount((net.minecraft.server.v1_6_R1.Entity) this.getHandle());
+		
+		hasPassenger = minecart.getPassenger() != null;
 	}
 
 	/**
