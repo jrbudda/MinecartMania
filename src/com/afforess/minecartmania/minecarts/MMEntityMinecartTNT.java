@@ -3,16 +3,16 @@ package com.afforess.minecartmania.minecarts;
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_6_R1.Block;
-import net.minecraft.server.v1_6_R1.BlockMinecartTrack;
-import net.minecraft.server.v1_6_R1.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_6_R1.IUpdatePlayerListBox;
-import net.minecraft.server.v1_6_R1.MathHelper;
-import net.minecraft.server.v1_6_R1.NBTTagCompound;
-import net.minecraft.server.v1_6_R1.World;
-import net.minecraft.server.v1_6_R1.WorldServer;
+import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.BlockMinecartTrack;
+import net.minecraft.server.v1_6_R2.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityMinecartAbstract;
+import net.minecraft.server.v1_6_R2.IUpdatePlayerListBox;
+import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R2.NBTTagCompound;
+import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 
-public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMinecartTNT implements IMMEntity{
+public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R2.EntityMinecartTNT implements IMMEntity{
 
 	//NMS
 	private boolean a;
@@ -216,7 +216,7 @@ public class MMEntityMinecartTNT extends net.minecraft.server.v1_6_R1.EntityMine
 				if (true ){// ||minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
 					if (this.vehicle == null && this.aq++ >= i) {
 						this.aq = i;
-						this.portalCooldown = this.aa();
+						this.portalCooldown = this.ab();
 						byte b0;
 
 						if (this.world.worldProvider.dimension == -1) {
