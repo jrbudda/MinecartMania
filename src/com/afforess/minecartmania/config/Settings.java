@@ -31,7 +31,7 @@ public  class Settings {
 	public static double MaxPassengerPushPercent;
 	//new
 	public static boolean KillPlayersOnTrack;
-
+	public static boolean PushBrakingAllowed;
 
 	//Signs
 	public static int SensorDisableDelay = 8;

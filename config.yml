@@ -75,9 +75,11 @@ PassengerFrictionPercent: 100
 SlowWhenEmpty: false
 EmptyFrictionPercent: 100
 
-
 #The maximum speed to which a player can nudge a minecart while riding in it, as a percentage of the normal minecart max speed.
 MaxPushSpeedPercent: 25
+
+#Whether or not the player can slow the minecart via pushing.
+PushBrakingAllowed: false
 
 #The speed change applied while going up or down slopes, as a percentage of normal minecart max speed.
 SlopeSpeedPercent: 100
@@ -252,7 +254,7 @@ Messages:
   SignCommandsSensorItemError: "[RED]Item Sensors Must Have a Valid Item Name or id, On Line 3"
   SignCommandsSensorPlayerNameError: "[RED]Player Name Sensors Must Have The Name Of The Player To Detect, On Line 3"
   SignCommandsSensorSuccess: "[GREEN]Sensor Successfully Created"
-  StationsTapInDirection: "[YELLOW]Tap your minecart in the desired direction"
+  StationsTapInDirection: "[YELLOW]Push your minecart in the desired direction"
   StationsInvalidDirection: "[RED]Not a valid direction."
   StationsValidDirections: "[YELLOW]You can go %s"
   StationHelpString: "[GREEN]Your current destination is: %s"

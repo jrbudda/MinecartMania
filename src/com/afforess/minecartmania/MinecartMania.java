@@ -339,6 +339,7 @@ public class MinecartMania extends JavaPlugin {
 		Settings.DefaultSlowWhenEmpty = getConfig().getBoolean("SlowWhenEmpty",true); 
 		Settings.LoadChunksOnTrack = getConfig().getBoolean("KeepChunksLoaded",false); 
 		Settings.ReturnCartsToOwner= getConfig().getBoolean("ReturnCartsToOwner",false); 
+		Settings.PushBrakingAllowed= getConfig().getBoolean("PushBrakingAllowed",false); 
 
 		Settings.StationParingMode = getConfig().getInt("StationParsingMethod",0);
 		Settings.IntersectionPromptsMode = getConfig().getInt("IntersectionPromptsMethod",0);

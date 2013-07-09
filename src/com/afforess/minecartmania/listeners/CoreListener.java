@@ -131,6 +131,7 @@ public class CoreListener implements Listener{
 
 		if (event.getVehicle() instanceof Minecart) {
 			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle());
+		
 			//Start workaround for double damage events
 			long lastDamage = -1;
 			if (minecart.getDataValue("Last Damage") != null) {

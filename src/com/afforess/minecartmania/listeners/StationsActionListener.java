@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.MinecartManiaPlayer;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;

@@ -11,7 +11,6 @@ import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftMinecart;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -40,7 +39,6 @@ import com.afforess.minecartmania.entity.MinecartOwner;
 import com.afforess.minecartmania.events.MinecartManiaMinecartCreatedEvent;
 import com.afforess.minecartmania.events.MinecartManiaMinecartDestroyedEvent;
 import com.afforess.minecartmania.events.MinecartTimeEvent;
-import com.afforess.minecartmania.signs.MMSign;
 import com.afforess.minecartmania.utils.BlockUtils;
 import com.afforess.minecartmania.utils.DirectionUtils;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;

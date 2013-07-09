@@ -1,6 +1,6 @@
 name: MinecartMania
 main: com.afforess.minecartmania.MinecartMania
-version: 2.2 beta1
+version: 2.3 beta2
 author: jrbudda, mze9412, Afforess
 database: true
 commands:

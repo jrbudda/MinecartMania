@@ -7,7 +7,6 @@ import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.BlockMinecartTrack;
 import net.minecraft.server.v1_6_R2.BlockMinecartTrackAbstract;
 import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityMinecartAbstract;
 import net.minecraft.server.v1_6_R2.IUpdatePlayerListBox;
 import net.minecraft.server.v1_6_R2.MathHelper;
