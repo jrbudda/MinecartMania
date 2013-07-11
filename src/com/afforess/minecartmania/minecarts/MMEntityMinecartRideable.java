@@ -391,7 +391,8 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 					f.setAccessible(true);
 					passengerJumping = f.getBoolean(((EntityLiving)this.passenger));
 					if (passengerJumping){
-						new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity()), this.getBukkitEntity().getLocation());
+						MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity());						
+						new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, this.getBukkitEntity().getLocation());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -403,7 +404,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 				double	passengerForwardSpeed = ((EntityLiving)this.passenger).bf;
 				double	passengerSidewaysSpeed = ((EntityLiving)this.passenger).be;
 
-		
+
 				Logger.motion("Passenger push " +passengerForwardSpeed + " " + passengerSidewaysSpeed);			
 				double modX = 0;
 				double modZ = 0;
@@ -432,22 +433,22 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 					modX = -d8;
 					modZ = -d9;
 				}
-				
-				
+
+
 				//minecart below max pusahble speed		
 				double max = MaxPushSpeedPercent / 100 * .4;
 				double testx = this.motX + modX*.01;		
 				if (Math.abs(testx) <= max) {
 					if (Math.abs(testx) > Math.abs(motX) || Settings.PushBrakingAllowed)	this.motX = testx;
-					
+
 				}
 				double testz = this.motZ + modZ * .01;		
 				if (Math.abs(testz) <= max) {
 					if (Math.abs(testz) > Math.abs(motZ) || Settings.PushBrakingAllowed)	this.motZ = testz;
 				}
-			
-			
-		
+
+
+
 			}
 		}
 

@@ -107,12 +107,6 @@ public class PlayerListener implements Listener{
 	}
 
 
-	@EventHandler(ignoreCancelled = true)
-	public void onPlayerEntityInteract(org.bukkit.event.player.PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Minecart)) return;
-
-
-	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {	
