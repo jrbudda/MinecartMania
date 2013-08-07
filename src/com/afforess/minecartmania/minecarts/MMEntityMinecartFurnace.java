@@ -26,7 +26,6 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 	//NMS
 	private boolean a;
 	private final IUpdatePlayerListBox b;
-	private String c;
 	private static final int[][][] matrix = new int[][][] { { { 0, 0, -1}, { 0, 0, 1}}, { { -1, 0, 0}, { 1, 0, 0}}, { { -1, -1, 0}, { 1, 0, 0}}, { { -1, 0, 0}, { 1, -1, 0}}, { { 0, 0, -1}, { 0, -1, 1}}, { { 0, -1, -1}, { 0, 0, 1}}, { { 0, 0, 1}, { 1, 0, 0}}, { { 0, 0, 1}, { -1, 0, 0}}, { { 0, 0, -1}, { -1, 0, 0}}, { { 0, 0, -1}, { 1, 0, 0}}};
 	private int e;
 	private double f;
@@ -440,7 +439,7 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 		Logger.motion(" Final speed x:" + motX + " z:" + motZ + "onground: " + this.onGround + " onrails:" + this.onRails);
 
 
-		this.D();
+		this.C();
 		this.pitch = 0.0F; //I think minecart tilting  is handled on the client only.
 
 
@@ -840,5 +839,10 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 	@Override
 	public void setMagnetic(boolean value) {
 		this.magnetic = value;
+	}
+	
+	@Override
+	public void setGravity(double value) {
+		this.GravityPercent = value;
 	}
 }

@@ -329,7 +329,7 @@ public class MinecartUtils {
 				else if (victim instanceof Player){
 					if(Settings.KillPlayersOnTrack && (minecart.getMotion().length() > (Settings.KillPlayersOnTrackMinnimumSpeed / 100) * .4) ){
 						//die
-						victim.setHealth(0);
+						victim.setHealth(0.0);
 					}
 					else{			
 						//get out the way

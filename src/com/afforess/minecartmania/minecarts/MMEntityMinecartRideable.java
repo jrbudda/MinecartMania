@@ -32,7 +32,6 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 	//NMS
 	private boolean a;
 	private final IUpdatePlayerListBox b;
-	private String c;
 	private static final int[][][] matrix = new int[][][] { { { 0, 0, -1}, { 0, 0, 1}}, { { -1, 0, 0}, { 1, 0, 0}}, { { -1, -1, 0}, { 1, 0, 0}}, { { -1, 0, 0}, { 1, -1, 0}}, { { 0, 0, -1}, { 0, -1, 1}}, { { 0, -1, -1}, { 0, 0, 1}}, { { 0, 0, 1}, { 1, 0, 0}}, { { 0, 0, 1}, { -1, 0, 0}}, { { 0, 0, -1}, { -1, 0, 0}}, { { 0, 0, -1}, { 1, 0, 0}}};
 	private int e;
 	private double f;
@@ -41,6 +40,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 	private double i;
 	private double j;
 
+	private java.lang.reflect.Field jumping;
 
 	//Mine
 	private final double defaultpassengerFriction =  0.996999979019165D;
@@ -66,7 +66,6 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 
 	private boolean onRails;
 
-	private boolean moving;
 	private boolean onSlope;
 	private boolean uphill;
 	private boolean downhill;
@@ -89,6 +88,13 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 		this.a(0.98F, 0.7F);
 		this.height = this.length / 2.0F;
 		this.b = world != null ? world.a(this) : null;
+
+		try {
+			jumping = EntityLiving.class.getDeclaredField("bd");
+			jumping.setAccessible(true);
+		} catch (Exception e) {
+		}
+
 	}
 
 
@@ -384,19 +390,19 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 			if(this.onRails && !this.magnetic){
 				// there is a passenger	
 
-				try {	
-					//jumping
-					boolean passengerJumping = false;
-					java.lang.reflect.Field f = EntityLiving.class.getDeclaredField("bd");
-					f.setAccessible(true);
-					passengerJumping = f.getBoolean(((EntityLiving)this.passenger));
-					if (passengerJumping){
-						MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity());						
-						new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, this.getBukkitEntity().getLocation());
-					}
+				//jumping
+				boolean passengerJumping = false;
+				
+				try {
+					passengerJumping = jumping.getBoolean(((EntityLiving)this.passenger));
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
+				
+				if (passengerJumping){
+					MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity());						
+					new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, this.getBukkitEntity().getLocation());
+				}
+
 			}
 
 			if(this.onRails){
@@ -531,7 +537,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 		Logger.motion(" Final speed x:" + motX + " z:" + motZ + "onground: " + this.onGround + " onrails:" + this.onRails);
 
 
-		this.D();
+		this.C();
 		this.pitch = 0.0F; //I think minecart tilting  is handled on the client only.
 
 
@@ -561,10 +567,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 		Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 
 		if (!isNew) {
-
-			this.moving = false;
 			if (!from.equals(to)) {
-				this.moving = true;
 				this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
 			}	
 		}
@@ -936,4 +939,8 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R2.Entit
 		this.magnetic = value;
 	}
 
+	@Override
+	public void setGravity(double value) {
+		this.GravityPercent = value;
+	}
 }

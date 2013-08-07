@@ -26,7 +26,6 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 	//NMS
 	private boolean a;
 	private final IUpdatePlayerListBox b;
-	private String c;
 	private static final int[][][] matrix = new int[][][] { { { 0, 0, -1}, { 0, 0, 1}}, { { -1, 0, 0}, { 1, 0, 0}}, { { -1, -1, 0}, { 1, 0, 0}}, { { -1, 0, 0}, { 1, -1, 0}}, { { 0, 0, -1}, { 0, -1, 1}}, { { 0, -1, -1}, { 0, 0, 1}}, { { 0, 0, 1}, { 1, 0, 0}}, { { 0, 0, 1}, { -1, 0, 0}}, { { 0, 0, -1}, { -1, 0, 0}}, { { 0, 0, -1}, { 1, 0, 0}}};
 	private int e;
 	private double f;
@@ -60,7 +59,6 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 
 	public boolean onRails;
 
-	public boolean moving;
 	public boolean onSlope;
 	public boolean uphill;
 	public boolean downhill;
@@ -436,7 +434,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 		Logger.motion(" Final speed x:" + motX + " z:" + motZ + "onground: " + this.onGround + " onrails:" + this.onRails);
 
 
-		this.D();
+		this.C();
 		this.pitch = 0.0F; //I think minecart tilting  is handled on the client only.
 
 
@@ -466,10 +464,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 		Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 
 		if (!isNew) {
-
-			this.moving = false;
 			if (!from.equals(to)) {
-				this.moving = true;
 				this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
 			}	
 		}
@@ -749,7 +744,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean d(NBTTagCompound nbttagcompound) {
 		return this.c(nbttagcompound);
@@ -835,5 +830,11 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_6_R2.EntityMi
 	@Override
 	public void setMagnetic(boolean value) {
 		this.magnetic = value;
+	}
+
+
+	@Override
+	public void setGravity(double value) {
+		this.GravityPercent = value;
 	}
 }

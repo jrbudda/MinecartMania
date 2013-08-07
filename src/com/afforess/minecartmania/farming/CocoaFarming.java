@@ -32,7 +32,6 @@ public class CocoaFarming extends FarmingBase {
 						int z = loc.getBlockZ() + dz;
 						Block b =MinecartManiaWorld.getBlockAt(minecart.getWorld(), x, y, z);
 						int id = b.getTypeId();
-						boolean dirty = false; //set when the data gets changed
 						//Harvest fully grown crops first
 
 						int data = MinecartManiaWorld.getBlockData(minecart.getWorld(), x, y, z);

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
@@ -17,7 +16,7 @@ public class PlatformAction extends SignAction {
 	@Override
 	public boolean execute(MMMinecart minecart) {
 		if (range <=0) return false;
-		if ( minecart.isStandardMinecart() && minecart.hasPassenger() == false) {
+		if ( minecart.isStandardMinecart() && minecart.getBukkitEntity().getPassenger() == null) {
 			List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range*2, range*2, range*2);
 
 			LivingEntity closest = null;

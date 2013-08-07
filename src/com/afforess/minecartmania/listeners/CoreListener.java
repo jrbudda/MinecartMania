@@ -1,7 +1,6 @@
 package com.afforess.minecartmania.listeners;
 
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
@@ -153,7 +152,7 @@ public class CoreListener implements Listener{
 						MinecartMania.callEvent(mce);
 
 						//dont break carts youre riding in.
-						event.setDamage(0);
+						event.setDamage(0.0);
 						event.setCancelled(true);
 
 					}

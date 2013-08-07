@@ -352,6 +352,7 @@ public class MinecartMania extends JavaPlugin {
 		Settings.MaxAllowedSpeedPercent = getConfig().getInt("MaxAllowedSpeedPercent",500);
 		Settings.MinecartCollisions =  getConfig().getBoolean("MinecartCollisions",false); 
 		Settings.SlopeSpeedPercent = getConfig().getInt("SlopeSpeedPercent",100);
+		Settings.MinecartGravity =  getConfig().getInt("GravityPercent",100);
 
 		Settings.PreserveMinecartsonRiderLogout = getConfig().getBoolean("PreserveMinecartOnLogout",true); 
 
@@ -365,7 +366,7 @@ public class MinecartMania extends JavaPlugin {
 		Settings.SpawnSignRange = getConfig().getInt("SpawnSignRange",2);
 		Settings.EjectSignRange = getConfig().getInt("EjectSignRange",8);
 		Settings.ActionSignRange = getConfig().getInt("ActionSignRange",2);
-		
+
 		Settings.ItemCollectionRange = getConfig().getInt("DefaultItemCollectionRange",4);
 		Settings.ItemCollectionRangeY = getConfig().getInt("DefaultItemCollectionRangeY",0);
 
@@ -379,8 +380,8 @@ public class MinecartMania extends JavaPlugin {
 		Settings.RailAdjusterTool =  Item.getNearestMatchingItem(getConfig().getString("RailAdjusterTool","270"));
 
 
-		
-		
+
+
 		com.afforess.minecartmania.config.Settings.StationCommandSaveAfterUse = true;
 
 		ConfigurationSection blocks = getConfig().getConfigurationSection("ControlBlocks");

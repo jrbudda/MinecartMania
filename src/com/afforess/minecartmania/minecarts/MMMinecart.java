@@ -119,6 +119,7 @@ public class MMMinecart {
 		initialize();
 	}
 	public boolean eject() {
+		hasPassenger = false;
 		return minecart.eject();
 	}
 
@@ -533,14 +534,6 @@ public class MMMinecart {
 		return previousFacingDir;
 	}
 
-	/**
-	 * Get's the previous position (from the last tick) of the minecart in the world
-	 * @return previous position
-	 */
-	@Deprecated
-	public final Vector getPreviousLocation() {
-		return previousLocation.clone();
-	}
 
 	public HashSet<Block> getPreviousLocationAdjacentBlocks(int range) {
 		return BlockUtils.getAdjacentBlocks(getPrevLocation(), range);
@@ -702,6 +695,8 @@ public class MMMinecart {
 		getHandle().setMagnetic(Settings.DefaultMagneticRail);
 		getHandle().setCollisions(Settings.MinecartCollisions);
 		getHandle().setMaxPushSpeed(Settings.MaxPassengerPushPercent);
+		getHandle().setGravity(Settings.MinecartGravity);
+		
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
 
@@ -1086,25 +1081,25 @@ public class MMMinecart {
 		nmscart.motZ = mhandle.motZ;
 
 		if (nmsworld.addEntity(nmscart)){
-			
+
 			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
-		
+
 			Minecart out = (Minecart) nmscart.getBukkitEntity();
-			
+
 			if (m instanceof StorageMinecart) {
 				//copy over any inventory
 				Inventory old = ((StorageMinecart)m).getInventory();
 				Inventory newi = ((StorageMinecart)out).getInventory();
 				for (ItemStack itemStack : old.getContents()) {
-				 if(itemStack!=null)  newi.addItem(itemStack);				
+					if(itemStack!=null)  newi.addItem(itemStack);				
 				}		
 			}
-			
+
 			m.remove();	
 			return out;
-			
+
 		}
-	
+
 		return m;
 
 
@@ -1210,10 +1205,10 @@ public class MMMinecart {
 
 	public void setPassenger(Entity entity) {
 		hasPassenger = true; //prevent looping from block procs on vehicleenter
-	
-        CraftEntity e = (CraftEntity) entity;
+
+		CraftEntity e = (CraftEntity) entity;
 		e.getHandle().mount((net.minecraft.server.v1_6_R2.Entity) this.getHandle());
-		
+
 		hasPassenger = minecart.getPassenger() != null;
 	}
 

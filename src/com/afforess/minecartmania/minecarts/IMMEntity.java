@@ -17,6 +17,7 @@ public interface IMMEntity {
 	public void setSlopeSpeed(double value);
 	public void setFrozen(boolean value);
 	public void setMagnetic(boolean value);
+	public void setGravity(double value);
 	
 	
 	
