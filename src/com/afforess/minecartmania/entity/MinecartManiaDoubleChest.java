@@ -1,10 +1,10 @@
 package com.afforess.minecartmania.entity;
 
-import net.minecraft.server.v1_6_R2.InventoryLargeChest;
+import net.minecraft.server.v1_6_R3.InventoryLargeChest;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

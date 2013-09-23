@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.server.v1_6_R2.EntityMinecartAbstract;
-import net.minecraft.server.v1_6_R2.EntityMinecartRideable;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.EntityMinecartAbstract;
+import net.minecraft.server.v1_6_R3.EntityMinecartRideable;
+import net.minecraft.server.v1_6_R3.World;
 
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftMinecart;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -56,7 +56,6 @@ public class MMMinecart {
 	protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 	//protected ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<String,Object>();
 	protected volatile boolean dead = false;
-	private boolean hasPassenger;
 	protected Minecart minecart;
 	protected MinecartOwner owner = null;
 	protected volatile CompassDirection previousFacingDir = DirectionUtils.CompassDirection.NO_DIRECTION;
@@ -118,8 +117,10 @@ public class MMMinecart {
 		MinecartManiaCore.instance.getDatabase().save(this.owner);*/
 		initialize();
 	}
+
+	public boolean Ejecting = false; 
 	public boolean eject() {
-		hasPassenger = false;
+		setLocked(false);
 		return minecart.eject();
 	}
 
@@ -572,8 +573,6 @@ public class MMMinecart {
 	}
 
 
-
-
 	public Item getType() {
 		if (isPoweredMinecart()) {
 			return Item.POWERED_MINECART;
@@ -667,7 +666,7 @@ public class MMMinecart {
 	 * @return
 	 */
 	public boolean hasPassenger() {
-		return minecart.getPassenger() != null || hasPassenger;	
+		return minecart.getPassenger() != null;	
 	}
 
 	/**
@@ -696,7 +695,7 @@ public class MMMinecart {
 		getHandle().setCollisions(Settings.MinecartCollisions);
 		getHandle().setMaxPushSpeed(Settings.MaxPassengerPushPercent);
 		getHandle().setGravity(Settings.MinecartGravity);
-		
+
 		MinecartMania.callEvent(new MinecartManiaMinecartCreatedEvent(this));		
 	}
 
@@ -1043,26 +1042,26 @@ public class MMMinecart {
 			return m;
 
 		//create new MM entity
-		World nmsworld = ((org.bukkit.craftbukkit.v1_6_R2.CraftWorld) m.getWorld()).getHandle();
+		World nmsworld = ((org.bukkit.craftbukkit.v1_6_R3.CraftWorld) m.getWorld()).getHandle();
 
 		EntityMinecartAbstract nmscart = null;
 
 		if(mhandle instanceof EntityMinecartRideable){
 			nmscart = new MMEntityMinecartRideable(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R2.EntityMinecartChest){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartChest){
 			nmscart = new MMEntityMinecartChest(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R2.EntityMinecartFurnace){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartFurnace){
 			nmscart = new MMEntityMinecartFurnace(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R2.EntityMinecartHopper){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartHopper){
 			nmscart = new MMEntityMinecartHopper(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R2.EntityMinecartMobSpawner){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartMobSpawner){
 			nmscart = new MMEntityMinecartSpawner(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R2.EntityMinecartTNT){
+		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartTNT){
 			nmscart = new MMEntityMinecartTNT(nmsworld);
 		}
 
@@ -1204,12 +1203,10 @@ public class MMMinecart {
 	}
 
 	public void setPassenger(Entity entity) {
-		hasPassenger = true; //prevent looping from block procs on vehicleenter
 
 		CraftEntity e = (CraftEntity) entity;
-		e.getHandle().mount((net.minecraft.server.v1_6_R2.Entity) this.getHandle());
+		e.getHandle().mount((net.minecraft.server.v1_6_R3.Entity) this.getHandle());
 
-		hasPassenger = minecart.getPassenger() != null;
 	}
 
 	/**

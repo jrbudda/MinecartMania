@@ -16,7 +16,7 @@ public class PlatformAction extends SignAction {
 	@Override
 	public boolean execute(MMMinecart minecart) {
 		if (range <=0) return false;
-		if ( minecart.isStandardMinecart() && minecart.getBukkitEntity().getPassenger() == null) {
+		if ( minecart.isStandardMinecart() && !minecart.hasPassenger()) {
 			List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range*2, range*2, range*2);
 
 			LivingEntity closest = null;

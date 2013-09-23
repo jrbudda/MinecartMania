@@ -3,16 +3,16 @@ package com.afforess.minecartmania.minecarts;
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_6_R2.Block;
-import net.minecraft.server.v1_6_R2.BlockMinecartTrack;
-import net.minecraft.server.v1_6_R2.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityMinecartAbstract;
-import net.minecraft.server.v1_6_R2.IUpdatePlayerListBox;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.NBTTagCompound;
-import net.minecraft.server.v1_6_R2.World;
-import net.minecraft.server.v1_6_R2.WorldServer;
+import net.minecraft.server.v1_6_R3.Block;
+import net.minecraft.server.v1_6_R3.BlockMinecartTrack;
+import net.minecraft.server.v1_6_R3.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityMinecartAbstract;
+import net.minecraft.server.v1_6_R3.IUpdatePlayerListBox;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.NBTTagCompound;
+import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 
-public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.EntityMinecartFurnace implements IMMEntity{
+public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R3.EntityMinecartFurnace implements IMMEntity{
 
 	//NMS
 	private boolean a;
@@ -197,7 +197,7 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 		}
 
 		if (this.locY < -64.0D) {
-			this.B();
+			this.C();
 		}
 
 		//		if (this.h() && this.random.nextInt(4) == 0) {
@@ -210,12 +210,12 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 			this.world.methodProfiler.a("portal");
 			//	MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
 
-			i = this.y();
+			i = this.z();
 			if (this.ap) {
 				if (true ){// ||minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
 					if (this.vehicle == null && this.aq++ >= i) {
 						this.aq = i;
-						this.portalCooldown = this.ab();
+						this.portalCooldown = this.ac();
 						byte b0;
 
 						if (this.world.worldProvider.dimension == -1) {
@@ -488,7 +488,7 @@ public class MMEntityMinecartFurnace extends net.minecraft.server.v1_6_R2.Entity
 		if (list != null && !list.isEmpty()) {
 			for (int l1 = 0; l1 < list.size(); ++l1) {
 				Entity entity = (Entity) list.get(l1);
-				if (entity != this.passenger && entity.L() && entity instanceof EntityMinecartAbstract) {
+				if (entity != this.passenger && entity.M() && entity instanceof EntityMinecartAbstract) {
 					//bump the other cart.
 					if (!(entity instanceof MMEntityMinecartFurnace) ||  !((MMEntityMinecartFurnace)entity).frozen){
 						if(this.collisions)	entity.collide(this);
