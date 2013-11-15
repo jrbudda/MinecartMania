@@ -1081,7 +1081,7 @@ public class MMMinecart {
 
 		if (nmsworld.addEntity(nmscart)){
 
-			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName());
+			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName() );
 
 			Minecart out = (Minecart) nmscart.getBukkitEntity();
 

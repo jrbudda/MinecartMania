@@ -77,7 +77,7 @@ permissions:
     minecartmania.commands.redraw:
         description: Sends updates to all connected players to force all clients to redraw minecarts. Causes ~1 second of lag. 
         default: op
-    minecartmania.commands.redraw:
+    minecartmania.commands.reload:
         description: Sends updates to all connected players to force all clients to redraw minecarts. Causes ~1 second of lag. 
         default: op
     minecartmania.commands.hide:

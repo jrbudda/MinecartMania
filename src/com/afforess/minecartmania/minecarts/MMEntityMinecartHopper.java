@@ -439,7 +439,7 @@ public class MMEntityMinecartHopper extends net.minecraft.server.v1_6_R3.EntityM
 		Logger.motion(" Final speed x:" + motX + " z:" + motZ + "onground: " + this.onGround + " onrails:" + this.onRails);
 
 
-		this.C();
+		this.D();
 		this.pitch = 0.0F; //I think minecart tilting  is handled on the client only.
 
 
@@ -742,6 +742,11 @@ public class MMEntityMinecartHopper extends net.minecraft.server.v1_6_R3.EntityM
 
 	}
 
+	@Override
+	public String getLocalizedName(){
+		return "MMMinecartHopper";	
+	}
+	
 	@Override
 	public boolean c(NBTTagCompound nbttagcompound) {
 		if (!this.dead) {
