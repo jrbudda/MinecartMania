@@ -24,8 +24,10 @@ public class PlatformAction extends SignAction {
 			for (Entity le : list) {
 				if (le instanceof LivingEntity){
 					if (le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector()) < distance || closest == null) {
-						closest = (LivingEntity) le;
-						distance = le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector());
+						if (!le.isInsideVehicle()){
+							closest = (LivingEntity) le;
+							distance = le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector());
+						}
 					}
 				}
 			}

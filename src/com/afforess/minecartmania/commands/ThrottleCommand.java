@@ -31,7 +31,7 @@ public class ThrottleCommand extends MinecartManiaCommand{
 				String num = StringUtils.getNumber(args[0]);
 				double throttle = Double.valueOf(num);
 				if (throttle >= 0.0D) {
-					MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getVehicle());
+					MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)(player.getVehicle()),null);
 
 					minecart.setMotion(minecart.getDirection(), throttle);
 					sender.sendMessage(Settings.getLocal("AdminControlsThrottleSet"));

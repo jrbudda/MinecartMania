@@ -265,7 +265,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R3.Entit
 				double	passengerSpeed = ((EntityLiving)this.passenger).bf;
 
 				if (passengerSpeed > 0 ) {
-					MinecartClickedEvent mce = new MinecartClickedEvent(com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity()));
+					MinecartClickedEvent mce = new MinecartClickedEvent(com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity(),null));
 					MinecartMania.callEvent(mce);
 				}
 			}
@@ -399,7 +399,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_6_R3.Entit
 				}
 				
 				if (passengerJumping){
-					MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity());						
+					MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity(),null);						
 					new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, this.getBukkitEntity().getLocation());
 				}
 

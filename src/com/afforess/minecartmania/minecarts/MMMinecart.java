@@ -94,20 +94,24 @@ public class MMMinecart {
 	}
 
 	public MMMinecart(Minecart cart) {
-		minecart = replaceCart(cart); 
 		oldid = cart.getEntityId();
+		minecart = replaceCart(cart); 
 		initialize();
 		findOwner();
 	}
 
 
-
 	public MMMinecart(Minecart cart, String owner) {
-		minecart = replaceCart(cart);
+
 		oldid = cart.getEntityId();
-		this.owner = new MinecartOwner(owner);
-		this.owner.setId(minecart.getEntityId());
-		this.owner.setWorld(minecart.getWorld().getName());
+		minecart = replaceCart(cart);
+		
+		if (owner !=null) {
+			this.owner = new MinecartOwner(owner);
+			this.owner.setId(minecart.getEntityId());
+			this.owner.setWorld(minecart.getWorld().getName());
+		}
+		
 		//clear previous owners
 		/*List<MinecartOwner> list = MinecartManiaCore.instance.getDatabase().find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findList();
 		for (MinecartOwner temp : list) {
@@ -115,6 +119,7 @@ public class MMMinecart {
 		}
 		//save new owner
 		MinecartManiaCore.instance.getDatabase().save(this.owner);*/
+		
 		initialize();
 	}
 

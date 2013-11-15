@@ -19,6 +19,7 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.metadata.MetadataValue;
 
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.config.NewControlBlock;
@@ -87,6 +88,10 @@ public class BlockListener implements Listener{
 						b.setMetadata("ThisPower", new org.bukkit.metadata.FixedMetadataValue(MinecartMania.getInstance(), event.getNewCurrent() > 0));
 
 						ncb.execute(null, b.getLocation());
+						
+						//prevent proccing elsewhere on this.
+						b.setMetadata("LastPower",b.getMetadata("ThisPower").get(0));
+
 			
 					}
 

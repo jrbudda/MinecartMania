@@ -22,7 +22,7 @@ public class MomentumCommand extends MinecartManiaCommand {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player player = (Player)sender;
 		if (player.getVehicle() instanceof Minecart) {
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getVehicle());
+			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getVehicle(), player.getName());
 			
 			player.sendMessage(Settings.getLocal("AdminControlsMomentum", (minecart.getMotionX() / .4)* 100, (minecart.getMotionY()/.4)*100, (minecart.getMotionZ()/.4)*100));
 			

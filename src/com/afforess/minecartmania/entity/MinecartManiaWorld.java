@@ -41,7 +41,7 @@ public class MinecartManiaWorld {
 	private static ConcurrentHashMap<String,MinecartManiaPlayer> players = new ConcurrentHashMap<String,MinecartManiaPlayer>();
 
 	public static Set<Integer> replacedIDs = new HashSet<Integer>();
-	
+
 	private static int counter = 0;
 	private static Lock pruneLock = new ReentrantLock();
 
@@ -50,20 +50,20 @@ public class MinecartManiaWorld {
 	 * @param the minecart to wrap
 	 */
 	@ThreadSafe
-	public static MMMinecart getOrCreateMMMinecart(Minecart minecart) {
+	public static MMMinecart getOrCreateMMMinecart(Minecart minecart, String owner) {
 		prune();
 		final int id = minecart.getEntityId();
 		MMMinecart testMinecart = minecarts.get(id);
-		
+
 		if (testMinecart == null) {
 			Logger.debug("No MM minecart found for id " + id);
 			synchronized(minecart) {
-				
+
 				//may have been created while waiting for the lock
 				if (minecarts.get(id) != null) {
 					return minecarts.get(id);
 				}
-				
+
 				if(replacedIDs.contains(id)){
 					Logger.debug("Duplication requested for " + id);
 					//special case got call for minecart we already replaced, happens when multiple events are queued for the vanilla cart.
@@ -75,23 +75,23 @@ public class MinecartManiaWorld {
 					Logger.debug("Minecart " + id + " listed as replaced but no entity found!!");
 					return null;
 				}
-				
+
 
 				MMMinecart newCart;
-				
+
 				if (minecart instanceof StorageMinecart) {
-					newCart = new MMStorageCart(minecart);
+					newCart = new MMStorageCart(minecart, owner);
 				}
 				else {
-					newCart = new MMMinecart(minecart);
+					newCart = new MMMinecart(minecart, owner);
 				}
-				
+
 				minecarts.put(newCart.getEntityId(), newCart);
 				replacedIDs.add(id);
 				return newCart;
 			}
 		}
-		
+
 		return testMinecart;
 	}
 
@@ -494,15 +494,8 @@ public class MinecartManiaWorld {
 			}
 		}
 
-		if (m instanceof StorageMinecart) {
-			minecart = new MMStorageCart(m, ownerName);
-		}
-		else {
-			minecart = new MMMinecart(m, ownerName);
-		}
-
-		minecarts.put(minecart.getEntityId(), minecart);
-
+		minecart = getOrCreateMMMinecart(m, ownerName);
+		
 		return minecart;
 	}
 
@@ -522,7 +515,7 @@ public class MinecartManiaWorld {
 
 	public static void LoadChunksAround(Location location, int radius) {
 		World world = location.getWorld();
-		
+
 		int x = location.getBlock().getChunk().getX();
 		int z = location.getBlock().getChunk().getZ();
 
