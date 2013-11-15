@@ -50,47 +50,47 @@ public class MinecartManiaWorld {
 	 * @param the minecart to wrap
 	 */
 	@ThreadSafe
-	public static MMMinecart getOrCreateMMMinecart(Minecart minecart) {
+	public synchronized static MMMinecart getOrCreateMMMinecart(Minecart minecart) {
 		prune();
 		final int id = minecart.getEntityId();
 		MMMinecart testMinecart = minecarts.get(id);
 		
 		if (testMinecart == null) {
 			Logger.debug("No MM minecart found for id " + id);
-			synchronized(minecart) {
 				
-				//may have been created while waiting for the lock
-				if (minecarts.get(id) != null) {
-					return minecarts.get(id);
-				}
-				
-				if(replacedIDs.contains(id)){
-					Logger.debug("Duplication requested for " + id);
-					//special case got call for minecart we already replaced, happens when multiple events are queued for the vanilla cart.
-					for (Entry<Integer, MMMinecart> ent : minecarts.entrySet()) {
-						if(ent.getValue().oldID() == id){
-							return ent.getValue();
-						}
-					}
-					Logger.debug("Minecart " + id + " listed as replaced but no entity found!!");
-					return null;
-				}
-				
+                        //may have been created while waiting for the lock
+                        if (minecarts.get(id) != null) {
+                                return minecarts.get(id);
+                        }
 
-				MMMinecart newCart;
-				
-				if (minecart instanceof StorageMinecart) {
-					newCart = new MMStorageCart(minecart);
-				}
-				else {
-					newCart = new MMMinecart(minecart);
-				}
-				
-				minecarts.put(newCart.getEntityId(), newCart);
-				replacedIDs.add(id);
-				return newCart;
-			}
-		}
+                        if(replacedIDs.contains(id)){
+                                Logger.debug("Duplication requested for " + id);
+                                //special case got call for minecart we already replaced, happens when multiple events are queued for the vanilla cart.
+                                for (Entry<Integer, MMMinecart> ent : minecarts.entrySet()) {
+                                        if(ent.getValue().oldID() == id){
+                                                minecarts.put(ent.getValue().getEntityId(), ent.getValue());
+                                                return ent.getValue();
+                                        }
+                                }
+                                Logger.debug("Minecart " + id + " listed as replaced but no entity found!!");
+                                return null;
+                        }
+
+
+                        MMMinecart newCart;
+
+                        if (minecart instanceof StorageMinecart) {
+                                newCart = new MMStorageCart(minecart);
+                        }
+                        else {
+                                newCart = new MMMinecart(minecart);
+                        }
+
+                        minecarts.put(newCart.getEntityId(), newCart);
+                        replacedIDs.add(id);
+                        return newCart;
+                }
+		
 		
 		return testMinecart;
 	}

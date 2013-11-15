@@ -8,34 +8,39 @@ import org.bukkit.entity.LivingEntity;
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.StringUtils;
+import java.util.HashMap;
+import org.bukkit.Location;
 
 public class PlatformAction extends SignAction {
-
+        private HashMap<Location, Long> lastPlatform = new HashMap<Location, Long>();      
 	private int range = -1;
 
 	@Override
 	public boolean execute(MMMinecart minecart) {
 		if (range <=0) return false;
-		if ( minecart.isStandardMinecart() && !minecart.hasPassenger()) {
-			List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range*2, range*2, range*2);
+                Long lastPlatform = this.lastPlatform.get(loc); //cooldown on spawner
+		if (lastPlatform == null || (Math.abs(System.currentTimeMillis() - lastPlatform) > 100)) {
+                    if ( minecart.isStandardMinecart() && !minecart.hasPassenger()) {
+                            List<Entity> list = minecart.getBukkitEntity().getNearbyEntities(range*2, range*2, range*2);
 
-			LivingEntity closest = null;
-			double distance = -1;
-			for (Entity le : list) {
-				if (le instanceof LivingEntity){
-					if (le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector()) < distance || closest == null) {
-						closest = (LivingEntity) le;
-						distance = le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector());
-					}
-				}
-			}
+                            LivingEntity closest = null;
+                            double distance = -1;
+                            for (Entity le : list) {
+                                    if (le instanceof LivingEntity){
+                                            if (le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector()) < distance || closest == null) {
+                                                    closest = (LivingEntity) le;
+                                                    distance = le.getLocation().toVector().distanceSquared(minecart.getLocation().toVector());
+                                            }
+                                    }
+                            }
 
-			if (closest != null ) {
-				minecart.setPassenger(closest);		
-				return true;
-			}
-		}
-
+                            if (closest != null ) {
+                                    this.lastPlatform.put(loc, System.currentTimeMillis());
+                                    minecart.setPassenger(closest);		
+                                    return true;
+                            }
+                    }
+                } 
 		return false;
 	}
 

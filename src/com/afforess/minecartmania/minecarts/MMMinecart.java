@@ -1029,7 +1029,8 @@ public class MMMinecart {
 		}
 	}
 
-	protected Minecart replaceCart(Minecart m){
+        @ThreadSafe
+	protected synchronized Minecart replaceCart(Minecart m){
 		EntityMinecartAbstract mhandle = ((CraftMinecart) m).getHandle();
 
 		//check if already a mm entity.
