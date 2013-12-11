@@ -1,17 +1,18 @@
 package com.afforess.minecartmania.utils;
 
+import net.minecraft.server.v1_7_R1.Block;
+
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.material.Sign;
 
 public class EntityUtils {
 
-	public static Location getValidLocation(Block base, int Yrange){
+	public static Location getValidLocation(org.bukkit.block.Block base, int Yrange){
 		if(base ==null ) return null;
 		//TODO: ugh.
 
 		Location out = null;
-		Block b = base;
+		org.bukkit.block.Block b = base;
 		boolean issign = b.getType() == org.bukkit.Material.SIGN || b.getType()==org.bukkit.Material.SIGN_POST;
 
 		if (issign){
@@ -38,7 +39,7 @@ public class EntityUtils {
 		else return null;
 	}
 
-	private static Location searchvert(Block start, int count){	
+	private static Location searchvert(org.bukkit.block.Block start, int count){	
 		start = start.getRelative(org.bukkit.block.BlockFace.DOWN);
 		for (int i = 0 ; i < count ; i++){
 			start = start.getRelative(org.bukkit.block.BlockFace.UP);
@@ -49,8 +50,8 @@ public class EntityUtils {
 
 	static boolean canStand(org.bukkit.block.Block base){
 		org.bukkit.block.Block below = base.getRelative(0, -1, 0);
-		if(!below.isEmpty() && net.minecraft.server.v1_6_R3.Block.byId[below.getTypeId()].material.isSolid()){
-			if(base.isEmpty() || net.minecraft.server.v1_6_R3.Block.byId[base.getTypeId()].material.isSolid()==false){
+		if(!below.isEmpty() && Block.e(below.getTypeId()).getMaterial().isSolid()){
+			if(base.isEmpty() || Block.e(base.getTypeId()).getMaterial().isSolid()==false){
 				return true;
 			}
 		}

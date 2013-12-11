@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.server.v1_6_R3.EntityMinecartAbstract;
-import net.minecraft.server.v1_6_R3.EntityMinecartRideable;
-import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_7_R1.EntityMinecartAbstract;
+import net.minecraft.server.v1_7_R1.EntityMinecartRideable;
+import net.minecraft.server.v1_7_R1.World;
 
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftMinecart;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -105,13 +105,13 @@ public class MMMinecart {
 
 		oldid = cart.getEntityId();
 		minecart = replaceCart(cart);
-		
+
 		if (owner !=null) {
 			this.owner = new MinecartOwner(owner);
 			this.owner.setId(minecart.getEntityId());
 			this.owner.setWorld(minecart.getWorld().getName());
 		}
-		
+
 		//clear previous owners
 		/*List<MinecartOwner> list = MinecartManiaCore.instance.getDatabase().find(MinecartOwner.class).where().idEq(minecart.getEntityId()).findList();
 		for (MinecartOwner temp : list) {
@@ -119,7 +119,7 @@ public class MMMinecart {
 		}
 		//save new owner
 		MinecartManiaCore.instance.getDatabase().save(this.owner);*/
-		
+
 		initialize();
 	}
 
@@ -579,14 +579,13 @@ public class MMMinecart {
 
 
 	public Item getType() {
-		if (isPoweredMinecart()) {
-			return Item.POWERED_MINECART;
-		}
-		if (isStorageMinecart()) {
-			return Item.STORAGE_MINECART;
-		}
-
-		return Item.MINECART;
+		if (minecart instanceof org.bukkit.entity.minecart.RideableMinecart) 	return Item.MINECART;
+		else 	if (minecart instanceof org.bukkit.entity.minecart.HopperMinecart) 	return Item.MINECART_HOPPER;
+		else 	if (minecart instanceof org.bukkit.entity.minecart.CommandMinecart) 	return Item.MINECART_COMMAND;
+		else 	if (minecart instanceof org.bukkit.entity.minecart.ExplosiveMinecart) 	return Item.MINECART_TNT;
+		else 	if (minecart instanceof org.bukkit.entity.minecart.StorageMinecart) 	return Item.STORAGE_MINECART;
+		else 	if (minecart instanceof org.bukkit.entity.minecart.PoweredMinecart) 	return Item.POWERED_MINECART;
+		else return Item.MINECART;
 	}
 
 
@@ -867,7 +866,7 @@ public class MMMinecart {
 	}
 
 	public boolean isStandardMinecart() {
-		return !isPoweredMinecart() && !isStorageMinecart();
+		return minecart instanceof org.bukkit.entity.minecart.RideableMinecart;
 	}
 
 	public boolean isStorageMinecart() {
@@ -1047,27 +1046,30 @@ public class MMMinecart {
 			return m;
 
 		//create new MM entity
-		World nmsworld = ((org.bukkit.craftbukkit.v1_6_R3.CraftWorld) m.getWorld()).getHandle();
+		World nmsworld = ((org.bukkit.craftbukkit.v1_7_R1.CraftWorld) m.getWorld()).getHandle();
 
 		EntityMinecartAbstract nmscart = null;
 
 		if(mhandle instanceof EntityMinecartRideable){
 			nmscart = new MMEntityMinecartRideable(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartChest){
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartChest){
 			nmscart = new MMEntityMinecartChest(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartFurnace){
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartFurnace){
 			nmscart = new MMEntityMinecartFurnace(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartHopper){
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartHopper){
 			nmscart = new MMEntityMinecartHopper(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartMobSpawner){
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartMobSpawner){
 			nmscart = new MMEntityMinecartSpawner(nmsworld);
 		}
-		else if(mhandle instanceof net.minecraft.server.v1_6_R3.EntityMinecartTNT){
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartTNT){
 			nmscart = new MMEntityMinecartTNT(nmsworld);
+		}
+		else if(mhandle instanceof net.minecraft.server.v1_7_R1.EntityMinecartCommandBlock){
+			nmscart = new MMEntityMinecartCommandBlock(nmsworld);
 		}
 
 		if (nmscart == null){
@@ -1086,7 +1088,7 @@ public class MMMinecart {
 
 		if (nmsworld.addEntity(nmscart)){
 
-			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.id + " " + nmscart.getLocalizedName() );
+			Logger.debug("Replacing cart " + m.getEntityId() + " with " + nmscart.getId() + " " + nmscart.getName() );
 
 			Minecart out = (Minecart) nmscart.getBukkitEntity();
 
@@ -1210,7 +1212,7 @@ public class MMMinecart {
 	public void setPassenger(Entity entity) {
 
 		CraftEntity e = (CraftEntity) entity;
-		e.getHandle().mount((net.minecraft.server.v1_6_R3.Entity) this.getHandle());
+		e.getHandle().mount((net.minecraft.server.v1_7_R1.Entity) this.getHandle());
 
 	}
 

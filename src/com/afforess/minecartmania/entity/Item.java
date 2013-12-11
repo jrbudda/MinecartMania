@@ -445,7 +445,14 @@ public enum Item {
 	HORSE_ARMOR_GOLD(418),
 	HORSE_ARMOR_DIAMOND(419),
 	LEASH(420),
-	NAME_TAG(420);
+	NAME_TAG(421),
+	
+	//1.7.2
+	PACKED_ICE(174),
+	DOUBLE_PLANT(175),
+	MINECART_COMMAND(422)
+	;
+	
 	
 	private final int id;
 	private final short data;

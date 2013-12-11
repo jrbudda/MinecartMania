@@ -10,7 +10,6 @@ import net.minecraft.server.v1_7_R1.Blocks;
 import net.minecraft.server.v1_7_R1.Entity;
 import net.minecraft.server.v1_7_R1.EntityLiving;
 import net.minecraft.server.v1_7_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_7_R1.EntityPlayer;
 import net.minecraft.server.v1_7_R1.MathHelper;
 import net.minecraft.server.v1_7_R1.NBTTagCompound;
 import net.minecraft.server.v1_7_R1.World;
@@ -22,12 +21,11 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.MinecartMania;
-import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 import com.afforess.minecartmania.events.MinecartClickedEvent;
 
-public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.EntityMinecartRideable implements IMMEntity {
+public class MMEntityMinecartCommandBlock extends net.minecraft.server.v1_7_R1.EntityMinecartCommandBlock implements IMMEntity{
 
 	//NMS
 	private boolean a;
@@ -40,7 +38,6 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 	private double h;
 	private double i;
 
-	private java.lang.reflect.Field jumping;
 
 	//Mine
 	private final double defaultpassengerFriction =  0.996999979019165D;
@@ -49,29 +46,30 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 	private final double DefaultslopeSpeed = 0.0078125D;
 	private final double defaultDerailedFriction  = 0.5;
 
-	private double derailedFrictioPercent = 100;
-	private double passengerFrictionPercent = 100;
-	private double emptyFrictionPercent = 100;
-	private double slopeSpeedPercent = 100;
-	private double MaxPushSpeedPercent = 100;
-	private double GravityPercent = 100;
+	public double derailedFrictioPercent = 100;
+	public double passengerFrictionPercent = 100;
+	public double emptyFrictionPercent = 100;
+	public double slopeSpeedPercent = 100;
+	public double MaxPushSpeedPercent = 100;
+	public double GravityPercent = 100;
 
-	private boolean onPoweredPoweredRail;
-	private boolean onUnpoweredPoweredRail;
+	public boolean onPoweredPoweredRail;
+	public boolean onUnpoweredPoweredRail;
 
 	private Block blockbeneath;
 	private int blockBeneathData;
-	
-	private boolean frozen;
 
-	private boolean onRails;
+	public boolean frozen;
 
-	private boolean onSlope;
-	private boolean uphill;
-	private boolean downhill;
+	public boolean onRails;
 
-	private boolean magnetic = false;
-	private boolean collisions = false;
+	public boolean moving;
+	public boolean onSlope;
+	public boolean uphill;
+	public boolean downhill;
+
+	public boolean magnetic = false;
+	public boolean collisions = false;
 
 
 	public boolean onNormalRail(){
@@ -81,18 +79,12 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 
 	private boolean isNew = true;
 
-	public MMEntityMinecartRideable(World world) {
+	public MMEntityMinecartCommandBlock(World world) {
 		super(world);
 		this.a = false;
 		this.l = true;
 		this.a(0.98F, 0.7F);
 		this.height = this.length / 2.0F;
-
-		try {
-			jumping = EntityLiving.class.getDeclaredField("bd");
-			jumping.setAccessible(true);
-		} catch (Exception e) {
-		}
 
 	}
 
@@ -186,7 +178,6 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 	}
 
 	public void move() {
-
 		//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.info(" j start " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		// CraftBukkit start
@@ -380,85 +371,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 
 		}
 
-		//modify these speeds only once per tick, cause physics.
-
-		if (this.passenger != null && this.passenger instanceof EntityPlayer) {
-
-			if(this.onRails && !this.magnetic){
-				// there is a passenger	
-
-				//jumping
-				boolean passengerJumping = false;
-
-				try {
-					passengerJumping = jumping.getBoolean(((EntityLiving)this.passenger));
-				} catch (Exception e) {
-				}
-
-				if (passengerJumping){
-					MMMinecart minecart = 	com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity(),null);						
-					new com.afforess.minecartmania.signs.actions.JumpAction().executeAsBlock(minecart, this.getBukkitEntity().getLocation());
-				}
-
-			}
-
-			if(this.onRails){
-				//player pushing
-				double	passengerForwardSpeed = ((EntityLiving)this.passenger).bf;
-				double	passengerSidewaysSpeed = ((EntityLiving)this.passenger).be;
-
-
-				Logger.motion("Passenger push " +passengerForwardSpeed + " " + passengerSidewaysSpeed);			
-				double modX = 0;
-				double modZ = 0;
-
-				if (passengerForwardSpeed > 0 ) {
-					double d8 = -Math.sin((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					double d9 = Math.cos((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					modX = d8;
-					modZ = d9;
-				}
-				else if (passengerForwardSpeed < 0){
-					double d8 = -Math.sin((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					double d9 = Math.cos((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					modX = -d8;
-					modZ = -d9;
-				}
-				else if (passengerSidewaysSpeed > 0){
-					double d8 = -Math.cos((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					double d9 = Math.sin((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					modX = d8;
-					modZ = d9;
-				}
-				else if (passengerSidewaysSpeed < 0){
-					double d8 = -Math.cos((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					double d9 = Math.sin((double) (this.passenger.yaw * 3.1415927F / 180.0F));
-					modX = -d8;
-					modZ = -d9;
-				}
-
-
-				//minecart below max pusahble speed		
-				double max = MaxPushSpeedPercent / 100 * .4;
-				double testx = this.motX + modX*.01;		
-				if (Math.abs(testx) <= max) {
-					if (Math.abs(testx) > Math.abs(motX) || Settings.PushBrakingAllowed)	this.motX = testx;
-
-				}
-				double testz = this.motZ + modZ * .01;		
-				if (Math.abs(testz) <= max) {
-					if (Math.abs(testz) > Math.abs(motZ) || Settings.PushBrakingAllowed)	this.motZ = testz;
-				}
-
-
-
-			}
-		}
-
-
-
-
-
+	
 		this.motY -= defaultgravity * GravityPercent / 100;
 
 		//slopes
@@ -836,13 +749,13 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 
 	@Override
 	public String getName(){
-		return "MMMinecartRideable";	
+		return "MMMinecartCommandBlock";	
 	}
 
 	@Override
 	public boolean c(NBTTagCompound nbttagcompound) {
 		if (!this.dead) {
-			nbttagcompound.setString("id", "MinecartRideable");
+			nbttagcompound.setString("id", "MinecartCommandBlock");
 			this.e(nbttagcompound);
 			return true;
 		} else {
@@ -854,13 +767,11 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 	public boolean d(NBTTagCompound nbttagcompound) {
 		return this.c(nbttagcompound);
 	}
-
+	
+	
 	public  int getType(){
-		return 0;
+		return 6;
 	}
-
-
-
 	//interface
 
 	@Override
@@ -939,7 +850,7 @@ public class MMEntityMinecartRideable extends net.minecraft.server.v1_7_R1.Entit
 	public void setMagnetic(boolean value) {
 		this.magnetic = value;
 	}
-
+	
 	@Override
 	public void setGravity(double value) {
 		this.GravityPercent = value;

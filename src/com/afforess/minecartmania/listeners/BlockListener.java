@@ -19,7 +19,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.metadata.MetadataValue;
 
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.config.NewControlBlock;
