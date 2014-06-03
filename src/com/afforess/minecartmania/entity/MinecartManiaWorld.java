@@ -14,9 +14,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -45,12 +46,14 @@ public class MinecartManiaWorld {
 	private static int counter = 0;
 	private static Lock pruneLock = new ReentrantLock();
 
+
+
 	/**
 	 * Returns a new MinecartManiaMinecart from storage if it already exists, or creates and stores a new MinecartManiaMinecart object, and returns it
 	 * @param the minecart to wrap
 	 */
 	@ThreadSafe
-	public static MMMinecart getOrCreateMMMinecart(Minecart minecart, String owner) {
+	public static MMMinecart CreateMMMinecart(Minecart minecart, boolean owned, String owner) {
 		prune();
 		final int id = minecart.getEntityId();
 		MMMinecart testMinecart = minecarts.get(id);
@@ -80,10 +83,10 @@ public class MinecartManiaWorld {
 				MMMinecart newCart;
 
 				if (minecart instanceof StorageMinecart) {
-					newCart = new MMStorageCart(minecart, owner);
+					newCart = new MMStorageCart(minecart, owned, owner);
 				}
 				else {
-					newCart = new MMMinecart(minecart, owner);
+					newCart = new MMMinecart(minecart, owned, owner);
 				}
 
 				minecarts.put(newCart.getEntityId(), newCart);
@@ -91,6 +94,20 @@ public class MinecartManiaWorld {
 				return newCart;
 			}
 		}
+
+		return testMinecart;
+
+	}
+
+
+	/**
+	 * Returns a new MinecartManiaMinecart from storage if it already exists, or creates and stores a new MinecartManiaMinecart object, and returns it
+	 * @param the minecart to wrap
+	 */
+	@ThreadSafe
+	public static MMMinecart getMMMinecart(Minecart minecart) {
+		final int id = minecart.getEntityId();
+		MMMinecart testMinecart = minecarts.get(id);
 
 		return testMinecart;
 	}
@@ -474,13 +491,18 @@ public class MinecartManiaWorld {
 		else if (type.getId() == Item.MINECART_HOPPER.getId()) {
 			m = (Minecart)w.spawn(loc, HopperMinecart.class);
 		}
+		else if (type.getId() == Item.MINECART_TNT.getId()) {
+			m = (Minecart)w.spawn(loc, ExplosiveMinecart.class);
+		}
+		else if (type.getId() == Item.MINECART_COMMAND.getId()) {
+			m = (Minecart)w.spawn(loc, org.bukkit.entity.minecart.CommandMinecart.class);
+		}
 
-		if(m == null || !m.isValid()){
+		if(m == null){ //|| !m.isValid()){
 			Logger.debug("Invalid entity spawning minecart at " + loc.toString());
 			return null;
 		}
 
-		MMMinecart minecart = null;
 		String ownerName = "none";
 		if (owner != null) {
 			if (owner instanceof Player) {
@@ -494,8 +516,12 @@ public class MinecartManiaWorld {
 			}
 		}
 
-		minecart = getOrCreateMMMinecart(m, ownerName);
+		MMMinecart minecart = null;
 		
+		minecart = CreateMMMinecart(m, ownerName!=null, ownerName); //onCreate listener will make the cart.
+
+		minecart.setOwner(ownerName);
+
 		return minecart;
 	}
 

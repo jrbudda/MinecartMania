@@ -27,7 +27,7 @@ public class PlayerListener implements Listener{
 		if (Settings.PreserveMinecartsonRiderLogout) {
 			MinecartManiaPlayer player = MinecartManiaWorld.getMinecartManiaPlayer(event.getPlayer());
 			if (event.getPlayer().getVehicle() instanceof Minecart) {
-				final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)player.getPlayer().getVehicle(), null);
+				final MMMinecart minecart = MinecartManiaWorld.getMMMinecart((Minecart)player.getPlayer().getVehicle());
 				try {
 					MMDataTable data = new MMDataTable(minecart, player.getName());
 					Logger.debug("Saving and removing minecart for " + player.getName());

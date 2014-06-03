@@ -54,8 +54,6 @@ public class SpawnAction extends SignAction {
 	}
 
 
-
-
 	@Override
 	public boolean process(String[] lines) {
 		for (String line : lines) {
@@ -75,6 +73,9 @@ public class SpawnAction extends SignAction {
 				}
 				else if(	line.toLowerCase().contains("[spawn:tnt")){
 					spawnType = Item.MINECART_TNT;
+				}
+				else if(	line.toLowerCase().contains("[spawn:com")){
+					spawnType = Item.MINECART_COMMAND;
 				}
 
 				return true;

@@ -1,6 +1,6 @@
 package com.afforess.minecartmania.utils;
 
-import net.minecraft.server.v1_7_R1.Block;
+import net.minecraft.server.v1_7_R3.Block;
 
 import org.bukkit.Location;
 import org.bukkit.material.Sign;

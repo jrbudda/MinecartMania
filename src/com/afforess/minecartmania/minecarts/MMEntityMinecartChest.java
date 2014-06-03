@@ -3,17 +3,18 @@ package com.afforess.minecartmania.minecarts;
 //CraftBukkit start
 import java.util.List;
 
-import net.minecraft.server.v1_7_R1.Block;
-import net.minecraft.server.v1_7_R1.BlockMinecartTrack;
-import net.minecraft.server.v1_7_R1.BlockMinecartTrackAbstract;
-import net.minecraft.server.v1_7_R1.Blocks;
-import net.minecraft.server.v1_7_R1.Entity;
-import net.minecraft.server.v1_7_R1.EntityLiving;
-import net.minecraft.server.v1_7_R1.EntityMinecartAbstract;
-import net.minecraft.server.v1_7_R1.MathHelper;
-import net.minecraft.server.v1_7_R1.NBTTagCompound;
-import net.minecraft.server.v1_7_R1.World;
-import net.minecraft.server.v1_7_R1.WorldServer;
+import net.minecraft.server.v1_7_R3.Block;
+import net.minecraft.server.v1_7_R3.BlockMinecartTrack;
+import net.minecraft.server.v1_7_R3.BlockMinecartTrackAbstract;
+import net.minecraft.server.v1_7_R3.Blocks;
+import net.minecraft.server.v1_7_R3.Entity;
+import net.minecraft.server.v1_7_R3.EntityLiving;
+import net.minecraft.server.v1_7_R3.EntityMinecartAbstract;
+import net.minecraft.server.v1_7_R3.EntityPlayer;
+import net.minecraft.server.v1_7_R3.MathHelper;
+import net.minecraft.server.v1_7_R3.NBTTagCompound;
+import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R3.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Minecart;
@@ -21,11 +22,12 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.util.Vector;
 
 import com.afforess.minecartmania.MinecartMania;
+import com.afforess.minecartmania.config.Settings;
 import com.afforess.minecartmania.debug.Logger;
 //CraftBukkit end
 import com.afforess.minecartmania.events.MinecartClickedEvent;
 
-public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMinecartChest implements IMMEntity{
+public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R3.EntityMinecartChest implements IMMEntity{
 
 	//NMS
 	private boolean a;
@@ -80,7 +82,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 	public MMEntityMinecartChest(World world) {
 		super(world);
 		this.a = false;
-		this.l = true;
+		this.k = true;
 		this.a(0.98F, 0.7F);
 		this.height = this.length / 2.0F;
 
@@ -175,6 +177,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 	}
 
 	public void move() {
+
 		//		com.afforess.minecartmaniacore.debug.MinecartManiaLogger.info(" j start " + locX + " " + locY + " " + locZ + ":" + motX + " " + motY + " " + motZ);
 
 		// CraftBukkit start
@@ -195,7 +198,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 		}
 
 		if (this.locY < -64.0D) {
-			this.G();
+			this.F();
 		}
 
 		//		if (this.h() && this.random.nextInt(4) == 0) {
@@ -208,12 +211,12 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 			this.world.methodProfiler.a("portal");
 			//	MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
 
-			i = this.D();
-			if (this.ao) {
+			i = this.C();
+			if (this.an) {
 				if (true ){// ||minecraftserver.getAllowNether()) { // CraftBukkit - multi-world should still allow teleport even if default vanilla nether disabled
-					if (this.vehicle == null && this.ap++ >= i) {
-						this.ap = i;
-						this.portalCooldown = this.ai();
+					if (this.vehicle == null && this.ao++ >= i) {
+						this.ao = i;
+						this.portalCooldown = this.ah();
 						byte b0;
 
 						if (this.world.worldProvider.dimension == -1) {
@@ -225,15 +228,15 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 						this.b(b0);
 					}
 
-					this.ao = false;
+					this.an = false;
 				}
 			} else {
-				if (this.ap > 0) {
-					this.ap -= 4;
+				if (this.ao > 0) {
+					this.ao -= 4;
 				}
 
-				if (this.ap < 0) {
-					this.ap = 0;
+				if (this.ao < 0) {
+					this.ao = 0;
 				}
 			}
 
@@ -247,10 +250,10 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 		if (frozen) {
 			if (this.passenger != null && this.passenger instanceof EntityLiving) {
 				// there is a passenger	
-				double	passengerSpeed = ((EntityLiving)this.passenger).bf;
+				double	passengerSpeed = ((EntityLiving)this.passenger).be;
 
 				if (passengerSpeed > 0 ) {
-					MinecartClickedEvent mce = new MinecartClickedEvent(com.afforess.minecartmania.entity.MinecartManiaWorld.getOrCreateMMMinecart((Minecart) this.getBukkitEntity(),null));
+					MinecartClickedEvent mce = new MinecartClickedEvent(com.afforess.minecartmania.entity.MinecartManiaWorld.getMMMinecart((Minecart) this.getBukkitEntity()));
 					MinecartMania.callEvent(mce);
 				}
 			}
@@ -368,6 +371,10 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 
 		}
 
+		//modify these speeds only once per tick, cause physics.
+
+		
+
 		this.motY -= defaultgravity * GravityPercent / 100;
 
 		//slopes
@@ -443,7 +450,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 		Logger.motion(" Final speed x:" + motX + " z:" + motZ + "onground: " + this.onGround + " onrails:" + this.onRails);
 
 
-		this.I();
+		this.H();
 		this.pitch = 0.0F; //I think minecart tilting  is handled on the client only.
 
 
@@ -489,7 +496,7 @@ public class MMEntityMinecartChest extends net.minecraft.server.v1_7_R1.EntityMi
 		if (list != null && !list.isEmpty()) {
 			for (int l1 = 0; l1 < list.size(); ++l1) {
 				Entity entity = (Entity) list.get(l1);
-				if (entity != this.passenger && entity.S() && entity instanceof EntityMinecartAbstract) {
+				if (entity != this.passenger && entity.R() && entity instanceof EntityMinecartAbstract) {
 					//bump the other cart.
 					if (!(entity instanceof IMMEntity) ||  !((IMMEntity)entity).getFrozen()){
 						if(this.collisions)	entity.collide(this);

@@ -35,10 +35,21 @@ public class CoreListener implements Listener{
 	}
 
 	@EventHandler
+	public void onCreate(org.bukkit.event.vehicle.VehicleCreateEvent event) {
+		if (event.getVehicle() instanceof Minecart) {
+			Logger.debug("onCreate " + event.getVehicle().toString());
+			Minecart cart = (Minecart)event.getVehicle();
+			MMMinecart minecart = MinecartManiaWorld.CreateMMMinecart(cart, true, null);
+			minecart.findOwner();
+		}
+		
+	}
+
+	@EventHandler
 	public void onVehicleUpdate(VehicleUpdateEvent event) {
 		if (event.getVehicle() instanceof Minecart) {
 			Minecart cart = (Minecart)event.getVehicle();
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart(cart, null);
+			MMMinecart minecart = MinecartManiaWorld.CreateMMMinecart(cart, false, null);
 
 			if (minecart.isDead()) {
 				return;
@@ -111,7 +122,7 @@ public class CoreListener implements Listener{
 				minecart.updateLocation();
 				minecart.createdLastTick = false;
 			}
-	}
+		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -119,7 +130,7 @@ public class CoreListener implements Listener{
 		//does this go off?
 		if (event.getVehicle() instanceof Minecart) {
 			Logger.debug("ondestroy");
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle(), null);
+			MMMinecart minecart = MinecartManiaWorld.getMMMinecart((Minecart)event.getVehicle());
 			event.setCancelled(true);
 			minecart.killOptionalReturn();
 		}
@@ -129,8 +140,8 @@ public class CoreListener implements Listener{
 	public void onVehicleDamage(VehicleDamageEvent event) {
 
 		if (event.getVehicle() instanceof Minecart) {
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle(), null);
-		
+			MMMinecart minecart = MinecartManiaWorld.getMMMinecart((Minecart)event.getVehicle());
+
 			//Start workaround for double damage events
 			long lastDamage = -1;
 			if (minecart.getDataValue("Last Damage") != null) {
@@ -167,7 +178,7 @@ public class CoreListener implements Listener{
 
 		if (event.getVehicle() instanceof Minecart) {
 
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle(), null);
+			MMMinecart minecart = MinecartManiaWorld.CreateMMMinecart((Minecart)event.getVehicle(), false, null);
 			Entity collisioner = event.getEntity();
 
 			Logger.debug("Collision! " + event.getVehicle().getLocation() + " " + collisioner);
@@ -181,7 +192,7 @@ public class CoreListener implements Listener{
 
 			event.setCancelled(!Settings.MinecartCollisions);
 			event.setCollisionCancelled(!Settings.MinecartCollisions);
-			
+
 			if (collisioner instanceof Player && !minecart.isApproaching(collisioner.getLocation())){
 				//allow player push
 				event.setCancelled(false);
@@ -189,7 +200,7 @@ public class CoreListener implements Listener{
 				event.setPickupCancelled(true);			
 			}
 			else if(collisioner instanceof Minecart) {
-				MMMinecart otherminecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart) collisioner, null);
+				MMMinecart otherminecart = MinecartManiaWorld.CreateMMMinecart((Minecart) collisioner, false, null);
 				if (otherminecart.isFrozen()){
 					event.setCancelled(true);
 					event.setCollisionCancelled(true);
@@ -221,7 +232,7 @@ public class CoreListener implements Listener{
 			}
 		}
 
-		final MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle(),null);
+		final MMMinecart minecart = MinecartManiaWorld.getMMMinecart((Minecart)event.getVehicle());
 
 		//now handled in playerEntityInteract
 		//		if (minecart !=null && minecart.getDataValue("Lock Cart") != null && minecart.isMoving()) {
@@ -246,12 +257,12 @@ public class CoreListener implements Listener{
 	@EventHandler(priority = org.bukkit.event.EventPriority.MONITOR)
 	public void onVehicleExit(VehicleExitEvent event) {
 		if (event.getVehicle().isDead()) return;
-		
+
 		Logger.debug("Vehicle exit " + event.getExited().toString());
-		
+
 		if (event.getVehicle() instanceof Minecart) {
-		
-			MMMinecart minecart = MinecartManiaWorld.getOrCreateMMMinecart((Minecart)event.getVehicle(),null);
+
+			MMMinecart minecart = MinecartManiaWorld.getMMMinecart((Minecart)event.getVehicle());
 
 			if (minecart !=null && event.getExited() instanceof Player && minecart.isLocked()) {
 				((Player)event.getExited()).sendMessage(Settings.getLocal("SignCommandsMinecartLockedError"));
@@ -259,7 +270,7 @@ public class CoreListener implements Listener{
 			}
 			else SignCommands.updateSensors(minecart);	
 		}
-		
+
 	}
 
 	@EventHandler

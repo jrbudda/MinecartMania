@@ -55,14 +55,14 @@ public class MMStorageCart extends MMMinecart implements MinecartManiaInventory{
 		ItemCollectionRangeY = itemCollectionRangeY;
 	}
 
-	/**
-	 * Creates a storage minecart from the given bukkit minecart
-	 * @param cart to create from
-	 */
-	public MMStorageCart(Minecart cart) {
-		super(cart);
-		initialize();
-	}
+//	/**
+//	 * Creates a storage minecart from the given bukkit minecart
+//	 * @param cart to create from
+//	 */
+//	public MMStorageCart(Minecart cart) {
+//		super(cart);
+//		initialize();
+//	}
 
 
 	private void initialize(){
@@ -77,8 +77,8 @@ public class MMStorageCart extends MMMinecart implements MinecartManiaInventory{
 	 * @param cart to create from
 	 * @param owner that created the minecart
 	 */
-	public MMStorageCart(Minecart cart, String owner) {
-		super(cart, owner);
+	public MMStorageCart(Minecart cart, boolean owned, String owner) {
+		super(cart, owned, owner);
 		initialize();
 	}
 
