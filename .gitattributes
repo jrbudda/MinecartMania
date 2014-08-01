@@ -1,0 +1,9 @@
+* text=auto
+
+*.sh text
+*.java text diff=java
+*.yml text
+*.txt text
+*.json text
+*.patch text
+*.xml text
