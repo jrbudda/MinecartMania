@@ -1,9 +1,5 @@
 package com.afforess.minecartmania.signs.actions;
 
-import java.util.Set;
-
-import org.bukkit.Location;
-
 import com.afforess.minecartmania.config.NewControlBlock;
 import com.afforess.minecartmania.config.NewControlBlockList;
 import com.afforess.minecartmania.debug.Logger;
@@ -14,99 +10,97 @@ import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.signs.SignManager;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmania.utils.MinecartUtils;
+import org.bukkit.Location;
 
-public class ElevatorAction extends SignAction{
+import java.util.Set;
 
-	private int min = 0;
-	private int max = 255;
+public class ElevatorAction extends SignAction {
 
-	protected Location calculateElevatorStop(MMMinecart minecart) {
-		//get the offset of the track just after the sign in the current facing direction
+    private int min = 0;
+    private int max = 255;
 
-		Location search = loc.clone();
+    protected Location calculateElevatorStop(MMMinecart minecart) {
+        //get the offset of the track just after the sign in the current facing direction
 
-		for (int i = min; i <= max; i++) {
+        Location search = loc.clone();
 
-			if (i == loc.getBlockY()) continue;
+        for (int i = min; i <= max; i++) {
 
-			search.setY(i);
-			MMSign temp = SignManager.getOrCreateMMSign(search);	
-			NewControlBlock ncb = NewControlBlockList.getControlBlock(Item.getItem(search.getBlock()));
+            if (i == loc.getBlockY()) continue;
 
-			if (temp == null && ncb == null) continue;
+            search.setY(i);
+            MMSign temp = SignManager.getOrCreateMMSign(search);
+            NewControlBlock ncb = NewControlBlockList.getControlBlock(Item.getItem(search.getBlock()));
 
-			if ( (temp !=null && temp.hasSignAction(ElevatorAction.class)) || (ncb!=null &&  ncb.hasSignAction(ElevatorAction.class)) )  {
+            if (temp == null && ncb == null) continue;
 
-				if(ncb !=null) search = search.add(0, 1, 0); //control block.
+            if ((temp != null && temp.hasSignAction(ElevatorAction.class)) || (ncb != null && ncb.hasSignAction(ElevatorAction.class))) {
 
-				Set<CompassDirection> dirs = MinecartUtils.getValidDirections(search.getBlock());
-		
-				Logger.debug("elevator: looking for exit at y= " + search.getBlockY() + "valid dirs " + dirs.size());		
+                if (ncb != null) search = search.add(0, 1, 0); //control block.
 
-				if(dirs.contains(minecart.getDirection())) return search;
+                Set<CompassDirection> dirs = MinecartUtils.getValidDirections(search.getBlock());
 
-				else{
-					if (!dirs.isEmpty()){
-						CompassDirection dir = dirs.iterator().next();
-						Logger.debug("elevator: sending minecart to the " + dir.toString());
-						minecart.setMotion(dirs.iterator().next(), minecart.getMotion().length());
-						return search;
-					}
-				}
-			}
-		}
-		return null;
-	}
+                Logger.debug("elevator: looking for exit at y= " + search.getBlockY() + "valid dirs " + dirs.size());
 
+                if (dirs.contains(minecart.getDirection())) return search;
 
-
-
-
-	public boolean execute(MMMinecart minecart) {
-		Location teleport = calculateElevatorStop(minecart);
-		if (teleport != null) {
-			if(minecart.teleport(teleport) == null) {
-				Logger.debug("Teleport failed!");
-			}
-			return true;
-		}
-		Logger.debug("could not find exit for elevator");
-		return false;
-	}
+                else {
+                    if (!dirs.isEmpty()) {
+                        CompassDirection dir = dirs.iterator().next();
+                        Logger.debug("elevator: sending minecart to the " + dir.toString());
+                        minecart.setMotion(dirs.iterator().next(), minecart.getMotion().length());
+                        return search;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
 
-	public boolean async() {
-		return false;
-	}
-
-	public boolean process(String[] lines) {
-		for (String line : lines) {
-			String s = line.toLowerCase();
-			if (s.toLowerCase().contains("[elevator")) {
-				return true;
-			}
-			else if( s.toLowerCase().contains("[lift down")){
-				min = 0;
-				max = loc.getBlockX()-1;
-				return true;
-			}
-			else if( s.toLowerCase().contains("[lift up")) {
-				min = loc.getBlockX() +1;
-				max = 255;
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
-	public String getPermissionName() {
-		return "elevatorsign";
-	}
+    public boolean execute(MMMinecart minecart) {
+        Location teleport = calculateElevatorStop(minecart);
+        if (teleport != null) {
+            if (minecart.teleport(teleport) == null) {
+                Logger.debug("Teleport failed!");
+            }
+            return true;
+        }
+        Logger.debug("could not find exit for elevator");
+        return false;
+    }
 
 
-	public String getFriendlyName() {
-		return "Elevator";
-	}
+    public boolean async() {
+        return false;
+    }
+
+    public boolean process(String[] lines) {
+        for (String line : lines) {
+            String s = line.toLowerCase();
+            if (s.toLowerCase().contains("[elevator")) {
+                return true;
+            } else if (s.toLowerCase().contains("[lift down")) {
+                min = 0;
+                max = loc.getBlockX() - 1;
+                return true;
+            } else if (s.toLowerCase().contains("[lift up")) {
+                min = loc.getBlockX() + 1;
+                max = 255;
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public String getPermissionName() {
+        return "elevatorsign";
+    }
+
+
+    public String getFriendlyName() {
+        return "Elevator";
+    }
 
 }

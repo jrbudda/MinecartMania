@@ -5,92 +5,99 @@ package com.afforess.minecartmania.farming;
  * Afforess, 2/27/11
  */
 
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.minecarts.MMStorageCart;
-
 public class StorageMinecartSugar {
-	public static void doAutoSugarFarm(MMStorageCart minecart) {
-		if((minecart.getDataValue("AutoSugar") == null) && (minecart.getDataValue("AutoPlant") == null) && FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
-			return;
-		}
+    public static void doAutoSugarFarm(MMStorageCart minecart) {
+        if ((minecart.getDataValue("AutoSugar") == null) && (minecart.getDataValue("AutoPlant") == null) && FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
+            return;
+        }
 
-		if (minecart.getFarmingRange() < 1) {
-			return;
-		}
+        if (minecart.getFarmingRange() < 1) {
+            return;
+        }
 
-		Location loc = minecart.getLocation().clone();
-		int range = minecart.getFarmingRange();
-		int rangeY = minecart.getFarmingRangeY();
-		for (int dx = -(range); dx <= range; dx++){
-			for (int dy = -(rangeY); dy <= rangeY; dy++){
-				for (int dz = -(range); dz <= range; dz++){
-					//Setup data
-					int x = loc.getBlockX() + dx;
-					int y = loc.getBlockY() + dy;
-					int z = loc.getBlockZ() + dz;
+        Location loc = minecart.getLocation().clone();
+        int range = minecart.getFarmingRange();
+        int rangeY = minecart.getFarmingRangeY();
+        for (int dx = -(range); dx <= range; dx++) {
+            for (int dy = -(rangeY); dy <= rangeY; dy++) {
+                for (int dz = -(range); dz <= range; dz++) {
+                    //Setup data
+                    int x = loc.getBlockX() + dx;
+                    int y = loc.getBlockY() + dy;
+                    int z = loc.getBlockZ() + dz;
 
-					int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-					int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z); 
-					int belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y-1, z);
-					
-					//Harvest Sugar
-					if (minecart.getDataValue("AutoSugar") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
-					
-						// Check for sugar blocks and ensure they're the top one in the stack. 
-						// Breaking sugar below the top will result in cane on the track which can stop the cart
-						// until autocollection is turned back on.
+                    int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                    int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                    int belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y - 1, z);
 
-						if (id == Material.SUGAR_CANE_BLOCK.getId() && aboveId != Material.SUGAR_CANE_BLOCK.getId()) {
-							if (belowId == Material.GRASS.getId() ||  belowId == Material.DIRT.getId()) {
-								if(minecart.getDataValue("AutoPlant") == null) {
-									minecart.addItem(Material.SUGAR_CANE.getId());
-									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
-								}
-							} else {
-								minecart.addItem(Material.SUGAR_CANE.getId());
-								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
-							}
-						}
-					}
+                    //Harvest Sugar
+                    if (minecart.getDataValue("AutoSugar") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
 
-					//update data
-					id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-					aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
-					belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y-1, z);
+                        // Check for sugar blocks and ensure they're the top one in the stack.
+                        // Breaking sugar below the top will result in cane on the track which can stop the cart
+                        // until autocollection is turned back on.
 
-					//Replant cane
-					if (minecart.getDataValue("AutoPlant") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
-						if (id == Material.GRASS.getId() ||  id == Material.DIRT.getId()) {
-							if (aboveId == Material.AIR.getId()) {
+                        if (id == Material.SUGAR_CANE_BLOCK.getId() && aboveId != Material.SUGAR_CANE_BLOCK.getId()) {
+                            if (belowId == Material.GRASS.getId() || belowId == Material.DIRT.getId()) {
+                                if (minecart.getDataValue("AutoPlant") == null) {
+                                    minecart.addItem(Material.SUGAR_CANE.getId());
+                                    MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
+                                }
+                            } else {
+                                minecart.addItem(Material.SUGAR_CANE.getId());
+                                MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
+                            }
+                        }
+                    }
 
-								// Need to check for water or the cane will not plant.
-								int water1 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x+1, y, z);
-								int water2 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x-1, y, z);
-								int water3 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z+1);
-								int water4 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z-1);
+                    //update data
+                    id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                    aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                    belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y - 1, z);
 
-								boolean foundwater = false;
+                    //Replant cane
+                    if (minecart.getDataValue("AutoPlant") != null || FarmingBase.isFarmingActive(minecart, FarmType.Sugar)) {
+                        if (id == Material.GRASS.getId() || id == Material.DIRT.getId()) {
+                            if (aboveId == Material.AIR.getId()) {
 
-								if(water1 == Material.WATER.getId() || water1 == Material.STATIONARY_WATER.getId()) { foundwater = true; }
-								if(water2 == Material.WATER.getId() || water2 == Material.STATIONARY_WATER.getId()) { foundwater = true; }
-								if(water3 == Material.WATER.getId() || water3 == Material.STATIONARY_WATER.getId()) { foundwater = true; }
-								if(water4 == Material.WATER.getId() || water4 == Material.STATIONARY_WATER.getId()) { foundwater = true; }
+                                // Need to check for water or the cane will not plant.
+                                int water1 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x + 1, y, z);
+                                int water2 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x - 1, y, z);
+                                int water3 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z + 1);
+                                int water4 = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z - 1);
 
-								if(foundwater == true) {
+                                boolean foundwater = false;
 
-									if (minecart.removeItem(Material.SUGAR_CANE.getId())) {
-										MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.SUGAR_CANE_BLOCK.getId(), x, y+1, z);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+                                if (water1 == Material.WATER.getId() || water1 == Material.STATIONARY_WATER.getId()) {
+                                    foundwater = true;
+                                }
+                                if (water2 == Material.WATER.getId() || water2 == Material.STATIONARY_WATER.getId()) {
+                                    foundwater = true;
+                                }
+                                if (water3 == Material.WATER.getId() || water3 == Material.STATIONARY_WATER.getId()) {
+                                    foundwater = true;
+                                }
+                                if (water4 == Material.WATER.getId() || water4 == Material.STATIONARY_WATER.getId()) {
+                                    foundwater = true;
+                                }
+
+                                if (foundwater == true) {
+
+                                    if (minecart.removeItem(Material.SUGAR_CANE.getId())) {
+                                        MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.SUGAR_CANE_BLOCK.getId(), x, y + 1, z);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 

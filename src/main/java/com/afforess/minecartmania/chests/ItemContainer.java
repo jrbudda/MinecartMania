@@ -5,17 +5,17 @@ import com.afforess.minecartmania.entity.MinecartManiaInventory;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
 public interface ItemContainer {
-	
-	public boolean hasDirectionCondition();
-	
-	public boolean hasAmountCondition();
-	
-	public AbstractItem[] getRawItemList();
-	
-	public AbstractItem[] getItemList(CompassDirection direction);
-	
-	public void addDirection(CompassDirection direction);
-	
-	public void doCollection(MinecartManiaInventory other);
+
+    public boolean hasDirectionCondition();
+
+    public boolean hasAmountCondition();
+
+    public AbstractItem[] getRawItemList();
+
+    public AbstractItem[] getItemList(CompassDirection direction);
+
+    public void addDirection(CompassDirection direction);
+
+    public void doCollection(MinecartManiaInventory other);
 
 }

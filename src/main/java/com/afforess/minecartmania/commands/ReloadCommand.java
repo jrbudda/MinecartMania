@@ -1,31 +1,30 @@
 package com.afforess.minecartmania.commands;
 
+import com.afforess.minecartmania.config.Settings;
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import com.afforess.minecartmania.config.Settings;
-import com.afforess.minecartmania.minecarts.MMMinecart;
+public class ReloadCommand extends MinecartManiaCommand {
 
-public class ReloadCommand extends MinecartManiaCommand  {
+    public boolean isPlayerOnly() {
+        return false;
+    }
 
-	public boolean isPlayerOnly() {
-		return false;
-	}
+    public CommandType getCommand() {
+        return CommandType.Reload;
+    }
 
-	public CommandType getCommand() {
-		return CommandType.Reload;
-	}
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        com.afforess.minecartmania.MinecartMania.getInstance().reloadMyConfig();
 
-		com.afforess.minecartmania.MinecartMania.getInstance().reloadMyConfig();
-		
-		sender.sendMessage(Settings.getLocal("AdminReload"));
-		return true;
-	}
+        sender.sendMessage(Settings.getLocal("AdminReload"));
+        return true;
+    }
 
-	public boolean shouldRemoveMinecart(MMMinecart minecart) {
-		return true;
-	}
+    public boolean shouldRemoveMinecart(MMMinecart minecart) {
+        return true;
+    }
 
 }

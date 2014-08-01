@@ -6,42 +6,42 @@ import com.afforess.minecartmania.minecarts.MMStorageCart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.ItemUtils;
 
-public class MaximumItemAction extends SignAction{
-	protected AbstractItem items[] = null;
+public class MaximumItemAction extends SignAction {
+    protected AbstractItem items[] = null;
 
-	
-	public boolean execute(MMMinecart minecart) {
-		if (minecart.isStorageMinecart()) {
-			for (AbstractItem item : items) {
-				((MMStorageCart)minecart).setMaximumItem(item.type(), item.getAmount());
-			}
-			return true;
-		}
-		return false;
-	}
 
-	
-	public boolean async() {
-		return true;
-	}
+    public boolean execute(MMMinecart minecart) {
+        if (minecart.isStorageMinecart()) {
+            for (AbstractItem item : items) {
+                ((MMStorageCart) minecart).setMaximumItem(item.type(), item.getAmount());
+            }
+            return true;
+        }
+        return false;
+    }
 
-	
-	public boolean process(String[] lines) {
-		if (lines[0].toLowerCase().contains("[max item")) {
-			this.items = ItemUtils.getItemStringListToMaterial(lines);
-			return true;
-		}
-		return false;
-	}
 
-	
-	public String getPermissionName() {
-		return "maximumitemsign";
-	}
+    public boolean async() {
+        return true;
+    }
 
-	
-	public String getFriendlyName() {
-		return "Maximum Item";
-	}
+
+    public boolean process(String[] lines) {
+        if (lines[0].toLowerCase().contains("[max item")) {
+            this.items = ItemUtils.getItemStringListToMaterial(lines);
+            return true;
+        }
+        return false;
+    }
+
+
+    public String getPermissionName() {
+        return "maximumitemsign";
+    }
+
+
+    public String getFriendlyName() {
+        return "Maximum Item";
+    }
 
 }

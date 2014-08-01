@@ -5,84 +5,82 @@ import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 
-public class AnnouncementAction extends SignAction{
+public class AnnouncementAction extends SignAction {
 
-	protected String[] announcement;
-	protected CompassDirection direction = CompassDirection.NO_DIRECTION;
+    protected String[] announcement;
+    protected CompassDirection direction = CompassDirection.NO_DIRECTION;
 
-	public boolean execute(MMMinecart minecart) {
-		if (minecart.hasPlayerPassenger()) {
-			if(direction == CompassDirection.NO_DIRECTION || minecart.getDirectionOfMotion() == direction){
-				for (int i = 0; i < 3; i++) {
-					if (announcement[i] != null && !announcement[i].trim().isEmpty()) {
-						minecart.getPlayerPassenger().sendMessage(announcement[i]);
-					}
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	public boolean async() {
-		return false;
-	}
+    public boolean execute(MMMinecart minecart) {
+        if (minecart.hasPlayerPassenger()) {
+            if (direction == CompassDirection.NO_DIRECTION || minecart.getDirectionOfMotion() == direction) {
+                for (int i = 0; i < 3; i++) {
+                    if (announcement[i] != null && !announcement[i].trim().isEmpty()) {
+                        minecart.getPlayerPassenger().sendMessage(announcement[i]);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
 
-	public boolean process(String[] lines) {
-		if (lines.length < 2) return false;
-		if (lines[0].toLowerCase().contains("[announce")) {
-
-			final String title = Settings.getLocal("SignCommandsAnnouncementPrefix");
-
-			if(lines[0].contains(":")){
-				String[] linesplit = lines[0].split(":");
-				if (linesplit.length == 2){
-					String dir = linesplit[1].toLowerCase();
-					if (dir.contains("nor)")) direction = CompassDirection.NORTH;
-					if (dir.contains("eas)")) direction = CompassDirection.EAST;
-					if (dir.contains("wes)")) direction = CompassDirection.WEST;
-					if (dir.contains("sou)")) direction = CompassDirection.SOUTH;
-				}
-			}
-
-			announcement = new String[3];
-			int line = 0;
-			announcement[line] = title + lines[1];
-			//! signifies a new line, otherwise continue message on same line
-
-			if(lines.length <3) return true;
-			if (lines[2].startsWith("!")) {
-				line++;
-				announcement[line] = '\n' + title + lines[2].substring(1);
-			}
-			else {
-				announcement[line] += lines[2];
-			}
-			if(lines.length <4) return true;
-			if (lines[3].startsWith("!")) {
-				line++;
-				announcement[line] = '\n' + title + lines[3].substring(1);
-			}
-			else {
-				announcement[line] += lines[3];
-			}
-			return true;
-		}
-		return false;
+    public boolean async() {
+        return false;
+    }
 
 
-	}
+    public boolean process(String[] lines) {
+        if (lines.length < 2) return false;
+        if (lines[0].toLowerCase().contains("[announce")) {
+
+            final String title = Settings.getLocal("SignCommandsAnnouncementPrefix");
+
+            if (lines[0].contains(":")) {
+                String[] linesplit = lines[0].split(":");
+                if (linesplit.length == 2) {
+                    String dir = linesplit[1].toLowerCase();
+                    if (dir.contains("nor)")) direction = CompassDirection.NORTH;
+                    if (dir.contains("eas)")) direction = CompassDirection.EAST;
+                    if (dir.contains("wes)")) direction = CompassDirection.WEST;
+                    if (dir.contains("sou)")) direction = CompassDirection.SOUTH;
+                }
+            }
+
+            announcement = new String[3];
+            int line = 0;
+            announcement[line] = title + lines[1];
+            //! signifies a new line, otherwise continue message on same line
+
+            if (lines.length < 3) return true;
+            if (lines[2].startsWith("!")) {
+                line++;
+                announcement[line] = '\n' + title + lines[2].substring(1);
+            } else {
+                announcement[line] += lines[2];
+            }
+            if (lines.length < 4) return true;
+            if (lines[3].startsWith("!")) {
+                line++;
+                announcement[line] = '\n' + title + lines[3].substring(1);
+            } else {
+                announcement[line] += lines[3];
+            }
+            return true;
+        }
+        return false;
 
 
-	public String getPermissionName() {
-		return "announcementsign";
-	}
+    }
 
 
-	public String getFriendlyName() {
-		return "Announcement";
-	}
+    public String getPermissionName() {
+        return "announcementsign";
+    }
+
+
+    public String getFriendlyName() {
+        return "Announcement";
+    }
 
 }

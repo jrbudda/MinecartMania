@@ -1,175 +1,182 @@
 package com.afforess.minecartmania.utils;
 
-import java.util.ArrayList;
-import java.util.Random;
-
+import com.afforess.minecartmania.entity.MinecartManiaWorld;
+import com.afforess.minecartmania.farming.FarmType;
+import com.afforess.minecartmania.farming.FarmingBase;
+import com.afforess.minecartmania.minecarts.MMStorageCart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.afforess.minecartmania.entity.MinecartManiaWorld;
-import com.afforess.minecartmania.farming.FarmType;
-import com.afforess.minecartmania.farming.FarmingBase;
-import com.afforess.minecartmania.minecarts.MMStorageCart;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class StorageMinecartUtils {
 
-	public static void doAutoFarm(MMStorageCart minecart) {
-		if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
-			return;
-		}
-		if (minecart.getFarmingRange() < 1) {
-			return;
-		}
-		Location loc = minecart.getLocation().clone();
-		int range = minecart.getFarmingRange();
-		int rangeY = minecart.getFarmingRangeY();
-		for (int dx = -(range); dx <= range; dx++){
-			for (int dy = -(rangeY); dy <= rangeY; dy++){
-				for (int dz = -(range); dz <= range; dz++){
-					//Setup data
-					int x = loc.getBlockX() + dx;
-					int y = loc.getBlockY() + dy;
-					int z = loc.getBlockZ() + dz;
-					int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-					int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
-					boolean dirty = false; //set when the data gets changed
-					//Harvest fully grown crops first
-					if (minecart.getDataValue("AutoHarvest") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
-						int data = MinecartManiaWorld.getBlockData(minecart.getWorld(), x, y, z);
-						if (id == Material.CROPS.getId()) {
-							//fully grown
-							if (data == 0x7) {
-								minecart.addItem(Material.WHEAT.getId());
-								minecart.addItem(Material.SEEDS.getId());
-								if ((new Random()).nextBoolean()) { //Randomly add second seed.
-									minecart.addItem(Material.SEEDS.getId());
-								}
-								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
-								dirty = true;
-							}
-						}
-					}
-					//update data
-					if (dirty) {
-						id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-						aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
-						dirty = false;
-					}
-					//till soil
-					if (minecart.getDataValue("AutoTill") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
-						if (id == Material.GRASS.getId() ||  id == Material.DIRT.getId()) {
-							if (aboveId == Material.AIR.getId()) {
-								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.SOIL.getId(), x, y, z);
-								dirty = true;
-							}
-						}
-					}
+    public static void doAutoFarm(MMStorageCart minecart) {
+        if (minecart.getDataValue("AutoHarvest") == null && minecart.getDataValue("AutoTill") == null && minecart.getDataValue("AutoSeed") == null && !FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
+            return;
+        }
+        if (minecart.getFarmingRange() < 1) {
+            return;
+        }
+        Location loc = minecart.getLocation().clone();
+        int range = minecart.getFarmingRange();
+        int rangeY = minecart.getFarmingRangeY();
+        for (int dx = -(range); dx <= range; dx++) {
+            for (int dy = -(rangeY); dy <= rangeY; dy++) {
+                for (int dz = -(range); dz <= range; dz++) {
+                    //Setup data
+                    int x = loc.getBlockX() + dx;
+                    int y = loc.getBlockY() + dy;
+                    int z = loc.getBlockZ() + dz;
+                    int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                    int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                    boolean dirty = false; //set when the data gets changed
+                    //Harvest fully grown crops first
+                    if (minecart.getDataValue("AutoHarvest") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
+                        int data = MinecartManiaWorld.getBlockData(minecart.getWorld(), x, y, z);
+                        if (id == Material.CROPS.getId()) {
+                            //fully grown
+                            if (data == 0x7) {
+                                minecart.addItem(Material.WHEAT.getId());
+                                minecart.addItem(Material.SEEDS.getId());
+                                if ((new Random()).nextBoolean()) { //Randomly add second seed.
+                                    minecart.addItem(Material.SEEDS.getId());
+                                }
+                                MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
+                                dirty = true;
+                            }
+                        }
+                    }
+                    //update data
+                    if (dirty) {
+                        id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                        aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                        dirty = false;
+                    }
+                    //till soil
+                    if (minecart.getDataValue("AutoTill") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
+                        if (id == Material.GRASS.getId() || id == Material.DIRT.getId()) {
+                            if (aboveId == Material.AIR.getId()) {
+                                MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.SOIL.getId(), x, y, z);
+                                dirty = true;
+                            }
+                        }
+                    }
 
-					//update data
-					if (dirty) {
-						id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-						aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
-						dirty = false;
-					}
-					//Seed tilled land 
-					if (minecart.getDataValue("AutoSeed") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
-						if (id == Material.SOIL.getId()) {
-							if (aboveId == Material.AIR.getId()) {
-								if (minecart.removeItem(Material.SEEDS.getId())) {
-									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CROPS.getId(), x, y+1, z);
-									dirty = true;
-								}
-							}
-						}
-					}
+                    //update data
+                    if (dirty) {
+                        id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                        aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                        dirty = false;
+                    }
+                    //Seed tilled land
+                    if (minecart.getDataValue("AutoSeed") != null || FarmingBase.isFarmingActive(minecart, FarmType.Wheat)) {
+                        if (id == Material.SOIL.getId()) {
+                            if (aboveId == Material.AIR.getId()) {
+                                if (minecart.removeItem(Material.SEEDS.getId())) {
+                                    MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CROPS.getId(), x, y + 1, z);
+                                    dirty = true;
+                                }
+                            }
+                        }
+                    }
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	public static void doAutoCactusFarm(MMStorageCart minecart) {
-		if((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
-			return;
-		}
-		if (minecart.getFarmingRange() < 1) {
-			return;
-		}
-		Location loc = minecart.getLocation().clone();
-		int range = minecart.getFarmingRange();
-		int rangeY = minecart.getFarmingRangeY();
-		for (int dx = -(range); dx <= range; dx++){
-			for (int dy = -(rangeY); dy <= rangeY; dy++){
-				for (int dz = -(range); dz <= range; dz++){
-					//Setup data
-					int x = loc.getBlockX() + dx;
-					int y = loc.getBlockY() + dy;
-					int z = loc.getBlockZ() + dz;
+    public static void doAutoCactusFarm(MMStorageCart minecart) {
+        if ((minecart.getDataValue("AutoCactus") == null) && (minecart.getDataValue("AutoReCactus") == null) && !FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
+            return;
+        }
+        if (minecart.getFarmingRange() < 1) {
+            return;
+        }
+        Location loc = minecart.getLocation().clone();
+        int range = minecart.getFarmingRange();
+        int rangeY = minecart.getFarmingRangeY();
+        for (int dx = -(range); dx <= range; dx++) {
+            for (int dy = -(rangeY); dy <= rangeY; dy++) {
+                for (int dz = -(range); dz <= range; dz++) {
+                    //Setup data
+                    int x = loc.getBlockX() + dx;
+                    int y = loc.getBlockY() + dy;
+                    int z = loc.getBlockZ() + dz;
 
-					int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-					int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z); 
-					int belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y-1, z);
+                    int id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                    int aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
+                    int belowId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y - 1, z);
 
-					//Harvest Sugar
-					if (minecart.getDataValue("AutoCactus") != null) {
+                    //Harvest Sugar
+                    if (minecart.getDataValue("AutoCactus") != null) {
 
-						// Like sugar, we need to break this from the top first. 
+                        // Like sugar, we need to break this from the top first.
 
-						if (id == Material.CACTUS.getId() && aboveId != Material.CACTUS.getId()) {
-							if (belowId == Material.SAND.getId()) {
-								if(!FarmingBase.isFarmingActive(minecart, FarmType.Cactus) &&  minecart.getDataValue("AutoReCactus") == null) {
-									// Only harvest the bottom if we're not replanting. 
-									minecart.addItem(Material.CACTUS.getId());
-									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
-								}
-							} else {
-								minecart.addItem(Material.CACTUS.getId());
-								MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
-							}
-						}
-					}
+                        if (id == Material.CACTUS.getId() && aboveId != Material.CACTUS.getId()) {
+                            if (belowId == Material.SAND.getId()) {
+                                if (!FarmingBase.isFarmingActive(minecart, FarmType.Cactus) && minecart.getDataValue("AutoReCactus") == null) {
+                                    // Only harvest the bottom if we're not replanting.
+                                    minecart.addItem(Material.CACTUS.getId());
+                                    MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
+                                }
+                            } else {
+                                minecart.addItem(Material.CACTUS.getId());
+                                MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.AIR.getId(), x, y, z);
+                            }
+                        }
+                    }
 
-					//update data
-					id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
-					aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z);
+                    //update data
+                    id = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y, z);
+                    aboveId = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z);
 
-					//Replant Cactus
-					if (minecart.getDataValue("AutoReCactus") != null || FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
-						if (id == Material.SAND.getId()) {
-							if (aboveId == Material.AIR.getId()) {
+                    //Replant Cactus
+                    if (minecart.getDataValue("AutoReCactus") != null || FarmingBase.isFarmingActive(minecart, FarmType.Cactus)) {
+                        if (id == Material.SAND.getId()) {
+                            if (aboveId == Material.AIR.getId()) {
 
-								// Need to check for blocks to the sides of the cactus position 
-								// as this would normally block planting.
+                                // Need to check for blocks to the sides of the cactus position
+                                // as this would normally block planting.
 
-								int sidemx = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x-1, y+1, z);
-								int sidepx = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x+1, y+1, z);
-								int sidemz = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z-1);
-								int sidepz = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y+1, z+1);
+                                int sidemx = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x - 1, y + 1, z);
+                                int sidepx = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x + 1, y + 1, z);
+                                int sidemz = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z - 1);
+                                int sidepz = MinecartManiaWorld.getBlockIdAt(minecart.getWorld(), x, y + 1, z + 1);
 
-								boolean blockcactus = false;
+                                boolean blockcactus = false;
 
-								if(sidemx != Material.AIR.getId()) { blockcactus = true; }
-								if(sidepx != Material.AIR.getId()) { blockcactus = true; }
-								if(sidemz != Material.AIR.getId()) { blockcactus = true; }
-								if(sidepz != Material.AIR.getId()) { blockcactus = true; }
+                                if (sidemx != Material.AIR.getId()) {
+                                    blockcactus = true;
+                                }
+                                if (sidepx != Material.AIR.getId()) {
+                                    blockcactus = true;
+                                }
+                                if (sidemz != Material.AIR.getId()) {
+                                    blockcactus = true;
+                                }
+                                if (sidepz != Material.AIR.getId()) {
+                                    blockcactus = true;
+                                }
 
 
-								if (blockcactus == false && minecart.removeItem(Material.CACTUS.getId())) {
-									MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CACTUS.getId(), x, y+1, z);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+                                if (blockcactus == false && minecart.removeItem(Material.CACTUS.getId())) {
+                                    MinecartManiaWorld.setBlockAt(minecart.getWorld(), Material.CACTUS.getId(), x, y + 1, z);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public static void doAutoFertilize(MMStorageCart minecart) {
-		return; // Todo: Make this work right without flashing trees/crops.
-		/* 
+    public static void doAutoFertilize(MMStorageCart minecart) {
+        return; // Todo: Make this work right without flashing trees/crops.
+        /*
 		if (minecart.getDataValue("AutoFertilize") == null) {
 		 	return;
 		}
@@ -237,36 +244,33 @@ public class StorageMinecartUtils {
 			log.info("Blockcycle: " + blockcycle);
 		}
 	*/
-	}
+    }
 
-	/**
-	 * Returns all blocks in farming range of the minecart
-	 * @param minecart
-	 * @return
-	 */
-	public static ArrayList<Block> getBlocksInRange(MMStorageCart minecart)
-	{
-		Location loc = minecart.getLocation().clone();
-		int range = minecart.getFarmingRange();
-		int rangeY = minecart.getFarmingRangeY();
-		World w = minecart.getWorld();
-		
-		ArrayList<Block> blocks = new ArrayList<Block>();
+    /**
+     * Returns all blocks in farming range of the minecart
+     *
+     * @param minecart
+     * @return
+     */
+    public static ArrayList<Block> getBlocksInRange(MMStorageCart minecart) {
+        Location loc = minecart.getLocation().clone();
+        int range = minecart.getFarmingRange();
+        int rangeY = minecart.getFarmingRangeY();
+        World w = minecart.getWorld();
 
-		for (int dx = -(range); dx <= range; dx++)
-		{
-			for (int dy = -(rangeY); dy <= rangeY; dy++)
-			{
-				for (int dz = -(range); dz <= range; dz++)
-				{
-					int x = loc.getBlockX() + dx;
-					int y = loc.getBlockY() + dy;
-					int z = loc.getBlockZ() + dz;
-					
-					blocks.add(MinecartManiaWorld.getBlockAt(w, x, y, z));
-				}				
-			}
-		}
-		return blocks;
-	}
+        ArrayList<Block> blocks = new ArrayList<Block>();
+
+        for (int dx = -(range); dx <= range; dx++) {
+            for (int dy = -(rangeY); dy <= rangeY; dy++) {
+                for (int dz = -(range); dz <= range; dz++) {
+                    int x = loc.getBlockX() + dx;
+                    int y = loc.getBlockY() + dy;
+                    int z = loc.getBlockZ() + dz;
+
+                    blocks.add(MinecartManiaWorld.getBlockAt(w, x, y, z));
+                }
+            }
+        }
+        return blocks;
+    }
 }

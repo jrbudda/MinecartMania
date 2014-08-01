@@ -1,51 +1,50 @@
 package com.afforess.minecartmania;
 
+import com.afforess.minecartmania.debug.Logger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import com.afforess.minecartmania.debug.Logger;
-
 public class PermissionManager {
 
-	//private PermissionHandler handler = null;
-	public PermissionManager(Server server) {		
-		Logger.info("Using Bukkit permissions.");
-	}
+    //private PermissionHandler handler = null;
+    public PermissionManager(Server server) {
+        Logger.info("Using Bukkit permissions.");
+    }
 
 
-	public boolean canCreateSign(Player player, String sign) {
-		if (player == null || player.isOp()) {
-			return true;
-		}
-		return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*") ;
+    public boolean canCreateSign(Player player, String sign) {
+        if (player == null || player.isOp()) {
+            return true;
+        }
+        return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*");
 
-	}
+    }
 
-	public boolean canBreakSign(Player player, String sign) {
-		if (player == null || player.isOp()) {
-			return true;
-		}
+    public boolean canBreakSign(Player player, String sign) {
+        if (player == null || player.isOp()) {
+            return true;
+        }
 
-		return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*");
+        return player.hasPermission("minecartmania.signs.create." + sign) || player.hasPermission("minecartmania.signs.create.*");
 
-	}
+    }
 
-	public boolean canUseAdminCommand(Player player, String command) {
-		if (player == null || player.isOp()) {
-			return true;
-		}
+    public boolean canUseAdminCommand(Player player, String command) {
+        if (player == null || player.isOp()) {
+            return true;
+        }
 
-		return player.hasPermission("minecartmania.commands.create." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
+        return player.hasPermission("minecartmania.commands.create." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
 
-	}
+    }
 
-	public boolean canUseCommand(Player player, String command) {
-		if (player == null || player.isOp()) {
-			return true;
-		}
+    public boolean canUseCommand(Player player, String command) {
+        if (player == null || player.isOp()) {
+            return true;
+        }
 
-		return player.hasPermission("minecartmania.commands." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
+        return player.hasPermission("minecartmania.commands." + command.toLowerCase()) || player.hasPermission("minecartmania.commands.create.*");
 
-	}
+    }
 
 }

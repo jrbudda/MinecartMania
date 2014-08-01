@@ -1,362 +1,358 @@
 package com.afforess.minecartmania.minecarts;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
-
 import com.afforess.minecartmania.MinecartMania;
 import com.afforess.minecartmania.debug.Logger;
 import com.afforess.minecartmania.entity.Item;
 import com.afforess.minecartmania.entity.MinecartManiaWorld;
 import com.afforess.minecartmania.utils.DirectionUtils.CompassDirection;
 import com.avaje.ebean.validation.NotNull;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Entity()
-@Table(name="MinecartManiaMinecartDataTable")
+@Table(name = "MinecartManiaMinecartDataTable")
 public class MMDataTable {
-	private transient static HashMap<String, MMDataTable> cache = new HashMap<String, MMDataTable>();
-	@NotNull
-	protected double previousX;
-	@NotNull
-	protected double previousY;
-	@NotNull
-	protected double previousZ;
-	@NotNull
-	protected double previousMotionX;
-	@NotNull
-	protected double previousMotionY;
-	@NotNull
-	protected double previousMotionZ;
-	@NotNull
-	protected CompassDirection previousFacingDir;
-	@NotNull
-	protected boolean wasMovingLastTick;
-	@NotNull
-	public String owner;
-	@NotNull
-	protected int myrange;
-	@NotNull
-	protected int rangeY;
-	@NotNull
-	protected boolean dead;
-	@NotNull
-	protected double X;
-	@NotNull
-	protected double Y;
-	@NotNull
-	protected double Z;
-	@NotNull
-	protected double motionX;
-	@NotNull
-	protected double motionY;
-	@NotNull
-	protected double motionZ;
-	@NotNull
-	protected int typeId;
-	@NotNull
-	protected String world;
-	@NotNull
-	protected String player;
-	@Id
-	protected int oldId;
-	protected transient ConcurrentHashMap<String, Object> data = null;
+    private transient static HashMap<String, MMDataTable> cache = new HashMap<String, MMDataTable>();
+    @NotNull
+    public String owner;
+    @NotNull
+    protected double previousX;
+    @NotNull
+    protected double previousY;
+    @NotNull
+    protected double previousZ;
+    @NotNull
+    protected double previousMotionX;
+    @NotNull
+    protected double previousMotionY;
+    @NotNull
+    protected double previousMotionZ;
+    @NotNull
+    protected CompassDirection previousFacingDir;
+    @NotNull
+    protected boolean wasMovingLastTick;
+    @NotNull
+    protected int myrange;
+    @NotNull
+    protected int rangeY;
+    @NotNull
+    protected boolean dead;
+    @NotNull
+    protected double X;
+    @NotNull
+    protected double Y;
+    @NotNull
+    protected double Z;
+    @NotNull
+    protected double motionX;
+    @NotNull
+    protected double motionY;
+    @NotNull
+    protected double motionZ;
+    @NotNull
+    protected int typeId;
+    @NotNull
+    protected String world;
+    @NotNull
+    protected String player;
+    @Id
+    protected int oldId;
+    protected transient ConcurrentHashMap<String, Object> data = null;
 
-	public MMDataTable() {
+    public MMDataTable() {
 
-	}
+    }
 
-	public MMDataTable(MMMinecart minecart, String player) {
-		this.previousX = minecart.previousLocation.getX();
-		this.previousY = minecart.previousLocation.getY();
-		this.previousZ = minecart.previousLocation.getZ();
-		this.previousMotionX =  minecart.getMotionX();
-		this.previousMotionY = minecart.getMotionY();
-		this.previousMotionZ = minecart.getMotionZ();
-		this.previousFacingDir = minecart.previousFacingDir;
-		this.wasMovingLastTick = minecart.wasMovingLastTick;
-		this.owner = minecart.owner.getOwner();
-		this.dead = minecart.dead;
-		this.oldId = minecart.minecart.getEntityId();
-		this.data = minecart.data;
-		this.X = minecart.getLocation().getX();
-		this.Y = minecart.getLocation().getY();
-		this.Z = minecart.getLocation().getZ();
-		this.motionX = minecart.getMotionX();
-		this.motionY = minecart.getMotionY();
-		this.motionZ = minecart.getMotionZ();
-		this.player = player;
-		this.typeId = minecart.getType().getId();
-		this.world = minecart.getWorld().getName();
-	}
+    public MMDataTable(MMMinecart minecart, String player) {
+        this.previousX = minecart.previousLocation.getX();
+        this.previousY = minecart.previousLocation.getY();
+        this.previousZ = minecart.previousLocation.getZ();
+        this.previousMotionX = minecart.getMotionX();
+        this.previousMotionY = minecart.getMotionY();
+        this.previousMotionZ = minecart.getMotionZ();
+        this.previousFacingDir = minecart.previousFacingDir;
+        this.wasMovingLastTick = minecart.wasMovingLastTick;
+        this.owner = minecart.owner.getOwner();
+        this.dead = minecart.dead;
+        this.oldId = minecart.minecart.getEntityId();
+        this.data = minecart.data;
+        this.X = minecart.getLocation().getX();
+        this.Y = minecart.getLocation().getY();
+        this.Z = minecart.getLocation().getZ();
+        this.motionX = minecart.getMotionX();
+        this.motionY = minecart.getMotionY();
+        this.motionZ = minecart.getMotionZ();
+        this.player = player;
+        this.typeId = minecart.getType().getId();
+        this.world = minecart.getWorld().getName();
+    }
 
-	public static MMDataTable getDataTable(String player) {
-		if (cache.containsKey(player)) {
-			return cache.get(player);
-		}
-		try {
-			MMDataTable data = null;
-			List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).where().ieq("player", player).findList();
-			if (list.size() > 0) {
-				data = list.get(0);
-				//handle issues with the db gracefully
-				if (list.size() > 1) {
-					for (int i = 1; i < list.size(); i++) {
-						MinecartMania.getInstance().getDatabase().delete(list.get(i));
-					}
-				}
-			}
-			cache.put(player, data);
-			return data;
-		}
-		catch (Exception e) {
-			Logger.severe("Failed to load the minecart from memory when " + player + " reconnected");
-			Logger.logCore(e.getMessage(), false);
-			return null;
-		}
-	}
+    public static MMDataTable getDataTable(String player) {
+        if (cache.containsKey(player)) {
+            return cache.get(player);
+        }
+        try {
+            MMDataTable data = null;
+            List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).where().ieq("player", player).findList();
+            if (list.size() > 0) {
+                data = list.get(0);
+                //handle issues with the db gracefully
+                if (list.size() > 1) {
+                    for (int i = 1; i < list.size(); i++) {
+                        MinecartMania.getInstance().getDatabase().delete(list.get(i));
+                    }
+                }
+            }
+            cache.put(player, data);
+            return data;
+        } catch (Exception e) {
+            Logger.severe("Failed to load the minecart from memory when " + player + " reconnected");
+            Logger.logCore(e.getMessage(), false);
+            return null;
+        }
+    }
 
-	public static List<MMDataTable> getAlltCarts(){
-		try {
-			List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).findList();
-			return list;
-		}
-		catch (Exception e) {
-			Logger.severe("Failed to load the minecarts from database!");
-			Logger.severe(e.getMessage(), false);
-			return null;
-		}
-	}
+    public static List<MMDataTable> getAlltCarts() {
+        try {
+            List<MMDataTable> list = MinecartMania.getInstance().getDatabase().find(MMDataTable.class).findList();
+            return list;
+        } catch (Exception e) {
+            Logger.severe("Failed to load the minecarts from database!");
+            Logger.severe(e.getMessage(), false);
+            return null;
+        }
+    }
 
-	public static void delete(MMDataTable data) {
-		cache.remove(data.getPlayer());
-		MinecartMania.getInstance().getDatabase().delete(data);
-	}
+    public static void delete(MMDataTable data) {
+        cache.remove(data.getPlayer());
+        MinecartMania.getInstance().getDatabase().delete(data);
+    }
 
-	public static void save(MMDataTable data) {
-		cache.put(data.getPlayer(), data);
-		MinecartMania.getInstance().getDatabase().save(data);
-	}
+    public static void save(MMDataTable data) {
+        cache.put(data.getPlayer(), data);
+        MinecartMania.getInstance().getDatabase().save(data);
+    }
 
-	public MMMinecart toMinecartManiaMinecart() {
-		MMMinecart minecart = MinecartManiaWorld.spawnMinecart(getLocation(), Item.getItem(typeId).get(0), owner);
+    public MMMinecart toMinecartManiaMinecart() {
+        MMMinecart minecart = MinecartManiaWorld.spawnMinecart(getLocation(), Item.getItem(typeId).get(0), owner);
 
-		if (minecart == null) {
-			Logger.debug("Could not load saved minecart for " + this.player);
-			return null;
-		}
-		minecart.previousFacingDir = this.previousFacingDir;
-		minecart.previousLocation = this.getPreviousLocation();
-		minecart.minecart.setVelocity(getMotion());
-		minecart.wasMovingLastTick = this.wasMovingLastTick;
-		minecart.dead = this.dead;
+        if (minecart == null) {
+            Logger.debug("Could not load saved minecart for " + this.player);
+            return null;
+        }
+        minecart.previousFacingDir = this.previousFacingDir;
+        minecart.previousLocation = this.getPreviousLocation();
+        minecart.minecart.setVelocity(getMotion());
+        minecart.wasMovingLastTick = this.wasMovingLastTick;
+        minecart.dead = this.dead;
 
-		if (this.data != null) {
-			minecart.data = this.data;
-		}
+        if (this.data != null) {
+            minecart.data = this.data;
+        }
 
-		return minecart;
+        return minecart;
 
-	}
+    }
 
-	public double getPreviousX() {
-		return previousX;
-	}
+    public double getPreviousX() {
+        return previousX;
+    }
 
-	public void setPreviousX(double previousX) {
-		this.previousX = previousX;
-	}
+    public void setPreviousX(double previousX) {
+        this.previousX = previousX;
+    }
 
-	public double getPreviousY() {
-		return previousY;
-	}
+    public double getPreviousY() {
+        return previousY;
+    }
 
-	public void setPreviousY(double previousY) {
-		this.previousY = previousY;
-	}
+    public void setPreviousY(double previousY) {
+        this.previousY = previousY;
+    }
 
-	public double getPreviousZ() {
-		return previousZ;
-	}
+    public double getPreviousZ() {
+        return previousZ;
+    }
 
-	public void setPreviousZ(double previousZ) {
-		this.previousZ = previousZ;
-	}
+    public void setPreviousZ(double previousZ) {
+        this.previousZ = previousZ;
+    }
 
-	public double getPreviousMotionX() {
-		return previousMotionX;
-	}
+    public double getPreviousMotionX() {
+        return previousMotionX;
+    }
 
-	public void setPreviousMotionX(double previousMotionX) {
-		this.previousMotionX = previousMotionX;
-	}
+    public void setPreviousMotionX(double previousMotionX) {
+        this.previousMotionX = previousMotionX;
+    }
 
-	public double getPreviousMotionY() {
-		return previousMotionY;
-	}
+    public double getPreviousMotionY() {
+        return previousMotionY;
+    }
 
-	public void setPreviousMotionY(double previousMotionY) {
-		this.previousMotionY = previousMotionY;
-	}
+    public void setPreviousMotionY(double previousMotionY) {
+        this.previousMotionY = previousMotionY;
+    }
 
-	public double getPreviousMotionZ() {
-		return previousMotionZ;
-	}
+    public double getPreviousMotionZ() {
+        return previousMotionZ;
+    }
 
-	public void setPreviousMotionZ(double previousMotionZ) {
-		this.previousMotionZ = previousMotionZ;
-	}
+    public void setPreviousMotionZ(double previousMotionZ) {
+        this.previousMotionZ = previousMotionZ;
+    }
 
-	public double getX() {
-		return X;
-	}
+    public double getX() {
+        return X;
+    }
 
-	public void setX(double x) {
-		X = x;
-	}
+    public void setX(double x) {
+        X = x;
+    }
 
-	public double getY() {
-		return Y;
-	}
+    public double getY() {
+        return Y;
+    }
 
-	public void setY(double y) {
-		Y = y;
-	}
+    public void setY(double y) {
+        Y = y;
+    }
 
-	public double getZ() {
-		return Z;
-	}
+    public double getZ() {
+        return Z;
+    }
 
-	public void setZ(double z) {
-		Z = z;
-	}
+    public void setZ(double z) {
+        Z = z;
+    }
 
-	public double getMotionX() {
-		return motionX;
-	}
+    public double getMotionX() {
+        return motionX;
+    }
 
-	public void setMotionX(double motionX) {
-		this.motionX = motionX;
-	}
+    public void setMotionX(double motionX) {
+        this.motionX = motionX;
+    }
 
-	public double getMotionY() {
-		return motionY;
-	}
+    public double getMotionY() {
+        return motionY;
+    }
 
-	public void setMotionY(double motionY) {
-		this.motionY = motionY;
-	}
+    public void setMotionY(double motionY) {
+        this.motionY = motionY;
+    }
 
-	public double getMotionZ() {
-		return motionZ;
-	}
+    public double getMotionZ() {
+        return motionZ;
+    }
 
-	public void setMotionZ(double motionZ) {
-		this.motionZ = motionZ;
-	}
+    public void setMotionZ(double motionZ) {
+        this.motionZ = motionZ;
+    }
 
-	public String getWorld() {
-		return world;
-	}
+    public String getWorld() {
+        return world;
+    }
 
-	public void setWorld(String world) {
-		this.world = world;
-	}
+    public void setWorld(String world) {
+        this.world = world;
+    }
 
-	public String getPlayer() {
-		return player;
-	}
+    public String getPlayer() {
+        return player;
+    }
 
-	public void setPlayer(String player) {
-		this.player = player;
-	}
+    public void setPlayer(String player) {
+        this.player = player;
+    }
 
-	public Vector getPreviousLocation() {
-		return new Vector(previousX, previousY, previousZ);
-	}
+    public Vector getPreviousLocation() {
+        return new Vector(previousX, previousY, previousZ);
+    }
 
-	public Vector getPreviousMotion() {
-		return new Vector(previousMotionX, previousMotionY, previousMotionZ);
-	}
+    public Vector getPreviousMotion() {
+        return new Vector(previousMotionX, previousMotionY, previousMotionZ);
+    }
 
-	public Vector getMotion() {
-		return new Vector(motionX, motionY, motionZ);
-	}
+    public Vector getMotion() {
+        return new Vector(motionX, motionY, motionZ);
+    }
 
-	public Location getLocation() {
-		return new Location(Bukkit.getServer().getWorld(world), X, Y, Z);
-	}
+    public Location getLocation() {
+        return new Location(Bukkit.getServer().getWorld(world), X, Y, Z);
+    }
 
-	public CompassDirection getPreviousFacingDir() {
-		return previousFacingDir;
-	}
+    public CompassDirection getPreviousFacingDir() {
+        return previousFacingDir;
+    }
 
-	public void setPreviousFacingDir(CompassDirection previousFacingDir) {
-		this.previousFacingDir = previousFacingDir;
-	}
+    public void setPreviousFacingDir(CompassDirection previousFacingDir) {
+        this.previousFacingDir = previousFacingDir;
+    }
 
-	public boolean isWasMovingLastTick() {
-		return wasMovingLastTick;
-	}
+    public boolean isWasMovingLastTick() {
+        return wasMovingLastTick;
+    }
 
-	public void setWasMovingLastTick(boolean wasMovingLastTick) {
-		this.wasMovingLastTick = wasMovingLastTick;
-	}
+    public void setWasMovingLastTick(boolean wasMovingLastTick) {
+        this.wasMovingLastTick = wasMovingLastTick;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-	public int getRangeY() {
-		return rangeY;
-	}
+    public int getRangeY() {
+        return rangeY;
+    }
 
-	public void setRangeY(int rangeY) {
-		this.rangeY = rangeY;
-	}
+    public void setRangeY(int rangeY) {
+        this.rangeY = rangeY;
+    }
 
-	public boolean isDead() {
-		return dead;
-	}
+    public boolean isDead() {
+        return dead;
+    }
 
-	public void setDead(boolean dead) {
-		this.dead = dead;
-	}
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
 
-	public int getOldId() {
-		return oldId;
-	}
+    public int getOldId() {
+        return oldId;
+    }
 
-	public void setOldId(int oldId) {
-		this.oldId = oldId;
-	}
+    public void setOldId(int oldId) {
+        this.oldId = oldId;
+    }
 
-	public int getTypeId() {
-		return typeId;
-	}
+    public int getTypeId() {
+        return typeId;
+    }
 
-	public void setTypeId(int type) {
-		this.typeId = type;
-	}
+    public void setTypeId(int type) {
+        this.typeId = type;
+    }
 
-	public void setMyrange(int myrange) {
-		this.myrange = myrange;
-	}
+    public int getMyrange() {
+        return myrange;
+    }
 
-	public int getMyrange() {
-		return myrange;
-	}
-
+    public void setMyrange(int myrange) {
+        this.myrange = myrange;
+    }
 
 
 }

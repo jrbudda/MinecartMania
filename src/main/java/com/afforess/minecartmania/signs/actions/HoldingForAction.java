@@ -1,22 +1,21 @@
 package com.afforess.minecartmania.signs.actions;
 
-import org.bukkit.Location;
-
 import com.afforess.minecartmania.minecarts.MMMinecart;
 import com.afforess.minecartmania.signs.SignAction;
+import org.bukkit.Location;
 
-public class HoldingForAction extends SignAction{
-	
+public class HoldingForAction extends SignAction {
 
-	protected int time = -1;
-	protected Location sign;
 
-	
-	public boolean execute(MMMinecart minecart) {
-	
-		//TODO: fix this mess. Making holding an option of Catch
-		return true;
-		
+    protected int time = -1;
+    protected Location sign;
+
+
+    public boolean execute(MMMinecart minecart) {
+
+        //TODO: fix this mess. Making holding an option of Catch
+        return true;
+
 //		if (minecart.getDataValue("HoldForDelay") != null) {
 //			return false;
 //		}
@@ -37,16 +36,16 @@ public class HoldingForAction extends SignAction{
 //			return true;
 //		}
 //		return false;
-	}
+    }
 
-	
-	public boolean async() {
-		return true;
-	}
 
-	
-	public boolean process(String[] lines) {
-		return false;
+    public boolean async() {
+        return true;
+    }
+
+
+    public boolean process(String[] lines) {
+        return false;
 //		for (int i = 0; i < lines.length; i++) {
 //			if (lines[i].toLowerCase().contains("hold for")) {
 //				try {
@@ -59,16 +58,16 @@ public class HoldingForAction extends SignAction{
 //		}
 //
 //		return time != -1;
-	}
+    }
 
-	
-	public String getPermissionName() {
-		return "holdingsign";
-	}
 
-	
-	public String getFriendlyName() {
-		return "Holding";
-	}
+    public String getPermissionName() {
+        return "holdingsign";
+    }
+
+
+    public String getFriendlyName() {
+        return "Holding";
+    }
 
 }

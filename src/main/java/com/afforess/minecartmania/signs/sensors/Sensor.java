@@ -1,27 +1,26 @@
 package com.afforess.minecartmania.signs.sensors;
 
+import com.afforess.minecartmania.minecarts.MMMinecart;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmania.minecarts.MMMinecart;
+public interface Sensor {
 
-public interface Sensor{
+    public void input(MMMinecart minecart);
 
-	public void input(MMMinecart minecart);
-	
-	public boolean output();
-	
-	public Sign getSign();
-	
-	public Location getLocation();
-	
-	public String getName();
-	
-	public SensorType getType();
-	
-	public boolean equals(Location location);
-	
-	public void kill();
-	
-	public SensorDataTable getDataTable();
+    public boolean output();
+
+    public Sign getSign();
+
+    public Location getLocation();
+
+    public String getName();
+
+    public SensorType getType();
+
+    public boolean equals(Location location);
+
+    public void kill();
+
+    public SensorDataTable getDataTable();
 }
